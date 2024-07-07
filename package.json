@@ -1,6 +1,25 @@
 {
+  "type": "module",
   "dependencies": {
+    "axios": "^1.7.2",
+    "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "express-async-errors": "^3.1.1",
+    "http-status-codes": "^2.3.0",
     "mongoose": "^8.4.4"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node_modules/.bin/nodemon server.js"
+  },
+  "name": "game-website",
+  "version": "1.0.0",
+  "main": "server.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "nodemon": "^3.1.4"
   }
 }
