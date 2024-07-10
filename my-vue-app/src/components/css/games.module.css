@@ -1,0 +1,13 @@
+.game{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.cover img{
+  max-width: 100%;
+  border-radius: 0.5rem;
+}
+
+.name h4{
+  text-align: center;
+}

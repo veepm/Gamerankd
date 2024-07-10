@@ -1,4 +1,5 @@
 import {useNavigate} from "react-router-dom";
+import classes from "./css/games.module.css"
 
 const Games = ({game}) => {
 
@@ -9,11 +10,11 @@ const Games = ({game}) => {
   }
 
   return (
-    <section className="game" onClick={()=>handleClick()}>
-      <div className="image">
+    <section className={classes.game} onClick={()=>handleClick()}>
+      <div className={classes.cover}>
         <img src={game.cover ? `https:${game.cover}` : "../vite.svg"}/>
       </div>
-      <div className="name">
+      <div className={classes.name}>
         <h4>{game.name}</h4>
       </div>
     </section>

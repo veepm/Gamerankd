@@ -1,11 +1,18 @@
 import { CiSearch } from "react-icons/ci";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { useAppContext } from "../context/appContext";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const Navbar = () => {
-  const {handleSearch} = useAppContext();
+  const {handleChange, resetInput} = useAppContext();
   const [searchValue, setSearchValue] = useState("");
+  const location = useLocation();
+
+  // reset search input on page change
+  useEffect(() => {
+      setSearchValue("")
+      resetInput();
+  },[location]);
 
   const debounce = () => {
     let timeoutID;
@@ -13,7 +20,7 @@ const Navbar = () => {
       setSearchValue(e.target.value);
       clearTimeout(timeoutID);
       timeoutID = setTimeout(() => {
-        handleSearch(e.target.value);
+        handleChange("search",e.target.value);
       }, 750);
     };
   };
