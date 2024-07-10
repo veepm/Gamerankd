@@ -5,11 +5,11 @@ import Loading from "./Loading";
 import PageButton from "./PageButton";
 
 const GamesContainer = () => {
-  const {isLoading, games, getAllGames} = useAppContext();
+  const {isLoading, games, getGames, page, search} = useAppContext();
 
   useEffect(()=>{
-    getAllGames();
-  },[]);
+    getGames();
+  },[page, search]);
 
   if (isLoading){
     return <Loading></Loading>;

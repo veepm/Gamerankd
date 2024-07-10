@@ -4,3 +4,5 @@ export const GET_GAME_BEGIN = "GET_GAME_BEGIN";
 export const GET_GAME_DONE = "GET_GAME_DONE";
 
 export const CHANGE_PAGE = "CHANGE_PAGE";
+
+export const HANDLE_SEARCH = "HANDLE_SEARCH";

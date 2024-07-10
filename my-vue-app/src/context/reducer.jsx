@@ -3,7 +3,8 @@ import {
   GET_GAMES_DONE,
   GET_GAME_BEGIN,
   GET_GAME_DONE,
-  CHANGE_PAGE
+  CHANGE_PAGE,
+  HANDLE_SEARCH
 } from "./actions"
 
 export const reducer = (state, action) => {
@@ -24,6 +25,10 @@ export const reducer = (state, action) => {
   }
 
   if (action.type === CHANGE_PAGE){
-    return {...state, page:action.payload.page+1, games:action.payload.games};
+    return {...state, page:action.payload.page};
+  }
+
+  if (action.type == HANDLE_SEARCH){
+    return {...state, search:action.payload.search, page:1};
   }
 }
