@@ -1,6 +1,7 @@
+import { StatusCodes } from "http-status-codes";
 import instance from "../axios.js"
-import CustomAPIError from "../errors/custom-api.js";
 import { BadRequestError, NotFoundError, UnAuthenticatedError } from "../errors/index.js"
+import { pool } from "../database.js";
 
 export const getAllGames = async (req, res) => {
   const {coverSize, search, genres, rating, minYear, maxYear, limit=10, page} = req.query;
@@ -8,13 +9,8 @@ export const getAllGames = async (req, res) => {
   let filters = [];
   let response;
 
-  if (search){
-    query += `search "${search}";`;
-  }
-
   if (genres){
-    const genresList = genres.split(",").map(genre =>`"${genre}"`).join(","); // surround each genre with ""
-    filters.push(`genres.name=(${genresList})`); // finds all games with a genre in the list
+    filters.push(`genres=(${genres})`); // finds all games with a genre in the list
   }
   
   //Using database
@@ -30,6 +26,12 @@ export const getAllGames = async (req, res) => {
     const unixTime = Math.floor(new Date(`${maxYear}-12-31`).getTime()/1000);
     filters.push(`first_release_date <= ${unixTime}`);
   }
+  if (search){
+    filters.push(`name ~ *"${search}"*`);
+  }
+
+  query += "sort rating_count desc;";
+
   if (filters.length > 0){
     query += `where ${filters.join("&")};`;
   }
@@ -41,50 +43,59 @@ export const getAllGames = async (req, res) => {
   }
 
   // gets filtered games from IGDB
-  try {
-    response = await instance.post("/games", `${query}`);
-  } catch (error) {
-    const customError = new CustomAPIError("IGDB request failed. " + error.message);
-    customError.statusCode = error.response.status;
-    throw customError;
-  }
+  response = await instance.post("/games", `${query}`);
 
   if (coverSize){
     resizeCover(response,coverSize);
   }
 
-  res.send({data:response.data, size:response.data.length});
+  res.status(StatusCodes.OK).send({data:response.data, size:response.data.length});
 }
 
 export const getSingleGame = async (req,res) => {
+  const query = `fields name,cover.url,summary,genres.name,first_release_date,involved_companies.publisher, involved_companies.developer,involved_companies.company.name,platforms.name; where id=${req.params.id};`;
   const {coverSize} = req.query;
-  let response;
 
   // Gets game with specified id from IGDB
-  try {
-    response = await instance.post("/games", `fields name,cover.url,summary,genres.name,first_release_date,involved_companies.publisher, involved_companies.developer,involved_companies.company.name,platforms.name; where id=${req.params.id};`);
-  } catch (error) {
-    const customError = new CustomAPIError("IGDB request failed. " + error.message);
-    customError.statusCode = error.response.status;
-    throw customError;
-  }
+  let {data} = await instance.post("/games", query);
 
-  if (response.data.length === 0){
+  if (data.length === 0){
     throw new BadRequestError(`No game exists with id ${req.params.id}`);
   }
 
   if (coverSize){
-    resizeCover(response,coverSize);
+    resizeCover(data,coverSize);
   }
 
   // get reviews and ratings from database
+
+  let pqQuery = `
+    SELECT CAST(AVG(rating) AS FLOAT)
+    FROM reviews
+    WHERE game_id=$1;
+  `
   
-  res.send(response.data);
+  data[0].avg_rating = (await pool.query(pqQuery,[req.params.id])).rows[0].avg;
+  
+  pqQuery = `
+    SELECT review_id,rating,review_text,r.created_at,r.updated_at,username
+    FROM reviews r,users u
+    WHERE r.user_id = u.user_id AND game_id=$1;
+  `
+
+  data[0].reviews = (await pool.query(pqQuery,[req.params.id])).rows;
+
+  res.status(StatusCodes.OK).send({data:data[0]});
 };
 
+export const addRating = async (req,res) => {
 
-const resizeCover= (response,coverSize) => {
-  response.data.forEach(game => {
+}
+
+
+// change default cover size provided by IGDB
+const resizeCover = (data,coverSize) => {
+  data.forEach(game => {
   const cover = game.cover?.url.replace("thumb", coverSize);
   game.cover = cover;
 })};

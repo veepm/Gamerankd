@@ -6,10 +6,34 @@ const app = express();
 
 import errorHandlerMiddleware from "./middleware/error-handler.js";
 
+import usersRoute from "./routes/usersRoute.js";
 import gamesRoute from "./routes/gamesRoute.js";
+import genresRoute from "./routes/genresRoute.js";
+
+// Add headers before the routes are defined
+app.use(function (req, res, next) {
+
+  // Website you wish to allow to connect
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
+
+  // Request methods you wish to allow
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+  // Request headers you wish to allow
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+
+  // Set to true if you need the website to include cookies in the requests sent
+  // to the API (e.g. in case you use sessions)
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  // Pass to next layer of middleware
+  next();
+});
 
 app.use(express.json());
+app.use("/users", usersRoute);
 app.use("/games", gamesRoute);
+app.use("/genres", genresRoute);
 
 app.use(errorHandlerMiddleware);
 
