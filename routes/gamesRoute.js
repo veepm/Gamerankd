@@ -1,10 +1,14 @@
 import express from "express";
-import { getAllGames, getSingleGame } from "../controllers/games.js";
+import { getGames, getSingleGame} from "../controllers/games.js";
+import authMiddleware from "../middleware/authentication.js";
+import { addReview, getGameReviews } from "../controllers/reviews.js";
 
 const router = express.Router();
 
-router.route("/").get(getAllGames);
+router.route("/").get(getGames);
 
-router.route("/:id").get(getSingleGame);
+router.route("/:gameId").get(getSingleGame);
+
+router.route("/:gameId/reviews").get(getGameReviews).post(authMiddleware,addReview);
 
 export default router;

@@ -4,10 +4,14 @@ import bcrypt from "bcrypt";
 import { BadRequestError, UnAuthenticatedError } from "../errors/index.js";
 import jwt from "jsonwebtoken";
 
-export const registerUser = async (req,res)=>{
+export const register = async (req,res)=>{
   const {username, email, password} = req.body;
   let user;
 
+  if (!username || !email || !password){
+    throw new BadRequestError("Username, email or password can not be empty");
+  }
+  
   const salt = await bcrypt.genSalt(10);
   const hashed = await bcrypt.hash(password,salt);
   const query = "INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3) RETURNING *;";
@@ -19,7 +23,7 @@ export const registerUser = async (req,res)=>{
   res.status(StatusCodes.CREATED).send({user:user.name, token});
 };
 
-export const loginUser = async (req,res) => {
+export const login = async (req,res) => {
   const {email, password} = req.body;
   let user;
 

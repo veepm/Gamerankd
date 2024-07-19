@@ -6,9 +6,12 @@ const app = express();
 
 import errorHandlerMiddleware from "./middleware/error-handler.js";
 
-import usersRoute from "./routes/usersRoute.js";
+import authRoute from "./routes/authRoute.js";
+import usersRoute from "./routes/usersRoutes.js";
 import gamesRoute from "./routes/gamesRoute.js";
 import genresRoute from "./routes/genresRoute.js";
+import reviewsRoute from "./routes/reviewsRoute.js";
+import gamesListsRoute from "./routes/gamesListsRoute.js";
 
 // Add headers before the routes are defined
 app.use(function (req, res, next) {
@@ -31,9 +34,14 @@ app.use(function (req, res, next) {
 });
 
 app.use(express.json());
+
+app.use("/auth", authRoute);
 app.use("/users", usersRoute);
 app.use("/games", gamesRoute);
 app.use("/genres", genresRoute);
+app.use("/reviews", reviewsRoute);
+app.use("/lists", gamesListsRoute);
+
 
 app.use(errorHandlerMiddleware);
 

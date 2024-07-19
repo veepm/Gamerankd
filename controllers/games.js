@@ -1,13 +1,15 @@
 import { StatusCodes } from "http-status-codes";
 import instance from "../axios.js"
-import { BadRequestError, NotFoundError, UnAuthenticatedError } from "../errors/index.js"
+import { BadRequestError } from "../errors/index.js"
 import { pool } from "../database.js";
 
-export const getAllGames = async (req, res) => {
-  const {coverSize, search, genres, rating, minYear, maxYear, limit=10, page} = req.query;
-  let query = 'fields name,cover.url;';
+export const getGames = async (req, res) => {
+  const {coverSize="thumb", search, genres, rating, minYear, maxYear, limit=10, page, id} = req.query;
+
+  // using IGDB rating_count to get more popular games first
+  let query = 'fields name,cover.url,summary,genres.name,first_release_date,involved_companies.publisher, involved_companies.developer,involved_companies.company.name,platforms.name; sort rating_count desc;'; 
+
   let filters = [];
-  let response;
 
   if (genres){
     filters.push(`genres=(${genres})`); // finds all games with a genre in the list
@@ -29,31 +31,63 @@ export const getAllGames = async (req, res) => {
   if (search){
     filters.push(`name ~ *"${search}"*`);
   }
+  if (id){
+    filters.push(`id=(${id})`);
+  }
 
-  query += "sort rating_count desc;";
-
+  // construct where query if valid
   if (filters.length > 0){
     query += `where ${filters.join("&")};`;
   }
 
   // pagination
   query += `limit ${limit};`;
+
   if (page){
     query += `offset ${limit*(page-1)};`;
   }
 
-  // gets filtered games from IGDB
-  response = await instance.post("/games", `${query}`);
+  if (sort){
+    const pgQuery = `
+      SELECT game_id
+      FROM reviews
+      GROUP BY game_id
+      ORDER BY COUNT(*) DESC;
+    `;
 
-  if (coverSize){
-    resizeCover(response,coverSize);
+    const orderedGames = await pool.query(pgQuery);
+
+    
   }
 
-  res.status(StatusCodes.OK).send({data:response.data, size:response.data.length});
-}
+  // gets filtered games from IGDB
+  let {data} = await instance.post("/games", `${query}`);
+
+  if (data.length === 0){
+    throw new BadRequestError(`No game exists with id ${id}`);
+  }
+
+  resizeCover(data,coverSize);
+
+  // get avg rating from database
+
+  let pqQuery = `
+  SELECT CAST(AVG(rating) AS FLOAT)
+  FROM reviews
+  WHERE game_id = $1;
+`;
+  
+  data[0].avg_rating = (await pool.query(pqQuery,[id])).rows[0].avg;
+
+
+  res.status(StatusCodes.OK).send({data});
+};
 
 export const getSingleGame = async (req,res) => {
-  const query = `fields name,cover.url,summary,genres.name,first_release_date,involved_companies.publisher, involved_companies.developer,involved_companies.company.name,platforms.name; where id=${req.params.id};`;
+  const {gameId} = req.params;
+
+  const query = `fields name,cover.url,summary,genres.name,first_release_date,involved_companies.publisher, involved_companies.developer,involved_companies.company.name,platforms.name; where id=${gameId};`;
+
   const {coverSize} = req.query;
 
   // Gets game with specified id from IGDB
@@ -66,36 +100,13 @@ export const getSingleGame = async (req,res) => {
   if (coverSize){
     resizeCover(data,coverSize);
   }
-
-  // get reviews and ratings from database
-
-  let pqQuery = `
-    SELECT CAST(AVG(rating) AS FLOAT)
-    FROM reviews
-    WHERE game_id=$1;
-  `
   
-  data[0].avg_rating = (await pool.query(pqQuery,[req.params.id])).rows[0].avg;
-  
-  pqQuery = `
-    SELECT review_id,rating,review_text,r.created_at,r.updated_at,username
-    FROM reviews r,users u
-    WHERE r.user_id = u.user_id AND game_id=$1;
-  `
-
-  data[0].reviews = (await pool.query(pqQuery,[req.params.id])).rows;
-
   res.status(StatusCodes.OK).send({data:data[0]});
 };
 
-export const addRating = async (req,res) => {
-
-}
-
-
 // change default cover size provided by IGDB
-const resizeCover = (data,coverSize) => {
-  data.forEach(game => {
+const resizeCover = (games,coverSize) => {
+  games.forEach(game => {
   const cover = game.cover?.url.replace("thumb", coverSize);
   game.cover = cover;
 })};
