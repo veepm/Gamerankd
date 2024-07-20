@@ -1,0 +1,15 @@
+.formInput {
+  display: flex;
+  flex-direction: column;
+  width: 20rem;
+  margin-top: 1rem;
+}
+
+.formInput input{
+  width: 100%;
+  padding: 0.5rem;
+}
+
+.formInput p{
+  color: red;
+}

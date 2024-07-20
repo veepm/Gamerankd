@@ -1,21 +1,24 @@
 import Games from "./Games"
 import { useAppContext } from "../context/appContext"
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import Loading from "./Loading";
 import PageButton from "./PageButton";
 
 const GamesContainer = () => {
   const {isLoading, games, getGames, page, search, filteredGenres} = useAppContext();
-
+  let isMounted = useRef(false);
   useEffect(()=>{
-    getGames();
-  },[page, search, filteredGenres]);
+    if (isMounted.current){
+      getGames();
+    }
+    isMounted.current = true;
+  },[page, search]);
 
 
   if (isLoading){
     return <Loading></Loading>;
   }
-  
+
   return (
     <>
       <div className="gamesContainer">

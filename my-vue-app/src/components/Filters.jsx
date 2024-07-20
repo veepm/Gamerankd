@@ -3,18 +3,16 @@ import { useAppContext } from "../context/appContext"
 import { useLocation, useSearchParams, useNavigate } from "react-router-dom";
 
 const Filters = () => {
-  const {genres, getGenres, filteredGenres,handleChange, resetInput} = useAppContext();
-  const location = useLocation();
-  const navigate = useNavigate();
+  const {genres, getGenres, handleChange} = useAppContext();
   const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
+
+  const filteredGenres = searchParams.get("genres")?.split(",").map(Number) || [];
 
   useEffect(() => {
     getGenres();
+    handleChange("filteredGenres",filteredGenres);
   },[]);
-
-  useEffect(()=>{
-    return resetInput();
-  },[location]);
 
   const handleToggle = (e) => {
     const checked = e.target.checked;
@@ -25,10 +23,14 @@ const Filters = () => {
     }
     else {
       newFiltered = filteredGenres.filter((genre) => {
-        return genre !== genreId;
+          return genre !== genreId;
         });
     }
-    handleChange("filteredGenres", newFiltered)
+    setSearchParams( (prev) => {
+      prev.set("genres", newFiltered)
+      return prev;
+    }, {replace:true});
+    handleChange("filteredGenres", newFiltered);
   }
 
   return (

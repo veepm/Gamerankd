@@ -1,6 +1,8 @@
+import controller from "../assets/controller.png"
+
 const Landing = () => {
   return (
-    <div style={{margin:"50vh 50vw"}}>Landing</div>
+    <img src={controller} style={{filter:"drop-shadow(10px 10px)"}} />
   )
 }
 export default Landing
