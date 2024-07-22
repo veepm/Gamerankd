@@ -1,19 +1,38 @@
 import Games from "./Games"
-import { useAppContext } from "../context/appContext"
-import { useEffect, useRef } from "react";
 import Loading from "./Loading";
 import PageButton from "./PageButton";
+import useFetch from "../useFetch";
+import { useSearchParams } from "react-router-dom";
+import { useEffect } from "react";
+
+const sortOptions = ["popularity","a-z","z-a","highest","lowest","latest","oldest"];
 
 const GamesContainer = () => {
-  const {isLoading, games, getGames, page, search, filteredGenres} = useAppContext();
-  let isMounted = useRef(false);
-  useEffect(()=>{
-    if (isMounted.current){
-      getGames();
-    }
-    isMounted.current = true;
-  },[page, search]);
+  const [searchParams, setSearchParams] = useSearchParams();
 
+  let filteredGenres = searchParams.get("genres")?.split(",").map(Number) || [];
+  const page = Number(searchParams.get("page")) || 1;
+  const search = searchParams.get("search") || "";
+  let sortBy = searchParams.get("sortBy");
+
+  if (!sortOptions.includes(sortBy)){
+    sortBy = "popularity";
+  }
+
+  if (filteredGenres.includes(NaN)){
+    filteredGenres = filteredGenres.filter(genre => !isNaN(genre));
+  }
+
+  let url = `/games?coverSize=cover_big&limit=20&page=${page}&sortBy=${sortBy}`;
+
+  if (search){
+    url += `&search=${search}`;
+  }
+  if (filteredGenres.length > 0){
+    url += `&genres=${filteredGenres}`;
+  }
+
+  const {data:games,isLoading,error} = useFetch({method:"get", url},[searchParams]);
 
   if (isLoading){
     return <Loading></Loading>;
@@ -22,7 +41,7 @@ const GamesContainer = () => {
   return (
     <>
       <div className="gamesContainer">
-        {!isLoading && games.map(game => {
+        {games.map(game => {
           return <Games game={game} key={game.id}></Games>;
         })}
       </div>

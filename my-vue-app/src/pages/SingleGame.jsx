@@ -16,7 +16,10 @@ const SingleGame = () => {
   }
 
   return (
-    <img src={`${game?.cover}`}/>
+    <div>
+      <img src={`${game?.cover}`}/>
+      <p style={{fontSize:"40px"}}>{game?.genres.map(g => g.name)}</p>
+    </div>
   )
 }
 export default SingleGame

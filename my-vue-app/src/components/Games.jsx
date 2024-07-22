@@ -15,7 +15,7 @@ const Games = ({game}) => {
         <img src={game.cover ? `https:${game.cover}` : "../vite.svg"}/>
       </div>
       <div className={classes.name}>
-        <h4>{game.name}</h4>
+        <h4 title={game.name}>{game.name}</h4>
       </div>
     </section>
   )

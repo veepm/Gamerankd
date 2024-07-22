@@ -1,42 +1,46 @@
-import { useEffect } from "react";
-import { useAppContext } from "../context/appContext"
-import { useLocation, useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
+import useFetch from "../useFetch";
 
 const Filters = () => {
-  const {genres, getGenres, handleChange} = useAppContext();
   const [searchParams, setSearchParams] = useSearchParams();
-  const location = useLocation();
 
-  const filteredGenres = searchParams.get("genres")?.split(",").map(Number) || [];
+  const {data:genres,isLoading,error} = useFetch({method:"get",url:"/genres?sort=asc"})
 
-  useEffect(() => {
-    getGenres();
-    handleChange("filteredGenres",filteredGenres);
-  },[]);
+  let filteredGenres = searchParams.get("genres")?.split(",").map(Number) || [];
+
+  if (filteredGenres.includes(NaN)){
+    filteredGenres = filteredGenres.filter(genre => !isNaN(genre));
+  }
 
   const handleToggle = (e) => {
     const checked = e.target.checked;
     const genreId = Number(e.target.id.split("genreBox")[1]);
-    let newFiltered;
+
     if (checked){
-      newFiltered = [...filteredGenres, genreId];
+      filteredGenres = [...filteredGenres, genreId];
     }
     else {
-      newFiltered = filteredGenres.filter((genre) => {
-          return genre !== genreId;
-        });
+      filteredGenres = filteredGenres.filter((genre) => genre !== genreId);
     }
-    setSearchParams( (prev) => {
-      prev.set("genres", newFiltered)
-      return prev;
-    }, {replace:true});
-    handleChange("filteredGenres", newFiltered);
+
+    if (filteredGenres.length > 0){
+      searchParams.set("genres", filteredGenres);
+    }
+    else {
+      searchParams.delete("genres");
+    }
+    searchParams.delete("page");
+    setSearchParams(searchParams);
+  }
+
+  if (isLoading){
+    return
   }
 
   return (
     <form action="" className="filtersForm">
       <h3>Filter By</h3>
-      {genres.map((genre) => {
+      {genres?.map((genre) => {
         return (
         <div key={genre.id}>
           <label htmlFor={`genreBox${genre.id}`}>

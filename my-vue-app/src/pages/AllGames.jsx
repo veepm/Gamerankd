@@ -1,12 +1,13 @@
-import Filters from "../components/Filters"
-import GamesContainer from "../components/GamesContainer"
-import Navbar from "../components/Navbar"
+import { useState } from "react"
+import {Filters, GamesContainer, Sort} from "../components/index"
 
 const AllGames = () => {
+
   return (
     <>
-      <Filters></Filters>
-      <GamesContainer></GamesContainer>
+      <Sort/>
+      <Filters/>
+      <GamesContainer/>
     </>
   )
 }

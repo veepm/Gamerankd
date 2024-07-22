@@ -4,6 +4,8 @@ import GamesContainer from "./GamesContainer";
 import Loading from "./Loading";
 import Navbar from "./Navbar";
 import PageButton from "./PageButton";
+import Sort from "./Sort";
+import SearchBar from "./SearchBar";
 
 export {
   Filters,
@@ -11,5 +13,7 @@ export {
   GamesContainer,
   Loading,
   Navbar,
-  PageButton
+  PageButton,
+  Sort,
+  SearchBar
 }
