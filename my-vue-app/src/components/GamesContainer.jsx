@@ -3,7 +3,7 @@ import Loading from "./Loading";
 import PageButton from "./PageButton";
 import useFetch from "../useFetch";
 import { useSearchParams } from "react-router-dom";
-import { useEffect } from "react";
+import Sort from "./Sort";
 
 const sortOptions = ["popularity","a-z","z-a","highest","lowest","latest","oldest"];
 
@@ -23,7 +23,7 @@ const GamesContainer = () => {
     filteredGenres = filteredGenres.filter(genre => !isNaN(genre));
   }
 
-  let url = `/games?coverSize=cover_big&limit=20&page=${page}&sortBy=${sortBy}`;
+  let url = `/games?coverSize=cover_big&limit=30&page=${page}&sortBy=${sortBy}&fields=cover.url`;
 
   if (search){
     url += `&search=${search}`;
@@ -40,6 +40,7 @@ const GamesContainer = () => {
 
   return (
     <>
+      <Sort></Sort>
       <div className="gamesContainer">
         {games.map(game => {
           return <Games game={game} key={game.id}></Games>;

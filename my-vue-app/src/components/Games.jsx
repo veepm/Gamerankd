@@ -12,10 +12,7 @@ const Games = ({game}) => {
   return (
     <section className={classes.game} onClick={()=>handleClick()}>
       <div className={classes.cover}>
-        <img src={game.cover ? `https:${game.cover}` : "../vite.svg"}/>
-      </div>
-      <div className={classes.name}>
-        <h4 title={game.name}>{game.name}</h4>
+        <img title={game.name} src={game.cover ? `https:${game.cover}` : "../vite.svg"}/>
       </div>
     </section>
   )

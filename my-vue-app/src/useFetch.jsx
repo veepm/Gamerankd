@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 
 const useFetch = (options,deps=[]) => {
 
@@ -9,15 +9,26 @@ const useFetch = (options,deps=[]) => {
 
   useEffect( () => {
 
+    const controller = new AbortController();
+    options.signal = controller.signal;
+
+    setIsLoading(true);
+
     axios(options)
     .then((res) => {
       setData(res.data.data);
+      setIsLoading(false)
     })
     .catch((err) => {
-      setError(err);
+      if (err.code !== "ERR_CANCELED"){
+        setIsLoading(false);
+      }
+      else{
+        setError(err);
+      }
     })
-    .finally(() => setIsLoading(false))
 
+    return () => controller.abort();
   }, deps)
 
   return {data,isLoading,error}

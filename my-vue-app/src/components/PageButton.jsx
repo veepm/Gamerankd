@@ -1,4 +1,5 @@
 import { useSearchParams } from "react-router-dom";
+import useDebounce from "../useDebounce";
 
 const PageButton = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -8,6 +9,9 @@ const PageButton = () => {
     searchParams.set("page",pageNum);
     setSearchParams(searchParams,{replace:true});
   }
+
+  const debounce = useDebounce(changePage);
+
 
   return (
     <div>

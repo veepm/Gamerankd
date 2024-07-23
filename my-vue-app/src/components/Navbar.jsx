@@ -10,8 +10,8 @@ const Navbar = () => {
       <NavLink to="/">Home</NavLink>
       <SearchBar/>
       <div>
-        <NavLink to="/games">All Games</NavLink>
-        {!user && <NavLink to="/register">Sign Up</NavLink>}
+        <NavLink to="/games" end>All Games</NavLink>
+        <NavLink to="/register">Sign Up</NavLink>
       </div>
     </nav>
   )

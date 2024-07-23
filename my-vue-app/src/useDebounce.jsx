@@ -1,20 +1,22 @@
 import { useMemo } from "react";
 
-const useDebounce = (state, setState) => {
+const useDebounce = (onCompletion, onChange, deps=[]) => {
 
   const debounce = () => {
     let timeoutID;
-    return (e) => {
-      setState(state);
+    return (...args) => {
+
+      if (onChange) onChange(...args);
       clearTimeout(timeoutID);
+
       timeoutID = setTimeout(() => {
-        handleChange("search",e.target.value);
+        onCompletion(...args);
       }, 750);
     };
   };
 
   // remembers debounce func so that it isn't re-created on every re-render
-  return useMemo(() => debounce(), []);
+  return useMemo(() => debounce(), deps);
 
 }
 export default useDebounce
