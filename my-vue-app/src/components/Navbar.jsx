@@ -3,7 +3,7 @@ import { useAppContext } from "../context/appContext";
 import SearchBar from "./SearchBar";
 
 const Navbar = () => {
-  const {user} = useAppContext();
+  const {user, logoutUser} = useAppContext();
 
   return (
     <nav className="navbar">
@@ -11,7 +11,11 @@ const Navbar = () => {
       <SearchBar/>
       <div>
         <NavLink to="/games" end>All Games</NavLink>
-        <NavLink to="/register">Sign Up</NavLink>
+        {!user ? 
+          <NavLink to="/register">Sign Up</NavLink>
+        :
+          <button onClick={logoutUser}>Sign Out</button>
+        }
       </div>
     </nav>
   )

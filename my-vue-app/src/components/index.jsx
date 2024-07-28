@@ -6,6 +6,9 @@ import Navbar from "./Navbar";
 import PageButton from "./PageButton";
 import Sort from "./Sort";
 import SearchBar from "./SearchBar";
+import Rating from "./Rating";
+import Review from "./Review";
+import UserGameInfo from "./UserGameInfo";
 
 export {
   Filters,
@@ -15,5 +18,8 @@ export {
   Navbar,
   PageButton,
   Sort,
-  SearchBar
+  SearchBar,
+  Rating,
+  Review,
+  UserGameInfo
 }

@@ -1,0 +1,8 @@
+.rating svg{
+  vertical-align: middle;
+}
+
+.star {
+  cursor: pointer;
+  transition: all 0.5s;
+}

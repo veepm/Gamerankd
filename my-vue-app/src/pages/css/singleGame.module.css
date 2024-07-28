@@ -1,0 +1,37 @@
+.game{
+  display: flex;
+  margin: 8rem 10rem;
+}
+
+.game img{
+  border-radius: 0.5rem;
+  width: 20rem;
+}
+
+.info{
+  margin-left: 2rem;
+}
+
+.header{
+  margin-bottom: 0.5rem;
+}
+
+.header h1{
+  display: inline;
+}
+
+.header h4{
+  display: inline;
+  margin-left: 0.5rem;
+}
+
+.info p{
+  max-width: 60ch;
+  line-height: 1.5rem;
+  margin-top: 1rem;
+}
+
+.avgRating{
+  display: inline;
+  margin: 0 0.5rem;
+}

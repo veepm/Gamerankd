@@ -1,32 +1,45 @@
-import { useEffect } from "react";
 import { useParams } from "react-router-dom"
-import {useAppContext} from "../context/appContext";
-import {Loading} from "../components/index"
+import {Loading, Rating, Review, UserGameInfo} from "../components/index"
 import useFetch from "../useFetch";
+import classes from "./css/singleGame.module.css";
+
 
 const SingleGame = () => {
   const {gameId} = useParams();
 
-  const url = `/games?fields=name,cover.url,summary,genres.name,first_release_date,involved_companies.publisher, involved_companies.developer,involved_companies.company.name,platforms.name&coverSize=cover_big&id=${gameId}`;
+  const url = `/games?fields=name,cover.url,summary,genres.name,first_release_date,involved_companies.publisher,involved_companies.developer,involved_companies.company.name,platforms.name&coverSize=cover_big_2x&id=${gameId}`;
 
-  const {data:games,isLoading,error} = useFetch({method:"get",url});
-
+  const {data,isLoading:gameInfoLoading,error} = useFetch({method:"get",url});
   
-  if (isLoading){
+  if (gameInfoLoading){
     return <Loading></Loading>;
   }
-  
-  const game = games[0];
 
-  console.log(game);
+  
+  const game = data.games[0];
+
+  const releaseDate = new Date(game.first_release_date * 1000);
 
   return (
-    <div className="game">
-      <img src={`${game.cover}`}/>
-      <div className="info">
-        <h2>{game.name}</h2>
-        <p>{game.summary}</p>
+    <div>
+      <div className={classes.game}>
+        <div>
+          <img src={`${game.cover}`}/>
+          <UserGameInfo gameId={gameId}/>
+        </div>
+        <div className={classes.info}>
+          <div className={classes.header}>
+            <h1>{game.name}</h1>
+            <h4>{releaseDate.getFullYear()}</h4>
+          </div>
+          <div>
+            <span>{game.avg_rating?.toFixed(1) || "Not Rated"}</span>
+            <Rating className={classes.avgRating} avgRating={game.avg_rating} size={15}/>
+          </div>
+          <p>{game.summary}</p>
+        </div>
       </div>
+      <Review gameId={gameId}/>
     </div>
   )
 }

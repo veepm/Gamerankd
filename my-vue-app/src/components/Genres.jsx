@@ -7,7 +7,7 @@ const Genres = () => {
 
   let filteredGenres = searchParams.get("genres")?.split(",").map(Number) || [];
 
-  const {data:genres,isLoading,error} = useFetch({method:"get",url:"/genres?sort=asc"})
+  const {data,isLoading,error} = useFetch({method:"get",url:"/genres?sort=asc"})
 
   if (filteredGenres.includes(NaN)){
     filteredGenres = filteredGenres.filter(genre => !isNaN(genre));
@@ -34,11 +34,18 @@ const Genres = () => {
     setSearchParams(searchParams);
   }
 
+  // const handleToggle = (e) => {
+  //   const genreId = Number(e.target.options[e.target.options.selectedIndex].id.split("genreBox")[1]);
+  //   searchParams.set("genres", genreId);
+  //   searchParams.delete("page");
+  //   setSearchParams(searchParams);
+  // }
+
   if (isLoading) return
 
   return (
     <ul>
-    {genres.map((genre) => {
+    {data.genres.map((genre) => {
       return (
       <li key={genre.id}>
         <label htmlFor={`genreBox${genre.id}`}>

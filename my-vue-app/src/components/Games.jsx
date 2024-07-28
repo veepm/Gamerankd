@@ -8,13 +8,13 @@ const Games = ({game}) => {
   const handleClick = () => {
     navigate(`/games/${game.id}`);
   }
-
   return (
-    <section className={classes.game} onClick={()=>handleClick()}>
-      <div className={classes.cover}>
-        <img title={game.name} src={game.cover ? `https:${game.cover}` : "../vite.svg"}/>
-      </div>
-    </section>
+        <img 
+          className={classes.game}
+          title={game.name} 
+          src={game.cover ? `https:${game.cover}` : "../vite.svg"}
+          onClick={handleClick}
+        />
   )
 }
 export default Games

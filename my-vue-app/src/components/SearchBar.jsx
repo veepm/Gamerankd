@@ -1,4 +1,4 @@
-import { useSearchParams} from "react-router-dom";
+import { useSearchParams, useLocation} from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import useDebounce from "../useDebounce";
 
@@ -6,6 +6,8 @@ import useDebounce from "../useDebounce";
 const SearchBar = () => {
   const [searchValue, setSearchValue] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const location = useLocation();
   
   const search = searchParams.get("search") || "";
 
@@ -25,7 +27,7 @@ const SearchBar = () => {
       setSearchParams(searchParams);
     },
     (e)=>setSearchValue(e.target.value),
-    [searchParams]
+    [location]
   )
 
   // const debounce = () => {

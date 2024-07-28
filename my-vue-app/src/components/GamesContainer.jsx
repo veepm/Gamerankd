@@ -1,9 +1,7 @@
-import Games from "./Games"
-import Loading from "./Loading";
-import PageButton from "./PageButton";
+import {Games, Loading, PageButton, Sort} from "./index";
 import useFetch from "../useFetch";
 import { useSearchParams } from "react-router-dom";
-import Sort from "./Sort";
+import classes from "./css/gamesContainer.module.css";
 
 const sortOptions = ["popularity","a-z","z-a","highest","lowest","latest","oldest"];
 
@@ -23,7 +21,7 @@ const GamesContainer = () => {
     filteredGenres = filteredGenres.filter(genre => !isNaN(genre));
   }
 
-  let url = `/games?coverSize=cover_big&limit=30&page=${page}&sortBy=${sortBy}&fields=cover.url`;
+  let url = `/games?coverSize=cover_big_2x&limit=30&page=${page}&sortBy=${sortBy}&fields=cover.url,name`;
 
   if (search){
     url += `&search=${search}`;
@@ -32,22 +30,22 @@ const GamesContainer = () => {
     url += `&genres=${filteredGenres}`;
   }
 
-  const {data:games,isLoading,error} = useFetch({method:"get", url},[searchParams]);
+  const {data,isLoading,error} = useFetch({method:"get", url},[searchParams]);
 
   if (isLoading){
     return <Loading></Loading>;
   }
 
   return (
-    <>
+    <div className={classes.container}>
       <Sort></Sort>
-      <div className="gamesContainer">
-        {games.map(game => {
+      <div className={classes.gamesContainer}>
+        {data.games.map(game => {
           return <Games game={game} key={game.id}></Games>;
         })}
       </div>
       <PageButton></PageButton>
-    </>
+    </div>
   )
 }
 export default GamesContainer

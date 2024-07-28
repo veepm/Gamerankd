@@ -1,5 +1,5 @@
 import axios from "axios";
-import { createContext, useContext, useEffect, useReducer } from "react"
+import { createContext, useContext, useEffect, useReducer, useState } from "react"
 import {reducer} from "./reducer"
 import {
   USER_SETUP_DONE,
@@ -16,23 +16,44 @@ const AppContext = createContext();
 
 const AppProvider = ({children}) => {
 
-  const [state, dispatch] = useReducer(reducer,initialState);
+  const [user, setUser] = useState(null);
+
+  //const [state, dispatch] = useReducer(reducer,initialState);
+
+  useEffect(() => {
+    const loggedInUser = localStorage.getItem("user");
+    if (loggedInUser) {
+      const foundUser = JSON.parse(loggedInUser);
+      setUser(foundUser);
+    }
+  }, []);
+
 
   const setupUser = async (url,values) => {
 
-    dispatch({type:USER_SETUP_BEGIN});
+    //dispatch({type:USER_SETUP_BEGIN});
 
     try {
       const {data} = await axios.post(url,values);
-      dispatch({type:USER_SETUP_DONE,payload:data});
+      localStorage.setItem("user",JSON.stringify(data.user));
+      localStorage.setItem("accessToken", data.token);
+      setUser(data.user);
+      //dispatch({type:USER_SETUP_DONE,payload:data});
     } catch (error) {
-      
+      console.log(error);
     }
   }
 
+  const logoutUser = () => {
+    setUser(null);
+    localStorage.removeItem("user");
+    localStorage.removeItem("accessToken");
+  }
+
   return <AppContext.Provider value={{
-    ...state,
+    user,
     setupUser,
+    logoutUser
   }}>
     {children}
   </AppContext.Provider>

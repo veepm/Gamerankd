@@ -7,14 +7,14 @@ const PageButton = () => {
 
   const changePage = (pageNum) => {
     searchParams.set("page",pageNum);
-    setSearchParams(searchParams,{replace:true});
+    setSearchParams(searchParams);
   }
 
   const debounce = useDebounce(changePage);
 
 
   return (
-    <div>
+    <div className="pageButton">
       <button onClick={()=>changePage(page-1)}>Previous Page</button>
       <button onClick={()=>changePage(page+1)}>Next Page</button>
     </div>

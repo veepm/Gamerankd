@@ -8,7 +8,6 @@ const useFetch = (options,deps=[]) => {
   const [error, setError] = useState(null);
 
   useEffect( () => {
-
     const controller = new AbortController();
     options.signal = controller.signal;
 
@@ -16,7 +15,7 @@ const useFetch = (options,deps=[]) => {
 
     axios(options)
     .then((res) => {
-      setData(res.data.data);
+      setData(res.data);
       setIsLoading(false)
     })
     .catch((err) => {
