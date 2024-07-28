@@ -10,7 +10,7 @@ export const getAllGenres = async (req,res) => {
   
   try {
     const genres = await instance.post("/genres", query);
-    return res.status(genres.status).send({data:genres.data});
+    return res.status(genres.status).send({genres:genres.data});
   } catch (error) {
     console.log(error.message);
   }

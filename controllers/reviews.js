@@ -60,7 +60,7 @@ export const getGameReviews = async (req,res) => {
 
   const reviews = await pool.query(query,[gameId]);
 
-  res.status(StatusCodes.OK).send(reviews.rows);
+  res.status(StatusCodes.OK).send({reviews:reviews.rows});
 };
 
 export const getUserReviews = async (req,res) => {
@@ -74,5 +74,5 @@ export const getUserReviews = async (req,res) => {
 
   const reviews = await pool.query(query,[username]);
 
-  res.status(StatusCodes.OK).send(reviews.rows);
+  res.status(StatusCodes.OK).send({reviews:reviews.rows});
 };

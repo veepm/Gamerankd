@@ -4,10 +4,13 @@ import { BadRequestError } from "../errors/index.js"
 import { pool } from "../database.js";
 
 export const getGames = async (req, res) => {
-  const {coverSize="thumb", search, genres, rating, minYear, maxYear, limit=10, page, id} = req.query;
-
+  const {fields, coverSize="thumb", search, genres, rating, minYear, maxYear, limit=10, page, id, sortBy} = req.query;
+  //name,cover.url,summary,genres.name,first_release_date,involved_companies.publisher, involved_companies.developer,involved_companies.company.name,platforms.name;
+  let query = "";
   // using IGDB rating_count to get more popular games first
-  let query = 'fields name,cover.url,summary,genres.name,first_release_date,involved_companies.publisher, involved_companies.developer,involved_companies.company.name,platforms.name; sort rating_count desc;'; 
+  if (fields){
+    query += `fields ${fields};`; 
+  }
 
   let filters = [];
 
@@ -15,11 +18,6 @@ export const getGames = async (req, res) => {
     filters.push(`genres=(${genres})`); // finds all games with a genre in the list
   }
   
-  //Using database
-  if (rating){
-    filters.push()
-    query += `rating=`;
-  }
   if (minYear){
     const unixTime = Math.floor(new Date(`${minYear}-01-01`).getTime()/1000);
     filters.push(`first_release_date >= ${unixTime}`);
@@ -34,6 +32,11 @@ export const getGames = async (req, res) => {
   if (id){
     filters.push(`id=(${id})`);
   }
+  //Using database
+  if (rating){
+    filters.push()
+    query += `rating=`;
+  }
 
   // construct where query if valid
   if (filters.length > 0){
@@ -47,48 +50,67 @@ export const getGames = async (req, res) => {
     query += `offset ${limit*(page-1)};`;
   }
 
-  if (sort){
-    const pgQuery = `
-      SELECT game_id
-      FROM reviews
-      GROUP BY game_id
-      ORDER BY COUNT(*) DESC;
-    `;
+  if (sortBy === "popularity"){
+    query += "sort rating_count desc;";
+  }
+  else if (sortBy === "a-z"){
+    query += "sort name asc;";
+  }
+  else if (sortBy === "z-a"){
+    query += "sort name desc;";
+  }
+  else if (sortBy === "latest"){
+    query += "sort first_release_date desc;";
+  }
+  else if (sortBy === "oldest"){
+    query += "sort first_release_date asc;";
+  }
 
-    const orderedGames = await pool.query(pgQuery);
+  // if (sort){
+  //   const pgQuery = `
+  //     SELECT game_id
+  //     FROM reviews
+  //     GROUP BY game_id
+  //     ORDER BY COUNT(*) DESC;
+  //   `;
+
+  //   const orderedGames = await pool.query(pgQuery);
 
     
-  }
+  // }
 
   // gets filtered games from IGDB
   let {data} = await instance.post("/games", `${query}`);
 
-  if (data.length === 0){
-    throw new BadRequestError(`No game exists with id ${id}`);
-  }
+  // if (data.length === 0){
+  //   throw new BadRequestError(`No game exists with id ${id}`);
+  // }
 
   resizeCover(data,coverSize);
 
   // get avg rating from database
 
   let pqQuery = `
-  SELECT CAST(AVG(rating) AS FLOAT)
-  FROM reviews
-  WHERE game_id = $1;
+    SELECT CAST(AVG(rating) AS FLOAT)
+    FROM reviews
+    WHERE game_id = $1;
 `;
   
   data[0].avg_rating = (await pool.query(pqQuery,[id])).rows[0].avg;
 
 
-  res.status(StatusCodes.OK).send({data});
+  res.status(StatusCodes.OK).send({games:data});
 };
 
 export const getSingleGame = async (req,res) => {
   const {gameId} = req.params;
+  const {fields, coverSize="thumb"} = req.query;
 
-  const query = `fields name,cover.url,summary,genres.name,first_release_date,involved_companies.publisher, involved_companies.developer,involved_companies.company.name,platforms.name; where id=${gameId};`;
+  let query = `where id=${gameId};`;
 
-  const {coverSize} = req.query;
+  if (fields){
+    query += `fields ${fields};`
+  }
 
   // Gets game with specified id from IGDB
   let {data} = await instance.post("/games", query);
@@ -97,11 +119,9 @@ export const getSingleGame = async (req,res) => {
     throw new BadRequestError(`No game exists with id ${req.params.id}`);
   }
 
-  if (coverSize){
-    resizeCover(data,coverSize);
-  }
+  resizeCover(data,coverSize);
   
-  res.status(StatusCodes.OK).send({data:data[0]});
+  res.status(StatusCodes.OK).send({game:data[0]});
 };
 
 // change default cover size provided by IGDB
