@@ -12,7 +12,7 @@ const Sort = () => {
   }
 
   return (
-    <select style={{margin:"20px", display:"none"}} onChange={handleChange} value={sortBy}>
+    <select onChange={handleChange} value={sortBy}>
       <option value="popularity">Popularity</option>
       <optgroup label="Name">
         <option value="a-z">A-Z</option>

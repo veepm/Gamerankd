@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import FormInput from "../components/FormInput";
 
 const Register = () => {
-  const {isLoading, user, setupUser} = useAppContext();
+  const {isUserLoading, user, setupUser} = useAppContext();
 
   const initialValues = {username:"",email:"",password:""};
   const [formValues, setFormValues] = useState(initialValues);
@@ -75,7 +75,7 @@ const Register = () => {
         { isLogin || <FormInput input="username" type="text" value={formValues.username} handleChange={handleChange} error={formErrors.username}/>}
         <FormInput input="email" type="email" value={formValues.email} handleChange={handleChange} error={formErrors.email}/>
         <FormInput input="password" type="password" value={formValues.password} handleChange={handleChange} error={formErrors.password}/>
-        <button type="submit">{isLoading ? "..." : "Submit"}</button>
+        <button type="submit">{isUserLoading ? "..." : "Submit"}</button>
         {isLogin ? (
           <p>Don't have an account? <a href="javascript:void(0)" onClick={toggleLogin}>Register</a></p>
         ) : (

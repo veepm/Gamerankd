@@ -13,13 +13,28 @@ const Rating = ({avgRating, isInteractable,  gameId, userRating, className, size
   },[]);
 
   const handleClick = async (value) => {
+    let config;
+    // add if rating does not exists else update
+    if (!userRating){
+      config = {
+        url:`/games/${gameId}/reviews`,
+        method: "post",
+        data:{rating:value},
+        withCredentials:true
+      }
+    }
+    else{
+      config = {
+        url:`/reviews/games/${gameId}`,
+        method: "patch",
+        data:{rating:value},
+        withCredentials:true
+      }
+    }
+
     try {
-      await axios.post(`/games/${gameId}/reviews`, 
-        {rating:value}, 
-        {headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`
-        }});
-        setRating(value);
+      await axios(config);
+      setRating(value);
     } catch (error) {
       console.log(error);
     }

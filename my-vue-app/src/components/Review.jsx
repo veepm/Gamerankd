@@ -11,7 +11,7 @@ const Review = ({gameId}) => {
     <div>
       {data.reviews.map((review)=>{
         return (
-          <div key={review.id}>
+          <div key={review.review_id}>
             <h3>{review.username}</h3>
             <p>Rating: {review.rating}</p>
             <p>{review.review_text}</p>

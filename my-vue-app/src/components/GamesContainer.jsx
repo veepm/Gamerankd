@@ -5,7 +5,7 @@ import classes from "./css/gamesContainer.module.css";
 
 const sortOptions = ["popularity","a-z","z-a","highest","lowest","latest","oldest"];
 
-const GamesContainer = () => {
+const GamesContainer = ({gameIds}) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   let filteredGenres = searchParams.get("genres")?.split(",").map(Number) || [];
@@ -29,6 +29,11 @@ const GamesContainer = () => {
   if (filteredGenres.length > 0){
     url += `&genres=${filteredGenres}`;
   }
+  if (gameIds){
+    gameIds.forEach(id => {
+      url += `&id[]=${id}`;
+    });
+  }
 
   const {data,isLoading,error} = useFetch({method:"get", url},[searchParams]);
 
@@ -37,15 +42,12 @@ const GamesContainer = () => {
   }
 
   return (
-    <div className={classes.container}>
-      <Sort></Sort>
-      <div className={classes.gamesContainer}>
-        {data.games.map(game => {
-          return <Games game={game} key={game.id}></Games>;
-        })}
-      </div>
-      <PageButton></PageButton>
+    <div className={classes.gamesContainer}>
+      {data.games?.map(game => {
+        return <Games game={game} key={game.id}></Games>;
+      })}
     </div>
   )
-}
-export default GamesContainer
+};
+
+export default GamesContainer;

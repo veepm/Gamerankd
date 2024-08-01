@@ -1,9 +1,9 @@
 import { useSearchParams, useLocation} from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import useDebounce from "../useDebounce";
+import classes from "./css/searchBar.module.css";
 
-
-const SearchBar = () => {
+const SearchBar = ({placeholder}) => {
   const [searchValue, setSearchValue] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -52,7 +52,15 @@ const SearchBar = () => {
   // const optimizedDebounce = useMemo(() => debounce(), [searchParams]); // need to set search param as dependent so that initial params aren;t used
 
   return (
-    <input type="search" name="" id="" placeholder="Search" onChange={debounce} value={searchValue}/>
+    <input 
+      className={classes.searchBar}
+      type="search" 
+      name=""
+      id="" 
+      placeholder={placeholder} 
+      onChange={debounce} 
+      value={searchValue}
+      />
   )
 }
 

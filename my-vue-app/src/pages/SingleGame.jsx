@@ -7,7 +7,7 @@ import classes from "./css/singleGame.module.css";
 const SingleGame = () => {
   const {gameId} = useParams();
 
-  const url = `/games?fields=name,cover.url,summary,genres.name,first_release_date,involved_companies.publisher,involved_companies.developer,involved_companies.company.name,platforms.name&coverSize=cover_big_2x&id=${gameId}`;
+  const url = `/games?fields=name,cover.url,summary,genres.name,first_release_date,involved_companies.publisher,involved_companies.developer,involved_companies.company.name,platforms.name&coverSize=cover_big_2x&id[]=${gameId}`;
 
   const {data,isLoading:gameInfoLoading,error} = useFetch({method:"get",url});
   
@@ -24,7 +24,12 @@ const SingleGame = () => {
     <div>
       <div className={classes.game}>
         <div>
-          <img src={`${game.cover}`}/>
+          <div className={classes.rating}>
+            <span>{game.avg_rating?.toFixed(1) || "Not Rated"}</span>
+            <Rating className={classes.avgRating} avgRating={game.avg_rating} size={"1rem"}/>
+            <span>From {game.rating_count || 0} ratings</span>
+          </div>
+          <img src={game.cover}/>
           <UserGameInfo gameId={gameId}/>
         </div>
         <div className={classes.info}>
@@ -32,12 +37,31 @@ const SingleGame = () => {
             <h1>{game.name}</h1>
             <h4>{releaseDate.getFullYear()}</h4>
           </div>
+
           <div>
-            <span>{game.avg_rating?.toFixed(1) || "Not Rated"}</span>
-            <Rating className={classes.avgRating} avgRating={game.avg_rating} size={15}/>
+            {game.genres.map((genre,i) => {
+              return <span key={genre.id} style={{borderRight: i!=game.genres.length-1 && "1px solid",  padding:"0 5px"}}>{genre.name}</span>
+            })}
           </div>
+
+
           <p>{game.summary}</p>
+
+
+          <div>
+            <h4>Publishers</h4>
+            {game.publishers.map((company) => <div>{company.name}</div>)}
+          </div>
+          <div>
+            <h4>Developers</h4>
+            {game.developers.map((company) => <div>{company.name}</div>)}
+          </div>
+          <div>
+            <h4>Platforms</h4>
+            {game.platforms.map((platform) => <div>{platform.name}</div>)}
+          </div>
         </div>
+
       </div>
       <Review gameId={gameId}/>
     </div>

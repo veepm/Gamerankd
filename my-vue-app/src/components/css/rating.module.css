@@ -1,5 +1,6 @@
-.rating svg{
-  vertical-align: middle;
+.rating{
+  display: flex;
+  align-content: center;
 }
 
 .star {

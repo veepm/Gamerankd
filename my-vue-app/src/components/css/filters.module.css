@@ -1,6 +1,7 @@
 .filtersForm{
   position: absolute;
   top: 0;
+  left: 0;
   background: whitesmoke;
   margin-top: 5rem;
 }

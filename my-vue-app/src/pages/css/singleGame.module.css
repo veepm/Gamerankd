@@ -13,7 +13,7 @@
 }
 
 .header{
-  margin-bottom: 0.5rem;
+  
 }
 
 .header h1{
@@ -31,7 +31,11 @@
   margin-top: 1rem;
 }
 
+.rating{
+  display: flex;
+  justify-content: center;
+}
+
 .avgRating{
-  display: inline;
   margin: 0 0.5rem;
 }

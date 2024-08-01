@@ -1,8 +1,18 @@
-.game{
-  cursor: pointer;
-  max-width: 100%;
+.game {
   border-radius: 0.5rem;
+  border: 0.1rem solid rgb(207, 230, 249);
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
 }
+
+.cover{
+  max-width: 100%;
+}
+
+
 
 .name h4{
   text-overflow: ellipsis;
