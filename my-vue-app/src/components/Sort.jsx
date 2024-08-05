@@ -1,32 +1,47 @@
 import { useSearchParams } from "react-router-dom"
+import {Select} from "../components"
+
+const options = [
+  {
+    options:  [{label: "Popularity", value: "popularity"}]
+  },
+  {
+    group: "Title",
+    options: [{label: "A-Z", value: "a-z"}, {label: "Z-A", value: "z-a"}]
+  },
+  {
+    group: "Average Rating",
+    options: [{label: "Highest Rated", value: "highestRated"}, {label: "Lowest Rated", value: "lowestRated"}]
+  },
+  {
+    group: "Year Made",
+    options: [{label: "Latest", value: "latest"}, {label: "Oldest", value: "oldest"}]
+  }
+]
 
 const Sort = () => {
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const sortBy = searchParams.get("sortBy") || "popularity";
+  const searchParam = searchParams.get("sortBy");
 
-  const handleChange = (e) => {
-    searchParams.set("sortBy", e.target.value);
+  const getOption = () => {
+    for (const option of options){
+      const found = option.options.find((opt) => opt.value === searchParam);
+      if (found) return found;
+    }
+    return options[0].options[0];
+  }
+
+  const sortBy = getOption();
+
+  const handleChange = (option) => {
+    searchParams.set("sortBy", option.value);
     searchParams.delete("page");
     setSearchParams(searchParams,{replace:true});
   }
 
   return (
-    <select onChange={handleChange} value={sortBy}>
-      <option value="popularity">Popularity</option>
-      <optgroup label="Name">
-        <option value="a-z">A-Z</option>
-        <option value="z-a">Z-A</option>
-      </optgroup>
-      <optgroup label="Rating">
-        <option value="highest">Highest Rated</option>
-        <option value="lowest">Lowest Rated</option>
-      </optgroup>
-      <optgroup label="Year Made">
-        <option value="latest">Latest</option>
-        <option value="oldest">Oldest</option>
-      </optgroup>
-    </select>
+    <Select options={options}  value={sortBy} onChange={handleChange}/>
   )
-}
-export default Sort
+};
+export default Sort;

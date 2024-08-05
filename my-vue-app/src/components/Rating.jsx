@@ -51,9 +51,8 @@ const Rating = ({avgRating, isInteractable,  gameId, userRating, className, size
           (
             <FaStar 
               key={i}
-              className={classes.star} 
+              className={`${classes.star} ${ratingValue <= (hoverRating || rating) && classes.active}`} 
               size={size}
-              color={ratingValue <= (hoverRating || rating) ? "#fcba03" : "#b0b3b8"}
               onMouseEnter={() => setHoverRating(ratingValue)}
               onMouseLeave={() => setHoverRating(null)}
               onClick={()=>handleClick(ratingValue)}

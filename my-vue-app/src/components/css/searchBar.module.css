@@ -1,5 +1,19 @@
+.container{
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.icon{
+  position: absolute;
+  color: black;
+  left: 0.5rem;
+}
+
 .searchBar{
-  width: 25rem;
+  width: 20rem;
   height: 2rem;
-  padding-left: 1rem;
+  padding-left: 2rem;
+  border: none;
+  border-radius: var(--border-radius);
 }

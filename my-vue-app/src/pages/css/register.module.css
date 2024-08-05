@@ -10,7 +10,7 @@
   flex-direction: column;
   align-items: center;
   background: aliceblue;
-  border-radius: 1rem;
+  border-radius: var(--border-radius);
   padding: 3rem 2rem;
   box-shadow: 1rem 1rem 1rem rgba(0, 0, 0, 0.75);
 }
@@ -21,6 +21,6 @@
   margin-top: 1em;
   margin-bottom: 2em;
   padding: 1em;
-  border-radius: 0.2em;
+  border-radius: var(--border-radius);
   background: #d81375;
 }

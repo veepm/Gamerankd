@@ -9,13 +9,13 @@ const Navbar = () => {
       <NavLink to="/">Home</NavLink>
       <div>
         <NavLink to="/games" end>All Games</NavLink>
+        <NavLink to="/wishlist">Wishlist</NavLink>
+        <NavLink to="/played">Played</NavLink>
         {!user ? 
           <NavLink to="/register">Sign Up</NavLink>
         :
           <NavLink to="/" onClick={logoutUser}>Sign Out</NavLink>
         }
-        <NavLink to="/wishlist">Wishlist</NavLink>
-        <NavLink to="/played">Played</NavLink>
       </div>
     </nav>
   )

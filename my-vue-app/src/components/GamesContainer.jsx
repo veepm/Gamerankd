@@ -38,7 +38,7 @@ const GamesContainer = ({gameIds}) => {
   const {data,isLoading,error} = useFetch({method:"get", url},[searchParams]);
 
   if (isLoading){
-    return <Loading></Loading>;
+    return <Loading></Loading>
   }
 
   return (

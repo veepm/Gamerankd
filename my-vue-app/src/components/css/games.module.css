@@ -1,6 +1,6 @@
 .game {
-  border-radius: 0.5rem;
-  border: 0.1rem solid rgb(207, 230, 249);
+  border-radius: var(--border-radius);
+  border: 1.2px solid var(--light);
   display: flex;
   align-items: center;
   position: relative;

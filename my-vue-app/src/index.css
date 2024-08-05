@@ -13,14 +13,23 @@
 
 :root{
   /* colors */
-  --primary-50: #1c8d99;
-  --test: #272640;
+  --background: #01011e;
+  /* --text: #fff7d6; */
+  --text: #FFFFF0;
+  --primary: #00c7c4;
+  --accent:#4147f1;
+  --light: rgb(207, 230, 249);
 
   /* fonts */
+  
+
+  --border-radius: 0.25rem;
 }
 
 body{
- background-color: #1c8d99; 
+ background-color: var(--background); 
+ line-height: 1.5rem;
+ color: var(--text);
 }
 
 label{
@@ -30,14 +39,20 @@ label{
 
 .navbar{
   position: fixed;
-  background-color: aliceblue;
+  background: var(--background);
   left: 0;
   top: 0;
   right: 0;
   display: flex;
-  height: 2rem;
+  align-items: center;
+  height: 3rem;
   z-index: 1000;
   justify-content: space-between;
+}
+
+.navbar a{
+  text-decoration: none;
+  color: var(--text);
 }
 
 .loading{

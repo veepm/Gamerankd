@@ -1,17 +1,22 @@
-import {Filters, GamesContainer, PageButton, Sort, SearchBar} from "../components"
+import { useState } from "react";
+import {GamesContainer, PageButton, Sort, SearchBar, GenresFilter} from "../components";
+import classes from "./css/allGames.module.css";
 
 const AllGames = () => {
 
   return (
-    <div style={{marginTop:"5rem",display:"flex",flexDirection:"column",alignItems:"center"}}>
-      <Filters/>
-      <div>
+    <div className={classes.container}>
+      <div className={classes.header}>
         <SearchBar placeholder="Search For Games By Title"/>
-        <Sort/>
+        <div className={classes.filters}>
+          <Sort/>
+          <GenresFilter/>
+        </div>
       </div>
       <GamesContainer/>
       <PageButton/>
     </div>
   )
-}
-export default AllGames
+};
+
+export default AllGames;

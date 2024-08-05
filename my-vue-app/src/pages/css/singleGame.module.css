@@ -4,7 +4,8 @@
 }
 
 .game img{
-  border-radius: 0.5rem;
+  border-radius: var(--border-radius);
+  border: 1.2px solid var(--light);
   width: 20rem;
 }
 
@@ -25,9 +26,14 @@
   margin-left: 0.5rem;
 }
 
+.headerContainer{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .info p{
   max-width: 60ch;
-  line-height: 1.5rem;
   margin-top: 1rem;
 }
 
