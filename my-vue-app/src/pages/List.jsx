@@ -1,6 +1,7 @@
-import { GamesContainer } from "../components"
-import { useAppContext } from "../context/appContext"
-import useFetch from "../useFetch"
+import {GamesContainer, PageButton, Sort, SearchBar, GenresFilter} from "../components";
+import { useAppContext } from "../context/appContext";
+import useFetch from "../useFetch";
+import classes from "./css/allGames.module.css";
 
 const List = ({listName}) => {
   const {user} = useAppContext();
@@ -10,7 +11,23 @@ const List = ({listName}) => {
   if (isLoading) return;
 
   return (
-    data.list.games ? <GamesContainer gameIds={data.list.games}/> : <div style={{margin:"10rem"}}>No Games In List</div>
+    data.list?.games ? (
+      <div className={classes.container}>
+        <div className={classes.header}>
+          <SearchBar placeholder="Search For Games By Title"/>
+          <div className={classes.filters}>
+            <Sort/>
+            <GenresFilter/>
+          </div>
+        </div>
+        <GamesContainer gameCount={data.list.games.length} gameIds={data.list.games}/>
+        <PageButton/>
+       </div>
+    )
+    :
+    (
+     <div style={{margin:"10rem"}}>No Games In List</div>
+    )
   )
 }
 export default List

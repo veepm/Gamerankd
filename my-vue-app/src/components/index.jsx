@@ -1,4 +1,3 @@
-import Games from "./Games";
 import GamesContainer from "./GamesContainer";
 import Loading from "./Loading";
 import Navbar from "./Navbar";
@@ -10,9 +9,9 @@ import Review from "./Review";
 import UserGameInfo from "./UserGameInfo";
 import Select from "./Select";
 import GenresFilter from "./GenresFilter";
+import GameDetails from "./GameDetails";
 
 export {
-  Games,
   GamesContainer,
   Loading,
   Navbar,
@@ -23,5 +22,6 @@ export {
   Review,
   UserGameInfo,
   Select,
-  GenresFilter
+  GenresFilter,
+  GameDetails
 }

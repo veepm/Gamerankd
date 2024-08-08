@@ -13,7 +13,7 @@ const AllGames = () => {
           <GenresFilter/>
         </div>
       </div>
-      <GamesContainer/>
+      <GamesContainer gameCount={48}/>
       <PageButton/>
     </div>
   )

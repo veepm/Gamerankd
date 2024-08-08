@@ -1,16 +1,24 @@
+.container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .game{
   display: flex;
+  gap: 2rem;
   margin: 8rem 10rem;
 }
 
 .game img{
   border-radius: var(--border-radius);
   border: 1.2px solid var(--light);
-  width: 20rem;
+  max-width: 20rem;
+  height: auto;
 }
 
 .info{
-  margin-left: 2rem;
+
 }
 
 .header{

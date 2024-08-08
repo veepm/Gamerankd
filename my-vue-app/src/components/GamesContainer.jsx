@@ -1,12 +1,13 @@
-import {Games, Loading, PageButton, Sort} from "./index";
+import {Loading} from "./index";
 import useFetch from "../useFetch";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import classes from "./css/gamesContainer.module.css";
 
-const sortOptions = ["popularity","a-z","z-a","highest","lowest","latest","oldest"];
+const sortOptions = ["popularity","a-z","z-a","highestRated","lowestRated","latest","oldest"];
 
-const GamesContainer = ({gameIds}) => {
+const GamesContainer = ({gameIds,gameCount}) => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   let filteredGenres = searchParams.get("genres")?.split(",").map(Number) || [];
   const page = Number(searchParams.get("page")) || 1;
@@ -21,7 +22,7 @@ const GamesContainer = ({gameIds}) => {
     filteredGenres = filteredGenres.filter(genre => !isNaN(genre));
   }
 
-  let url = `/games?coverSize=cover_big_2x&limit=30&page=${page}&sortBy=${sortBy}&fields=cover.url,name`;
+  let url = `/games?coverSize=cover_big_2x&limit=${gameCount}&page=${page}&sortBy=${sortBy}&fields=cover.url,name`;
 
   if (search){
     url += `&search=${search}`;
@@ -37,15 +38,31 @@ const GamesContainer = ({gameIds}) => {
 
   const {data,isLoading,error} = useFetch({method:"get", url},[searchParams]);
 
-  if (isLoading){
-    return <Loading></Loading>
-  }
 
   return (
     <div className={classes.gamesContainer}>
-      {data.games?.map(game => {
-        return <Games game={game} key={game.id}></Games>;
-      })}
+      {isLoading ?
+        [...Array(gameCount)].map(placeholder =>{
+          return <div className={classes.placeholder}></div>;
+        })
+      :
+        data.games?.map(game => {
+          return (
+            <div key={game.id} className={classes.game} onClick={()=>navigate(`/games/${game.id}`)}>
+              <img 
+                title={game.name}
+                className={classes.cover}
+                src={game.cover ? `https:${game.cover}` : "../vite.svg"}
+                loading="lazy"
+              />
+              <img
+                className={classes.background}
+                src={game.cover ? `https:${game.cover}` : "../vite.svg"}
+                loading="lazy"
+              />
+            </div>
+          );
+        })}
     </div>
   )
 };

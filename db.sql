@@ -5,6 +5,7 @@ CREATE TABLE users(
   username VARCHAR(50) NOT NULL UNIQUE,
   email VARCHAR(50) NOT NULL UNIQUE CONSTRAINT proper_email CHECK (email ~* '^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$'),
   password_hash CHAR(60) NOT NULL,
+  refresh_token TEXT,
   created_at TIMESTAMP DEFAULT NOW()
 );
 

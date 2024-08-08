@@ -50,44 +50,45 @@ const UserGameInfo = ({gameId}) => {
       
       return (
         <div className={classes.container}>
-      { isPlayed ?
-        (
-          <IoGameController 
-            size={30}
-            className={classes.controller}
-            onClick={()=>deleteFromlist("played")}
+          { isPlayed ?
+            (
+              <IoGameController 
+                size={30}
+                className={classes.controller}
+                onClick={()=>deleteFromlist("played")}
+              />
+            )
+            :
+            (
+              <IoGameControllerOutline
+                size={30}
+                className={classes.controller}
+                onClick={()=>addToList("played")}
+              />
+            )}
+        <div className={classes.userRating} >
+          <Rating 
+            isInteractable 
+            userRating={userInfo.rating} 
+            gameId={gameId} size={30}
           />
-        )
-        :
-        (
-          <IoGameControllerOutline
-            size={30}
-            className={classes.controller}
-            onClick={()=>addToList("played")}
-          />
-        )}
-      <Rating 
-        className={classes.userRating} 
-        isInteractable 
-        userRating={userInfo.rating} 
-        gameId={gameId} size={30}
-      />
-      { isWishlisted ?
-        (
-          <FaListCheck
-            className={classes.wishlist}
-            size={20}
-            onClick={()=>deleteFromlist("wishlist")}
-          />
-        )
-        :
-        (
-          <FaListUl 
-            className={classes.wishlist}
-            size={20}
-            onClick={()=>addToList("wishlist")}
-          />
-        )}
+        </div>
+          { isWishlisted ?
+            (
+              <FaListCheck
+                className={classes.wishlist}
+                size={20}
+                onClick={()=>deleteFromlist("wishlist")}
+              />
+            )
+            :
+            (
+              <FaListUl 
+                className={classes.wishlist}
+                size={20}
+                onClick={()=>addToList("wishlist")}
+              />
+            )}
     </div>
   )
 }

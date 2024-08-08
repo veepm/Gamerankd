@@ -3,6 +3,7 @@ import { StatusCodes } from "http-status-codes";
 import bcrypt from "bcrypt";
 import { BadRequestError, UnAuthenticatedError } from "../errors/index.js";
 import jwt from "jsonwebtoken";
+import { generateTokens } from "../utils/generateTokens.js";
 
 export const register = async (req,res)=>{
   const {username, email, password} = req.body;
@@ -18,26 +19,88 @@ export const register = async (req,res)=>{
   const result = await pool.query(query,[username,email,hashed]);
   const user = result.rows[0];
 
-  const token = jwt.sign({userId:user.user_id, username:user.username}, process.env.JWT_SECRET, {expiresIn: process.env.JWT_LIFETIME});
-  res.status(StatusCodes.CREATED).send({user:{userId:user.user_id, username:user.username, email:user.email}, token});
+  const {accessToken, refreshToken} = await generateTokens(user.user_id);
+
+  res.cookie("refreshToken",refreshToken,{maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly:true, secure:true});
+  res.cookie("accessToken",accessToken,{maxAge: 15 * 60 * 1000, httpOnly:true, secure:true});
+
+  res.status(StatusCodes.CREATED).send({user:{userId:user.user_id, username:user.username, email:user.email}, accessToken});
 };
 
 export const login = async (req,res) => {
-  const {email, password} = req.body;
+  const {email, username, password} = req.body;
 
-  if (!email || !password){
-    throw new BadRequestError("Please provide email and password");
+  if (!email && !username){
+    throw new BadRequestError("Please provide email or username");
   }
 
-  const query = "SELECT * FROM users WHERE email=$1;";
+  if (!password){
+    throw new BadRequestError("Please provide password");
+  }
 
-  const result = await pool.query(query,[email]);
+  const query = "SELECT * FROM users WHERE email=$1 OR username=$2;";
+
+  const result = await pool.query(query,[email,username]);
   const user = result.rows[0];
 
-  if (!user || ! await bcrypt.compare(password,user.password_hash)){
+  if (!user){
+    throw new UnAuthenticatedError("User does not exist");
+  }
+
+  if (! await bcrypt.compare(password,user.password_hash)){
     throw new UnAuthenticatedError("Invalid Credentials");
   }
 
-  const token = jwt.sign({userId:user.user_id, username:user.username}, process.env.JWT_SECRET, {expiresIn: process.env.JWT_LIFETIME});
-  res.status(StatusCodes.OK).send({user:{userId:user.user_id, username:user.username, email:user.email}, token});
+  const {accessToken, refreshToken} = await generateTokens(user.user_id);
+
+  res.cookie("refreshToken",refreshToken,{maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly:true, secure:true});
+  res.cookie("accessToken",accessToken,{maxAge: 15 * 60 * 1000, httpOnly:true, secure:true});
+
+  res.status(StatusCodes.OK).send({user:{userId:user.user_id, username:user.username, email:user.email}, accessToken});
 };
+
+export const logout = async (req,res) => {
+  const {userId} = req.user;
+  
+  const query = "UPDATE users SET refresh_token = NULL WHERE user_id=$1;"
+
+  await pool.query(query,[userId]);
+
+  res.clearCookie("refreshToken",{maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly:true, secure:true});
+  res.clearCookie("accessToken",{maxAge: 15 * 60 * 1000, httpOnly:true, secure:true});
+
+  res.status(StatusCodes.OK).send();
+}
+
+export const refresh = async (req,res) => {
+  const incomingRefreshToken = req.cookies?.refreshToken;
+  if (!incomingRefreshToken){
+    throw new UnAuthenticatedError("Refresh token not found");
+  }
+
+  try {
+    const payload = jwt.verify(incomingRefreshToken, process.env.REFRESH_TOKEN_SECRET);
+    req.user = {userId:payload.userId, username:payload.username};
+
+    const query = "SELECT * FROM users WHERE user_id=$1;";
+    const user = await pool.query(query,[payload.userId]);
+
+    if (user.rowCount === 0){
+      throw new UnAuthenticatedError("Invalid refresh token");
+    }
+
+    if (user.rows[0].refresh_token !== incomingRefreshToken){
+      throw new UnAuthenticatedError("Refresh token is either used or expired");
+    }
+
+    const {accessToken, refreshToken:newRefreshToken} = await generateTokens(payload.userId);
+
+    res.cookie("refreshToken", newRefreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly:true, secure:true});
+    res.cookie("accessToken", accessToken, {maxAge: 15 * 60 * 1000, httpOnly:true, secure:true});
+
+    res.status(StatusCodes.OK).send({accessToken});
+    
+  } catch (error) {
+    throw new UnAuthenticatedError(error.message || "Invalid Credentials");
+  }
+}

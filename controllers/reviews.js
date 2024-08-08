@@ -24,12 +24,12 @@ export const addReview = async (req,res) => {
 
 export const updateReview = async (req,res) => {
   const {rating,review_text:reviewText} = req.body;
-  const {reviewId} = req.params;
+  const {gameId} = req.params;
   const {userId} = req.user;
 
-  const query = "UPDATE reviews SET rating = $1,review_text = $2 WHERE review_id = $3 AND user_id = $4;";
+  const query = "UPDATE reviews SET rating = $1,review_text = $2 WHERE game_id = $3 AND user_id = $4;";
 
-  await pool.query(query,[rating,reviewText,reviewId,userId]);
+  await pool.query(query,[rating,reviewText,gameId,userId]);
 
   res.status(StatusCodes.OK).send();
 };

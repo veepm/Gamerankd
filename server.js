@@ -1,5 +1,7 @@
 import "dotenv/config";
 import "express-async-errors";
+import cookieParser from "cookie-parser";
+import cors from "cors";
 
 import express from "express";
 const app = express();
@@ -13,11 +15,11 @@ import genresRoute from "./routes/genresRoute.js";
 import reviewsRoute from "./routes/reviewsRoute.js";
 import gamesListsRoute from "./routes/gamesListsRoute.js";
 
+app.use(cookieParser());
+app.use(cors({origin: "http://localhost:5173", credentials: true, exposedHeaders: ["set-cookie"]}));
+
 // Add headers before the routes are defined
 app.use(function (req, res, next) {
-
-  // Website you wish to allow to connect
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
 
   // Request methods you wish to allow
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');

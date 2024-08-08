@@ -9,7 +9,7 @@
 .header{
   display: flex;
   justify-content: space-between;
-  width: 50%;
+  width: 75%;
   margin-bottom: 1rem;
 }
 

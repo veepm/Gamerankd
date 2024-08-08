@@ -9,6 +9,8 @@ router.route("/").post(authMiddleware,createList);
 
 router.route("/:listId").get(getList).delete(authMiddleware,deleteList);
 
-router.route("/:listId/games").post(authMiddleware,addListGame).delete(authMiddleware,deleteListGame);
+router.route("/:listName/games").post(authMiddleware,addListGame);
+
+router.route("/:listName/games/:gameId").delete(authMiddleware,deleteListGame);
 
 export default router;

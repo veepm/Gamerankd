@@ -3,7 +3,7 @@ import classes from "./css/rating.module.css"
 import { useEffect, useRef, useState } from "react"
 import axios from "axios";
 
-const Rating = ({avgRating, isInteractable,  gameId, userRating, className, size}) => {
+const Rating = ({avgRating, isInteractable,  gameId, userRating, size}) => {
   const [rating, setRating] = useState(null);
   const [hoverRating, setHoverRating] = useState(null);
   const ref = useRef(null);
@@ -42,7 +42,7 @@ const Rating = ({avgRating, isInteractable,  gameId, userRating, className, size
   };
 
   return (
-    <div className={`${classes.rating} ${className}`}>
+    <div className={classes.rating}>
       { [...Array(5)].map((star, i) => {
         const ratingValue = i + 1;
 

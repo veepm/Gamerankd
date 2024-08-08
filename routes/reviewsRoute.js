@@ -6,6 +6,6 @@ const router = express.Router();
 
 router.route("/").get(getAllReviews);
 
-router.route("/:reviewId").patch(authMiddleware,updateReview).delete(authMiddleware,deleteReview);
+router.route("/games/:gameId").patch(authMiddleware,updateReview).delete(authMiddleware,deleteReview);
 
 export default router;
