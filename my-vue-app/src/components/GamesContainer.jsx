@@ -42,8 +42,8 @@ const GamesContainer = ({gameIds,gameCount}) => {
   return (
     <div className={classes.gamesContainer}>
       {isLoading ?
-        [...Array(gameCount)].map(placeholder =>{
-          return <div className={classes.placeholder}></div>;
+        [...Array(gameCount)].map((placeholder,i) =>{
+          return <div key={i} className={classes.placeholder}></div>;
         })
       :
         data.games?.map(game => {

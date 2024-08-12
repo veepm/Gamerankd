@@ -36,10 +36,23 @@ label{
   text-transform: capitalize;
 }
 
+a{
+  text-decoration: none;
+  color: var(--text);
+}
+
+button{
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  display: inline-flex;
+  align-items: center;
+}
 
 .navbar{
   position: fixed;
-  background: var(--background);
+  background: var(--accent);
   left: 0;
   top: 0;
   right: 0;
@@ -48,11 +61,6 @@ label{
   height: 3rem;
   z-index: 1000;
   justify-content: space-between;
-}
-
-.navbar a{
-  text-decoration: none;
-  color: var(--text);
 }
 
 .loading{

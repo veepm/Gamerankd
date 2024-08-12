@@ -1,0 +1,75 @@
+.container{
+  width: 50vw;
+}
+
+.container > header{
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.container > header > button{
+  font-size: 1rem;
+}
+
+.add{
+  transition: 0.5s ease-in;
+  font-size: 1.5rem;
+}
+.add.rotated{
+  transform: rotate(225deg);
+}
+
+.inputContainer{
+  visibility: hidden;
+  height: 0;
+  transition: 1s;
+  overflow: hidden;
+  position: relative;
+}
+
+.inputContainer.active{
+  visibility: visible;
+  height: 6rem;
+}
+
+.inputContainer > button{
+  background: var(--accent);
+  padding: 0.5em;
+  border-radius: var(--border-radius);
+}
+
+.reviewInput{
+  width: 100%;
+  padding: 1em;
+  height: 100%;
+  display: block;
+  border: none;
+  outline: none;
+  resize: none;
+  border-radius: var(--border-radius);
+}
+
+.submit{
+  position: absolute;
+  bottom: 0.5em;
+  right: 0.5em;
+}
+
+.reviewContainer{
+  border-bottom: 0.5px solid;
+  max-width: 60ch;
+}
+
+.reviewContainer > header{
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  border-bottom: 0.5px solid;
+  padding: 0.25em 0;
+}
+
+.reviewContainer > p{
+  padding-bottom: 0.5em;
+  padding-top: 0.5em;
+}

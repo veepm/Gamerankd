@@ -10,8 +10,8 @@ function App() {
           <Route index element={<Landing/>}/>     
           <Route path="games" element={<AllGames/>}/>
           <Route path="games/:gameId" element={<SingleGame/>}/>
-          <Route path="wishlist" element={<ProtectedRoute> <List listName={"wishlist"}/> </ProtectedRoute>}/>
-          <Route path="played" element={<ProtectedRoute> <List listName={"played"}/> </ProtectedRoute>}/>
+          <Route path="/users/:username/lists/:listName" element={<ProtectedRoute> <List/> </ProtectedRoute>}/>
+          {/* <Route path="played" element={<ProtectedRoute> <List listName={"played"}/> </ProtectedRoute>}/> */}
           <Route path="*" element={<Error/>}/>
         </Route>
         <Route path="/register" element={<Register/>}/>

@@ -5,7 +5,7 @@ import PageButton from "./PageButton";
 import Sort from "./Sort";
 import SearchBar from "./SearchBar";
 import Rating from "./Rating";
-import Review from "./Review";
+import Reviews from "./Reviews";
 import UserGameInfo from "./UserGameInfo";
 import Select from "./Select";
 import GenresFilter from "./GenresFilter";
@@ -19,9 +19,9 @@ export {
   Sort,
   SearchBar,
   Rating,
-  Review,
+  Reviews,
   UserGameInfo,
   Select,
   GenresFilter,
-  GameDetails
+  GameDetails,
 }

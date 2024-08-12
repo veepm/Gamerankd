@@ -1,55 +1,52 @@
 .container{
   display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.game{
-  display: flex;
   gap: 2rem;
-  margin: 8rem 10rem;
+  margin: 120px 160px;
 }
 
-.game img{
+
+.cover{
+  position: sticky;
+  top: 5rem;
+}
+
+.cover img{
   border-radius: var(--border-radius);
   border: 1.2px solid var(--light);
   max-width: 20rem;
   height: auto;
 }
 
-.info{
-
-}
-
-.header{
-  
-}
-
-.header h1{
-  display: inline;
-}
-
-.header h4{
-  display: inline;
-  margin-left: 0.5rem;
-}
-
-.headerContainer{
+.besideCover{
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  justify-content: center;
 }
 
-.info p{
+.info{
+  display: flex;
+  gap: 5rem;
+  margin-bottom: 20rem;
+}
+
+.info > section > p{
   max-width: 60ch;
   margin-top: 1rem;
 }
 
-.rating{
+.header{
   display: flex;
-  justify-content: center;
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+
+.header > h4{
+  margin-left: 0.5rem;
 }
 
 .avgRating{
-  margin: 0 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
 }

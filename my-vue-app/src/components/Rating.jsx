@@ -1,16 +1,11 @@
 import { FaStar, FaStarHalf} from "react-icons/fa"
 import classes from "./css/rating.module.css"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, memo } from "react"
 import axios from "axios";
 
-const Rating = ({avgRating, isInteractable,  gameId, userRating, size}) => {
-  const [rating, setRating] = useState(null);
+const Rating = ({avgRating, isInteractable,  gameId, userRating, setUserRating, size}) => {
   const [hoverRating, setHoverRating] = useState(null);
-  const ref = useRef(null);
 
-  useEffect(()=>{
-    setRating(userRating);
-  },[]);
 
   const handleClick = async (value) => {
     let config;
@@ -25,7 +20,7 @@ const Rating = ({avgRating, isInteractable,  gameId, userRating, size}) => {
     }
     else{
       config = {
-        url:`/reviews/games/${gameId}`,
+        url:`/games/${gameId}/reviews`,
         method: "patch",
         data:{rating:value},
         withCredentials:true
@@ -34,7 +29,7 @@ const Rating = ({avgRating, isInteractable,  gameId, userRating, size}) => {
 
     try {
       await axios(config);
-      setRating(value);
+      setUserRating(value);
     } catch (error) {
       console.log(error);
     }
@@ -43,27 +38,28 @@ const Rating = ({avgRating, isInteractable,  gameId, userRating, size}) => {
 
   return (
     <div className={classes.rating}>
-      { [...Array(5)].map((star, i) => {
+      { [...Array(5)].map((_, i) => {
         const ratingValue = i + 1;
 
         return (
           isInteractable ?
           (
-            <FaStar 
-              key={i}
-              className={`${classes.star} ${ratingValue <= (hoverRating || rating) && classes.active}`} 
-              size={size}
-              onMouseEnter={() => setHoverRating(ratingValue)}
-              onMouseLeave={() => setHoverRating(null)}
-              onClick={()=>handleClick(ratingValue)}
-            />
+            <button onClick={()=>handleClick(ratingValue)}>
+              <FaStar 
+                key={i}
+                className={`${classes.star} ${classes.clickable} ${ratingValue <= (hoverRating || userRating) ? classes.active : ""}`} 
+                size={size}
+                onMouseEnter={() => setHoverRating(ratingValue)}
+                onMouseLeave={() => setHoverRating(null)}
+              />
+            </button>
           )
           :
           (
             <FaStar 
               key={i}
+              className={`${classes.star} ${ratingValue <= (avgRating) ? classes.active : ""}`}
               size={size}
-              color={ratingValue <= (avgRating) ? "#fcba03" : "#b0b3b8"} 
             />
           )
         )
@@ -71,5 +67,6 @@ const Rating = ({avgRating, isInteractable,  gameId, userRating, size}) => {
       )}     
     </div>
   )
-}
-export default Rating
+};
+
+export default memo(Rating);

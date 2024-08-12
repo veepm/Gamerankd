@@ -1,24 +1,14 @@
-import { useEffect, useState } from "react";
+import { useState, memo } from "react";
 import {Rating} from "./index";
 import classes from "./css/userGameInfo.module.css";
-import useFetch from "../useFetch";
-import {useAppContext} from "../context/appContext";
 import axios from "axios";
 import { IoGameController, IoGameControllerOutline } from "react-icons/io5";
-import { FaListUl, FaListCheck } from "react-icons/fa6";
+import { PiListBulletsLight, PiListChecksLight } from "react-icons/pi";
 
-const UserGameInfo = ({gameId}) => {
-  const {user} = useAppContext();
-  const [isPlayed,setIsPlayed] = useState();
-  const [isWishlisted,setIsWishlisted] = useState();
+const UserGameInfo = ({gameId, userRating, setUserRating, userPlayed, userWishlisted}) => {
+  const [isPlayed,setIsPlayed] = useState(userPlayed);
+  const [isWishlisted,setIsWishlisted] = useState(userWishlisted);
 
-  // if (!user){
-  //   return <div>Login to be able to rate and add to lists</div>
-  // }
-
-  const {data:userInfo,isLoading:userInfoLoading} = useFetch({url:`/users/${user?.username}/games/${gameId}`});
-
-  
   const addToList = async (listName) => {
     try {
       await axios.post(`/lists/${listName}/games`, {game_id:gameId}, {withCredentials:true});
@@ -41,55 +31,22 @@ const UserGameInfo = ({gameId}) => {
         }
       }
       
-      useEffect(() => {
-        setIsPlayed(userInfo?.played);
-        setIsWishlisted(userInfo?.wishlisted);
-      },[userInfo])
-
-      if (userInfoLoading) return;
-      
       return (
         <div className={classes.container}>
-          { isPlayed ?
-            (
-              <IoGameController 
-                size={30}
-                className={classes.controller}
-                onClick={()=>deleteFromlist("played")}
-              />
-            )
-            :
-            (
-              <IoGameControllerOutline
-                size={30}
-                className={classes.controller}
-                onClick={()=>addToList("played")}
-              />
-            )}
-        <div className={classes.userRating} >
+          <button onClick={isPlayed ? ()=>deleteFromlist("played") : ()=>addToList("played")}>
+            { isPlayed ? <IoGameController/> : <IoGameControllerOutline/>}
+          </button>
           <Rating 
             isInteractable 
-            userRating={userInfo.rating} 
-            gameId={gameId} size={30}
+            userRating={userRating}
+            setUserRating={setUserRating} 
+            gameId={gameId}
           />
-        </div>
-          { isWishlisted ?
-            (
-              <FaListCheck
-                className={classes.wishlist}
-                size={20}
-                onClick={()=>deleteFromlist("wishlist")}
-              />
-            )
-            :
-            (
-              <FaListUl 
-                className={classes.wishlist}
-                size={20}
-                onClick={()=>addToList("wishlist")}
-              />
-            )}
+          <button onClick={isWishlisted ? ()=>deleteFromlist("wishlist") : ()=>addToList("wishlist")}>            
+            { isWishlisted ? <PiListChecksLight/> : <PiListBulletsLight/> }
+          </button>
     </div>
   )
-}
-export default UserGameInfo
+};
+
+export default memo(UserGameInfo);

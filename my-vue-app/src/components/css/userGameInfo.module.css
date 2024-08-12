@@ -4,6 +4,6 @@
   align-items: center;
 }
 
-.controller, .wishlist{
-  cursor: pointer;
+.container button{
+  font-size: 1.75rem;
 }

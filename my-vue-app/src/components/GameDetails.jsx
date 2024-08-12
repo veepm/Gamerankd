@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, memo } from "react";
 import classes from "./css/gameDetails.module.css";
 
 
@@ -27,4 +27,4 @@ const GameDetails = (props) => {
   )
 };
 
-export default GameDetails;
+export default memo(GameDetails);
