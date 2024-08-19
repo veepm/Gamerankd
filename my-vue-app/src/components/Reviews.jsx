@@ -1,5 +1,4 @@
 import { useState, memo, useRef, useEffect } from "react";
-import useFetch from "../useFetch";
 import classes from "./css/reviews.module.css";
 import Rating from "./Rating";
 import { IoAdd } from "react-icons/io5";
@@ -7,6 +6,7 @@ import { MdEdit, MdDelete } from "react-icons/md";
 import axios from "axios";
 import { useAppContext } from "../context/appContext";
 import { Link } from "react-router-dom";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 const Reviews = ({gameId, userReviewed, userRating, setUserRating}) => {
   const {user} = useAppContext();
@@ -16,12 +16,41 @@ const Reviews = ({gameId, userReviewed, userRating, setUserRating}) => {
   const [reviews,setReviews] = useState(null);
   const [reviewError, setReviewError] = useState("");
 
-  const {data, isLoading, error} = useFetch({url:`/games/${gameId}/reviews`});
+  const reviewsQuery = useQuery({
+    queryKey: ["games", gameId, "reviews"],
+    queryFn: async () => {
+      const {data} = await axios.get(`/games/${gameId}/reviews`);
+      setReviews(data.reviews);
+      return data;
+    }
+  });
 
-  useEffect(()=>{
-    setReviews(data?.reviews);
-  },[data])
+  const submitReviewMutation = useMutation({
+    mutationFn: () => axios.patch(`/games/${gameId}/reviews`,{review_text:reviewText},{withCredentials:true}),
+    onSuccess: (data) => {
+      data.data.review.username = user.username;
+    
+      const tempReviews = reviews.filter(((review) => review.review_id != data.data.review.review_id));
+  
+      setReviews([data.data.review,...tempReviews]);
+      setIsReviewed(reviewText);
+      setIsReviewing(false);
+      setReviewError("");
+    }
+  });
 
+  const deleteReviewMutation = useMutation({
+    mutationFn: () => axios.delete(`/games/${gameId}/reviews`,{withCredentials:true}),
+    onSuccess: (data) => {
+      const tempReviews = reviews.filter(((review) => review.review_id != data.data.review.review_id));
+  
+      setReviews([...tempReviews]);
+      setIsReviewed(null);
+      setReviewText("");
+      setUserRating(null);
+      setIsReviewing(false);
+    }
+  })
   
   const handleChange = (e) => {
     setReviewText(e.target.value);
@@ -31,21 +60,10 @@ const Reviews = ({gameId, userReviewed, userRating, setUserRating}) => {
     setIsReviewing(!isReviewing);
   };
 
-  const submitReview = async () => {
+  const submitReview = async (e) => {
+    e.preventDefault();
     if (userRating && reviewText.trim()){
-      try {      
-        const {data:{review:userReview}} = await axios.patch(`/games/${gameId}/reviews`,{review_text:reviewText},{withCredentials:true});
-        userReview.username = user.username;
-    
-        const tempReviews = reviews.filter(((review) => review.review_id != userReview.review_id));
-    
-        setReviews([userReview,...tempReviews]);
-        setIsReviewed(reviewText);
-        setIsReviewing(false);
-        setReviewError("");
-      } catch (error) {
-        console.log(error);
-      }
+      submitReviewMutation.mutate();
     }
     else if (!userRating){
       setReviewError("Rating required");
@@ -55,58 +73,47 @@ const Reviews = ({gameId, userReviewed, userRating, setUserRating}) => {
     }
   };
 
-  const deleteReview = async () => {
-    try {
-      const {data:{review:userReview}} = await axios.delete(`/games/${gameId}/reviews`,{withCredentials:true});
-      const tempReviews = reviews.filter(((review) => review.review_id != userReview.review_id));
-  
-      setReviews([...tempReviews]);
-      setIsReviewed(null);
-      setReviewText("");
-      setUserRating(null);
-      setIsReviewing(false);
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  if (reviewsQuery.isLoading) return <div>Loading...</div>;
 
-  if (isLoading) return <div>Loading...</div>;
-
-  if (error) console.log(error);
+  if (reviewsQuery.isError) console.log(error);
 
   return (
     <div className={classes.container}>
       <header>
         <h2>Reviews</h2>
-        { isReviewed ? (
-          <>
-            <button title="Edit your review" onClick={handleClick}>
-              <MdEdit/>
+        <div className={classes.reviewActions}>
+          { isReviewed ? (
+            <>
+              <button title="Edit your review" onClick={handleClick}>
+                <MdEdit/>
+              </button>
+              <button title="Delete your review" onClick={deleteReviewMutation.mutate}>
+                <MdDelete/>
+              </button>
+            </>
+          )
+          :
+          (
+            <button title="Add a review" onClick={handleClick}>
+              <IoAdd 
+                className={`${classes.add} ${isReviewing ? classes.rotated : ""}`} 
+              />
             </button>
-            <button title="Delete your review" onClick={deleteReview}>
-              <MdDelete/>
-            </button>
-          </>
-        )
-        :
-        (
-          <button title="Add a review" onClick={handleClick}>
-            <IoAdd 
-              className={`${classes.add} ${isReviewing ? classes.rotated : ""}`} 
-            />
-          </button>
-        )}
+          )}
+        </div>
       </header>
-      <div className={`${classes.inputContainer} ${isReviewing ? classes.active : ""}`}>
-        <p>{reviewError}</p>
+      <p>{reviewError}</p>
+      <form className={`${classes.inputContainer} ${isReviewing ? classes.active : ""}`} onSubmit={submitReview}>
         <textarea
           className={classes.reviewInput}
           placeholder="What are your thoughts on this game?"
           value={reviewText}
           onChange={handleChange}
         />
-        <button onClick={submitReview} className={classes.submit}>Submit</button>
-      </div>
+        <div>
+          <button type="submit">Submit</button>
+        </div>
+      </form>
       <GameReviews reviews={reviews}/>
     </div>
   )

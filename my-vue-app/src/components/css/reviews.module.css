@@ -1,20 +1,25 @@
 .container{
-  width: 50vw;
+  max-width: 60ch;
 }
 
 .container > header{
   display: flex;
-  gap: 0.5rem;
+  justify-content: space-between;
   margin-bottom: 1rem;
 }
 
-.container > header > button{
-  font-size: 1rem;
+.reviewActions{
+  display: flex;
+  gap: 1rem;
+}
+
+.reviewActions > button{
+  font-size: 1.2rem;
 }
 
 .add{
   transition: 0.5s ease-in;
-  font-size: 1.5rem;
+  font-size: 1.7rem;
 }
 .add.rotated{
   transform: rotate(225deg);
@@ -22,19 +27,26 @@
 
 .inputContainer{
   visibility: hidden;
-  height: 0;
+  max-height: 0;
   transition: 1s;
   overflow: hidden;
-  position: relative;
 }
 
 .inputContainer.active{
   visibility: visible;
-  height: 6rem;
+  max-height: 15rem;
 }
 
-.inputContainer > button{
+.inputContainer > div {
+  text-align: right;
+  background: white;
+  border-bottom-left-radius: var(--border-radius);
+  border-bottom-right-radius: var(--border-radius);
+}
+
+.inputContainer button{
   background: var(--accent);
+  margin-top: 0.5em;
   padding: 0.5em;
   border-radius: var(--border-radius);
 }
@@ -42,18 +54,13 @@
 .reviewInput{
   width: 100%;
   padding: 1em;
-  height: 100%;
+  height: 7em;
   display: block;
   border: none;
   outline: none;
   resize: none;
-  border-radius: var(--border-radius);
-}
-
-.submit{
-  position: absolute;
-  bottom: 0.5em;
-  right: 0.5em;
+  border-top-left-radius: var(--border-radius);
+  border-top-right-radius: var(--border-radius);
 }
 
 .reviewContainer{

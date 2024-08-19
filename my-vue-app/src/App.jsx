@@ -1,17 +1,16 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom"
-import {AllGames, Error, Landing, SharedLayout, SingleGame, Login, Register, List, ProtectedRoute} from "./pages/index"
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import {Games, Error, Landing, SharedLayout, SingleGame, Login, Register, ProtectedRoute} from "./pages/index";
 import "./axios";
 
-function App() {
+const App = () => {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<SharedLayout/>}>  
           <Route index element={<Landing/>}/>     
-          <Route path="games" element={<AllGames/>}/>
+          <Route path="games" element={<Games/>}/>
           <Route path="games/:gameId" element={<SingleGame/>}/>
-          <Route path="/users/:username/lists/:listName" element={<ProtectedRoute> <List/> </ProtectedRoute>}/>
-          {/* <Route path="played" element={<ProtectedRoute> <List listName={"played"}/> </ProtectedRoute>}/> */}
+          <Route path="/users/:username/lists/:listName" element={<Games/>}/>
           <Route path="*" element={<Error/>}/>
         </Route>
         <Route path="/register" element={<Register/>}/>
@@ -19,6 +18,6 @@ function App() {
       </Routes>
     </BrowserRouter>
   )
-}
+};
 
-export default App
+export default App;

@@ -2,39 +2,33 @@ import { FaStar, FaStarHalf} from "react-icons/fa"
 import classes from "./css/rating.module.css"
 import { useEffect, useRef, useState, memo } from "react"
 import axios from "axios";
+import { useMutation } from "@tanstack/react-query";
 
 const Rating = ({avgRating, isInteractable,  gameId, userRating, setUserRating, size}) => {
   const [hoverRating, setHoverRating] = useState(null);
 
-
-  const handleClick = async (value) => {
-    let config;
+  const submitRating = (value) => {
+    const config = {
+      url:`/games/${gameId}/reviews`,
+      data:{rating:value},
+      withCredentials:true
+    };
+    
     // add if rating does not exists else update
     if (!userRating){
-      config = {
-        url:`/games/${gameId}/reviews`,
-        method: "post",
-        data:{rating:value},
-        withCredentials:true
-      }
+      config.method = "post";
     }
     else{
-      config = {
-        url:`/games/${gameId}/reviews`,
-        method: "patch",
-        data:{rating:value},
-        withCredentials:true
-      }
+      config.method = "patch";
     }
+    axios(config);
+  }
 
-    try {
-      await axios(config);
-      setUserRating(value);
-    } catch (error) {
-      console.log(error);
-    }
+  const submitRatingMutation = useMutation({
+    mutationFn: submitRating,
+    onSuccess: (data, value) => setUserRating(value)
+  });
 
-  };
 
   return (
     <div className={classes.rating}>
@@ -44,9 +38,8 @@ const Rating = ({avgRating, isInteractable,  gameId, userRating, setUserRating, 
         return (
           isInteractable ?
           (
-            <button onClick={()=>handleClick(ratingValue)}>
+            <button key={i} onClick={()=>submitRatingMutation.mutate(ratingValue)}>
               <FaStar 
-                key={i}
                 className={`${classes.star} ${classes.clickable} ${ratingValue <= (hoverRating || userRating) ? classes.active : ""}`} 
                 size={size}
                 onMouseEnter={() => setHoverRating(ratingValue)}

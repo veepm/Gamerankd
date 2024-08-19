@@ -1,32 +1,41 @@
 import { Link, useParams } from "react-router-dom"
 import {GameDetails, Loading, Rating, Reviews, UserGameInfo} from "../components/index"
-import useFetch from "../useFetch";
 import classes from "./css/singleGame.module.css";
 import { useAppContext } from "../context/appContext";
 import { memo, useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 
 
 const SingleGame = () => {
   const {user} = useAppContext();
   const {gameId} = useParams();
 
-  const {data:userInfo,isLoading:userInfoLoading} = useFetch({url:`/users/${user?.username}/games/${gameId}`});
-
-  const url = `/games?fields=name,cover.url,summary,genres.name,first_release_date,involved_companies.publisher,involved_companies.developer,involved_companies.company.name,platforms.name&coverSize=cover_big_2x&id[]=${gameId}`;
-
-  const {data,isLoading:gameInfoLoading,error} = useFetch({method:"get",url});
-
   const [userRating, setUserRating] = useState(null); // for rerendering user rating after review
-
-  useEffect(()=>{
-    setUserRating(userInfo?.rating);
-  },[userInfo])
   
-  if (gameInfoLoading || userInfoLoading){
+  const userInfoQuery = useQuery({
+    queryKey: ["users", user?.username, "games", gameId],
+    enabled: user != null,
+    queryFn: async () => {
+      const {data} = await axios.get(`/users/${user.username}/games/${gameId}`);
+      setUserRating(data.rating);
+      return data;
+    }
+  });
+
+  const gameInfoQuery = useQuery({
+    queryKey: ["games", gameId],
+    queryFn: async () => {
+      const {data} = await axios.get(`/games?fields=name,cover.url,summary,genres.name,first_release_date,involved_companies.publisher,involved_companies.developer,involved_companies.company.name,platforms.name&coverSize=cover_big_2x&id[]=${gameId}`);
+      return data;
+    }
+  });
+  
+  if (userInfoQuery.isLoading || gameInfoQuery.isLoading){
     return <Loading></Loading>;
   }
- 
-  const game = data.games[0];
+
+  const game = gameInfoQuery.data?.games[0];
 
   const releaseDate = new Date(game.first_release_date * 1000);
 
@@ -35,7 +44,7 @@ const SingleGame = () => {
       <div>
         <div className={classes.cover}>
           <img src={game.cover}/>
-          <UserGameInfo gameId={gameId} userPlayed={userInfo.played} userWishlisted={userInfo.wishlisted} userRating={userRating} setUserRating={setUserRating}/>
+          <UserGameInfo gameId={gameId} userPlayed={userInfoQuery.data?.played} userWishlisted={userInfoQuery.data?.wishlisted} userRating={userRating} setUserRating={setUserRating}/>
         </div>
       </div>
       <div className={classes.besideCover}>
@@ -56,7 +65,7 @@ const SingleGame = () => {
           </section>
           <GameDetails developers={game.developers} publishers={game.publishers} platforms={game.platforms}/>
         </div>
-        <Reviews gameId={gameId} userReviewed={userInfo.review_text} userRating={userRating} setUserRating={setUserRating}/>
+        <Reviews gameId={gameId} userReviewed={userInfoQuery.data?.review_text} userRating={userRating} setUserRating={setUserRating}/>
       </div>
     </div>
   )

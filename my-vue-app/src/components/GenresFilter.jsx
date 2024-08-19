@@ -1,6 +1,7 @@
 import { useSearchParams } from "react-router-dom";
-import useFetch from "../useFetch"
 import Select from "./Select";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 
 const any = {options:[{label:"Any Genre",value:"any"}]};
 
@@ -11,10 +12,17 @@ const GenresFilter = () => {
     return Number(genre) || [];
   });
 
-  const {data,isLoading,error} = useFetch({method:"get",url:"/genres?sort=asc"});
+  const genresQuery = useQuery({
+    queryKey: ["genres"],
+    queryFn: async () => {
+      const {data} = await axios.get("/genres?sort=asc");
+      return data;
+    }
+  });
 
   const handleToggle = (options) => {
     if (options.length > 0 && !options.includes(any.options[0])){
+      options.sort((a,b) => a.value - b.value);
       searchParams.set("genres", options.map(o => o.value));
     }
     else {
@@ -24,9 +32,9 @@ const GenresFilter = () => {
     setSearchParams(searchParams);
   }
 
-  if (isLoading) return
+  if (genresQuery.isLoading) return
 
-  const genres = data.genres.map(genre => ({options:[{label:genre.name,value:genre.id}]}));
+  const genres = genresQuery.data.genres.map(genre => ({options:[{label:genre.name,value:genre.id}]}));
 
   const genresMap = genres.reduce((map,genre) => (map[genre.options[0].value] = genre.options[0].label, map),{});
 
@@ -42,4 +50,5 @@ const GenresFilter = () => {
     />
   )
 };
+
 export default GenresFilter;
