@@ -2,9 +2,12 @@ import { FaStar, FaStarHalf} from "react-icons/fa"
 import classes from "./css/rating.module.css"
 import { useEffect, useRef, useState, memo } from "react"
 import axios from "axios";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useAppContext } from "../context/appContext";
 
-const Rating = ({avgRating, isInteractable,  gameId, userRating, setUserRating, size}) => {
+const Rating = ({avgRating, isInteractable, gameId, userRating, size}) => {
+  const {user} = useAppContext();
+  const queryClient = useQueryClient();
   const [hoverRating, setHoverRating] = useState(null);
 
   const submitRating = (value) => {
@@ -13,7 +16,7 @@ const Rating = ({avgRating, isInteractable,  gameId, userRating, setUserRating, 
       data:{rating:value},
       withCredentials:true
     };
-    
+
     // add if rating does not exists else update
     if (!userRating){
       config.method = "post";
@@ -21,12 +24,27 @@ const Rating = ({avgRating, isInteractable,  gameId, userRating, setUserRating, 
     else{
       config.method = "patch";
     }
-    axios(config);
+    return axios(config);
   }
 
   const submitRatingMutation = useMutation({
     mutationFn: submitRating,
-    onSuccess: (data, value) => setUserRating(value)
+    onMutate: async (value) => {
+      await queryClient.cancelQueries({queryKey: ["users", user?.username, "games", gameId]});
+
+      const prevUserInfo = queryClient.getQueryData(["users", user?.username, "games", gameId]);
+      
+      queryClient.setQueryData(["users", user?.username, "games", gameId], (old) => ({...old, rating:value}));
+
+      return {prevUserInfo};
+    },
+    onError: (err, value, context) => {
+      queryClient.setQueryData(["users", user?.username, "games", gameId], context.prevUserInfo);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({queryKey: ["users", user?.username, "games", gameId]});
+      
+    }
   });
 
 

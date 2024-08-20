@@ -8,20 +8,7 @@ import axios from "axios";
 
 
 const SingleGame = () => {
-  const {user} = useAppContext();
   const {gameId} = useParams();
-
-  const [userRating, setUserRating] = useState(null); // for rerendering user rating after review
-  
-  const userInfoQuery = useQuery({
-    queryKey: ["users", user?.username, "games", gameId],
-    enabled: user != null,
-    queryFn: async () => {
-      const {data} = await axios.get(`/users/${user.username}/games/${gameId}`);
-      setUserRating(data.rating);
-      return data;
-    }
-  });
 
   const gameInfoQuery = useQuery({
     queryKey: ["games", gameId],
@@ -31,7 +18,7 @@ const SingleGame = () => {
     }
   });
   
-  if (userInfoQuery.isLoading || gameInfoQuery.isLoading){
+  if (gameInfoQuery.isLoading){
     return <Loading></Loading>;
   }
 
@@ -44,7 +31,7 @@ const SingleGame = () => {
       <div>
         <div className={classes.cover}>
           <img src={game.cover}/>
-          <UserGameInfo gameId={gameId} userPlayed={userInfoQuery.data?.played} userWishlisted={userInfoQuery.data?.wishlisted} userRating={userRating} setUserRating={setUserRating}/>
+          <UserGameInfo gameId={gameId}/>
         </div>
       </div>
       <div className={classes.besideCover}>
@@ -65,7 +52,7 @@ const SingleGame = () => {
           </section>
           <GameDetails developers={game.developers} publishers={game.publishers} platforms={game.platforms}/>
         </div>
-        <Reviews gameId={gameId} userReviewed={userInfoQuery.data?.review_text} userRating={userRating} setUserRating={setUserRating}/>
+        <Reviews gameId={gameId} userReviewed={"ree"} userRating={5} setUserRating={()=>{}}/>
       </div>
     </div>
   )

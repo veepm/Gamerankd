@@ -1,4 +1,4 @@
-import { useState, memo } from "react";
+import {  memo } from "react";
 import {Rating} from "./index";
 import classes from "./css/userGameInfo.module.css";
 import axios from "axios";
@@ -6,57 +6,72 @@ import { IoGameController, IoGameControllerOutline } from "react-icons/io5";
 import { PiListBulletsLight, PiListChecksLight } from "react-icons/pi";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAppContext } from "../context/appContext";
+import useUserInfo from "../useUserInfo";
 
-const UserGameInfo = ({gameId, userRating, setUserRating, userPlayed, userWishlisted}) => {
+const UserGameInfo = ({gameId}) => {
   const {user} = useAppContext();
   const queryClient = useQueryClient();
 
-  const [isPlayed,setIsPlayed] = useState(userPlayed);
-  const [isWishlisted,setIsWishlisted] = useState(userWishlisted);
+  const userInfoQuery = useUserInfo(gameId);
 
   const addGameMutation = useMutation({
     mutationFn: (listName) => axios.post(`/lists/${listName}/games`, {game_id:gameId}, {withCredentials:true}),
+    onMutate: async (listName) => {
+      await queryClient.cancelQueries({queryKey: ["users", user?.username, "games", gameId]});
+
+      const prevUserInfo = queryClient.getQueryData(["users", user?.username, "games", gameId]);
+
+      queryClient.setQueryData(["users", user?.username, "games", gameId], (old) => ({...old, [listName]:true}));
+
+      return {prevUserInfo};
+    },
+    onError: (err, listName, context) => {
+      queryClient.setQueryData(["users", user?.username, "games", gameId], context.prevUserInfo);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({queryKey: ["users", user?.username, "games", gameId]});
+    },
     onSuccess: (data, listName) => {
-      // queryClient.setQueryData(["users", user.username, "lists", variables], (oldData) => {
-      //   if (oldData){
-      //     return {...oldData, games:[...oldData.games, gameId]};
-      //   }
-      //   return oldData;
-      // });
-      queryClient.invalidateQueries({queryKey:["users", user?.username, "games", gameId]});
       queryClient.invalidateQueries({queryKey: ["users", user.username, "lists", listName], refetchType:"all"});
-      listName === "played" ? setIsPlayed(true) : setIsWishlisted(true);
     }
   });
 
   const deleteGameMutation = useMutation({
     mutationFn: (listName) => axios.delete(`/lists/${listName}/games/${gameId}`,{withCredentials:true}),
+    onMutate: async (listName) => {
+      await queryClient.cancelQueries({queryKey: ["users", user?.username, "games", gameId]});
+
+      const prevUserInfo = queryClient.getQueryData(["users", user?.username, "games", gameId]);
+
+      queryClient.setQueryData(["users", user?.username, "games", gameId], (old) => ({...old, [listName]:false}));
+
+      return {prevUserInfo};
+    },
+    onError: (err, listName, context) => {
+      queryClient.setQueryData(["users", user?.username, "games", gameId], context.prevUserInfo);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({queryKey: ["users", user?.username, "games", gameId]});
+    },
     onSuccess: (data, listName) => {
-      // queryClient.setQueryData(["users", user.username, "lists", variables], (oldData) => {
-      //   if (oldData){
-      //     return {...oldData, games:oldData.games.filter((game) => game!=gameId)};
-      //   }
-      //   return oldData;
-      // });
-      queryClient.invalidateQueries({queryKey:["users", user?.username, "games", gameId]});
       queryClient.invalidateQueries({queryKey: ["users", user.username, "lists", listName], refetchType:"all"});
-      listName === "played" ? setIsPlayed(false) : setIsWishlisted(false)
     }
   });
+
+  if (userInfoQuery.isLoading) return <div>Loading</div>;
       
   return (
     <div className={classes.container}>
-      <button onClick={isPlayed ? () => deleteGameMutation.mutate("played") : () => addGameMutation.mutate("played")}>
-        { isPlayed ? <IoGameController/> : <IoGameControllerOutline/>}
+      <button onClick={userInfoQuery.data.played ? () => deleteGameMutation.mutate("played") : () => addGameMutation.mutate("played")}>
+        { userInfoQuery.data.played ? <IoGameController/> : <IoGameControllerOutline/>}
       </button>
       <Rating 
-        isInteractable 
-        userRating={userRating}
-        setUserRating={setUserRating} 
+        isInteractable
         gameId={gameId}
+        userRating={userInfoQuery.data.rating}
       />
-      <button onClick={isWishlisted ? () => deleteGameMutation.mutate("wishlist") : () => addGameMutation.mutate("wishlist")}>            
-        { isWishlisted ? <PiListChecksLight/> : <PiListBulletsLight/> }
+      <button onClick={userInfoQuery.data.wishlist ? () => deleteGameMutation.mutate("wishlist") : () => addGameMutation.mutate("wishlist")}>            
+        { userInfoQuery.data.wishlist ? <PiListChecksLight/> : <PiListBulletsLight/> }
       </button>
     </div>
   )

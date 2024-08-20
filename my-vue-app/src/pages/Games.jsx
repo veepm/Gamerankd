@@ -1,4 +1,4 @@
-import {useQuery} from "@tanstack/react-query";
+import {keepPreviousData, useQuery} from "@tanstack/react-query";
 import {GamesContainer, PageButton, Sort, SearchBar, GenresFilter} from "../components";
 import classes from "./css/allGames.module.css";
 import axios from "axios";

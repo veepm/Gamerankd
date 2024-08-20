@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import {Games, Error, Landing, SharedLayout, SingleGame, Login, Register, ProtectedRoute} from "./pages/index";
+import {Games, Error, Landing, SharedLayout, SingleGame, Register, ProtectedRoute} from "./pages/index";
 import "./axios";
 
 const App = () => {
@@ -14,7 +14,6 @@ const App = () => {
           <Route path="*" element={<Error/>}/>
         </Route>
         <Route path="/register" element={<Register/>}/>
-        <Route path="/login" element={<Login/>}/>
       </Routes>
     </BrowserRouter>
   )

@@ -1,4 +1,4 @@
-import { useState, memo, useRef, useEffect } from "react";
+import { useState, memo, useEffect } from "react";
 import classes from "./css/reviews.module.css";
 import Rating from "./Rating";
 import { IoAdd } from "react-icons/io5";
@@ -6,16 +6,19 @@ import { MdEdit, MdDelete } from "react-icons/md";
 import axios from "axios";
 import { useAppContext } from "../context/appContext";
 import { Link } from "react-router-dom";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import useUserInfo from "../useUserInfo";
 
-const Reviews = ({gameId, userReviewed, userRating, setUserRating}) => {
+const Reviews = ({gameId}) => {
   const {user} = useAppContext();
-  const [isReviewed, setIsReviewed] = useState(userReviewed); // TODO: change name
   const [isReviewing, setIsReviewing] = useState(false);
-  const [reviewText, setReviewText] = useState(userReviewed || "");
+  const [reviewText, setReviewText] = useState("");
   const [reviews,setReviews] = useState(null);
   const [reviewError, setReviewError] = useState("");
 
+  const queryClient = useQueryClient();
+
+  
   const reviewsQuery = useQuery({
     queryKey: ["games", gameId, "reviews"],
     queryFn: async () => {
@@ -24,30 +27,28 @@ const Reviews = ({gameId, userReviewed, userRating, setUserRating}) => {
       return data;
     }
   });
+  
+  const userInfoQuery = useUserInfo(gameId);
 
+  useEffect(() => {
+    setReviewText(userInfoQuery?.data?.review_text || "");
+  },[userInfoQuery?.data?.review_text])
+  
   const submitReviewMutation = useMutation({
     mutationFn: () => axios.patch(`/games/${gameId}/reviews`,{review_text:reviewText},{withCredentials:true}),
-    onSuccess: (data) => {
-      data.data.review.username = user.username;
-    
-      const tempReviews = reviews.filter(((review) => review.review_id != data.data.review.review_id));
-  
-      setReviews([data.data.review,...tempReviews]);
-      setIsReviewed(reviewText);
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey:["games",gameId,"reviews"]});
+      queryClient.invalidateQueries({queryKey: ["users", user?.username, "games", gameId]});
       setIsReviewing(false);
       setReviewError("");
     }
   });
 
   const deleteReviewMutation = useMutation({
-    mutationFn: () => axios.delete(`/games/${gameId}/reviews`,{withCredentials:true}),
-    onSuccess: (data) => {
-      const tempReviews = reviews.filter(((review) => review.review_id != data.data.review.review_id));
-  
-      setReviews([...tempReviews]);
-      setIsReviewed(null);
-      setReviewText("");
-      setUserRating(null);
+    mutationFn: () => axios.patch(`/games/${gameId}/reviews`,{review_text:null},{withCredentials:true}),
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ["games", gameId, "reviews"]});
+      queryClient.invalidateQueries({queryKey: ["users", user?.username, "games", gameId]});
       setIsReviewing(false);
     }
   })
@@ -62,10 +63,10 @@ const Reviews = ({gameId, userReviewed, userRating, setUserRating}) => {
 
   const submitReview = async (e) => {
     e.preventDefault();
-    if (userRating && reviewText.trim()){
+    if (userInfoQuery?.data?.rating && reviewText.trim()){
       submitReviewMutation.mutate();
     }
-    else if (!userRating){
+    else if (!userInfoQuery?.data?.rating){
       setReviewError("Rating required");
     }
     else if (!reviewText.trim()){
@@ -75,14 +76,16 @@ const Reviews = ({gameId, userReviewed, userRating, setUserRating}) => {
 
   if (reviewsQuery.isLoading) return <div>Loading...</div>;
 
-  if (reviewsQuery.isError) console.log(error);
+  if (reviewsQuery.isError) console.log(reviewsQuery.error);
+
+  if (deleteReviewMutation.isError) console.log(deleteReviewMutation.error);
 
   return (
     <div className={classes.container}>
       <header>
         <h2>Reviews</h2>
         <div className={classes.reviewActions}>
-          { isReviewed ? (
+          { userInfoQuery?.data?.review_text ? (
             <>
               <button title="Edit your review" onClick={handleClick}>
                 <MdEdit/>
