@@ -6,24 +6,25 @@ import { MdEdit, MdDelete } from "react-icons/md";
 import axios from "axios";
 import { useAppContext } from "../context/appContext";
 import { Link } from "react-router-dom";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import useUserInfo from "../useUserInfo";
+import PuffLoader from "react-spinners/PuffLoader";
+import ProfilePic from "./ProfilePic";
 
 const Reviews = ({gameId}) => {
   const {user} = useAppContext();
   const [isReviewing, setIsReviewing] = useState(false);
   const [reviewText, setReviewText] = useState("");
-  const [reviews,setReviews] = useState(null);
   const [reviewError, setReviewError] = useState("");
 
   const queryClient = useQueryClient();
 
-  
-  const reviewsQuery = useQuery({
+  const reviewsQuery = useInfiniteQuery({
     queryKey: ["games", gameId, "reviews"],
-    queryFn: async () => {
-      const {data} = await axios.get(`/games/${gameId}/reviews`);
-      setReviews(data.reviews);
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages, lastPageParam) => lastPage.last_page > lastPageParam ? lastPageParam + 1 : null,
+    queryFn: async ({pageParam}) => {
+      const {data} = await axios.get(`/games/${gameId}/reviews?limit=4&page=${pageParam}`);
       return data;
     }
   });
@@ -74,8 +75,6 @@ const Reviews = ({gameId}) => {
     }
   };
 
-  if (reviewsQuery.isLoading) return <div>Loading...</div>;
-
   if (reviewsQuery.isError) console.log(reviewsQuery.error);
 
   if (deleteReviewMutation.isError) console.log(deleteReviewMutation.error);
@@ -117,25 +116,43 @@ const Reviews = ({gameId}) => {
           <button type="submit">Submit</button>
         </div>
       </form>
-      <GameReviews reviews={reviews}/>
+      {reviewsQuery.isLoading ?
+        <div className={classes.loader}><PuffLoader color="white"/></div>
+        :
+        <GameReviews pages={reviewsQuery?.data?.pages}/>
+      }
+      <div className={classes.loader}><PuffLoader loading={reviewsQuery.isFetchingNextPage} color="white"/></div>
+      {reviewsQuery.hasNextPage && <button onClick={!reviewsQuery.isFetchingNextPage && reviewsQuery.fetchNextPage}>Next</button>}
     </div>
   )
 };
 
 
 // seperating into another comp to reduce re rendering
-const GameReviews = memo(({reviews}) => {
+const GameReviews = memo(({pages}) => {
   return (
-    reviews?.length > 0 ? (
-      reviews.map((review)=>{
+    pages[0].review_count > 0 ? (
+      pages.map((page)=>{
         return (
-          <div key={review.review_id} className={classes.reviewContainer}>
-            <header>
-              <Link to={`/users/${review.username}`}>{review.username}</Link>
-              <Rating avgRating={review.rating} size={"0.75em"}/>
-            </header>
-            <p>{review.review_text}</p>
-          </div>
+          page.reviews.map((review)=>{
+            return (
+              <div key={review.review_id} className={classes.reviewContainer}>
+                <header>
+                  <div>
+                    <Link to={`/users/${review.username}`}>
+                      <ProfilePic username={review.username} size="2rem" fontSize="1rem"/>
+                      {review.username}
+                    </Link>
+                    <Rating avgRating={review.rating} size={"0.75em"}/>
+                  </div>
+                  <div>
+                    <small>{(new Date(review.created_at)).toLocaleDateString("en-UK")}</small>
+                  </div>
+                </header>
+                <p>{review.review_text}</p>
+              </div>
+            )
+          })
         );
       })
     )

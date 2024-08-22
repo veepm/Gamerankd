@@ -8,7 +8,8 @@ const Navbar = () => {
     <nav className="navbar">
       <NavLink to="/">Home</NavLink>
       <div>
-        <NavLink to="/games" end>All Games</NavLink>
+        <NavLink to="/games" end>Games</NavLink>
+        <NavLink to="/users" end>Users</NavLink>
         {!user ? 
           <NavLink to="/register">Sign Up</NavLink>
         :
@@ -21,5 +22,6 @@ const Navbar = () => {
       </div>
     </nav>
   )
-}
-export default Navbar
+};
+
+export default Navbar;

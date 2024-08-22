@@ -17,7 +17,9 @@ const GenresFilter = () => {
     queryFn: async () => {
       const {data} = await axios.get("/genres?sort=asc");
       return data;
-    }
+    },
+    gcTime: Infinity,
+    staleTime: Infinity
   });
 
   const handleToggle = (options) => {

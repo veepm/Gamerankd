@@ -1,5 +1,5 @@
 import { useSearchParams, useLocation} from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, memo } from "react";
 import useDebounce from "../useDebounce";
 import classes from "./css/searchBar.module.css";
 import { IoSearch } from "react-icons/io5";
@@ -66,6 +66,6 @@ const SearchBar = ({placeholder}) => {
         />
     </div>
   )
-}
+};
 
-export default SearchBar
+export default memo(SearchBar);

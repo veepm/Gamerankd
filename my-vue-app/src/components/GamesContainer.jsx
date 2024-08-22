@@ -1,5 +1,4 @@
-import {Loading} from "./index";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import classes from "./css/gamesContainer.module.css";
 
 const GamesContainer = ({gamesQuery,gameCount}) => {
@@ -15,7 +14,7 @@ const GamesContainer = ({gamesQuery,gameCount}) => {
       )
       :
       (
-        gamesQuery?.isSuccess && gamesQuery.data.map(game => {
+        gamesQuery?.isSuccess && gamesQuery.data.games.map(game => {
           return (
             <div key={game.id} className={classes.game} onClick={()=>navigate(`/games/${game.id}`)}>
               <img 

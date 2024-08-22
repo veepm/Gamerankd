@@ -40,7 +40,7 @@ const Games = () => {
   if (filteredGenres.length > 0){
     url += `&genres=${filteredGenres}`;
   }
-  if (listGamesQuery?.data?.games.length > 0){
+  if (listGamesQuery?.data?.games?.length > 0){
     listGamesQuery.data.games.forEach(id => {
       url += `&id[]=${id}`;
     });
@@ -48,24 +48,24 @@ const Games = () => {
 
   const allGamesQuery = useQuery({
     queryKey: ["games", {genres:filteredGenres}, {page}, {search}, {sortBy}, {ids:listGamesQuery?.data?.games}],
-    enabled: !username && !listName || listGamesQuery?.data?.games.length > 0,
+    enabled: !username && !listName || listGamesQuery?.data?.games?.length > 0,
     queryFn: async () => {
-      const {data:{games}} = await axios.get(url);
-      return games;
+      const {data} = await axios.get(url);
+      return data;
     }
   });
 
   return (
     <div className={classes.container}>
       <header>
-        {!username && !listName && <SearchBar placeholder="Search For Games By Title"/>}
+        {!username && !listName ? <SearchBar placeholder="Search For Games By Title"/> : <h2>{username + "'s " + listName.charAt(0).toUpperCase() + listName.slice(1)}</h2>}
         <div className={classes.filters}>
           <Sort/>
           <GenresFilter/>
         </div>
       </header>
-      <GamesContainer gamesQuery={allGamesQuery} gameCount={listGamesQuery.data?.games.length || 48}/>
-      <PageButton/>
+      {!listGamesQuery.isLoading && <GamesContainer gamesQuery={allGamesQuery} gameCount={listGamesQuery.data?.games?.length || 48}/>}
+      {!listGamesQuery.isLoading && <PageButton lastPage={allGamesQuery.data?.last_page}/>}
     </div>
   )
 };

@@ -1,11 +1,10 @@
 import { Link, useParams } from "react-router-dom"
-import {GameDetails, Loading, Rating, Reviews, UserGameInfo} from "../components/index"
+import {GameDetails, Rating, Reviews, UserGameInfo} from "../components/index"
 import classes from "./css/singleGame.module.css";
-import { useAppContext } from "../context/appContext";
-import { memo, useEffect, useState } from "react";
+import { memo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-
+import PuffLoader from "react-spinners/PuffLoader";
 
 const SingleGame = () => {
   const {gameId} = useParams();
@@ -18,9 +17,7 @@ const SingleGame = () => {
     }
   });
   
-  if (gameInfoQuery.isLoading){
-    return <Loading></Loading>;
-  }
+  if (gameInfoQuery.isLoading) return <div className={classes.loader}><PuffLoader color="white"/></div>;
 
   const game = gameInfoQuery.data?.games[0];
 
@@ -60,7 +57,7 @@ const SingleGame = () => {
 
 const GameGenres = memo(({genres}) => {
   return (
-    <div>
+    <div className={classes.genres}>
       {genres?.map((genre,i) => {
         return <Link
                 key={genre.id} 

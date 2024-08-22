@@ -1,5 +1,4 @@
 import GamesContainer from "./GamesContainer";
-import Loading from "./Loading";
 import Navbar from "./Navbar";
 import PageButton from "./PageButton";
 import Sort from "./Sort";
@@ -10,10 +9,11 @@ import UserGameInfo from "./UserGameInfo";
 import Select from "./Select";
 import GenresFilter from "./GenresFilter";
 import GameDetails from "./GameDetails";
+import UsersContainer from "./UsersContainer";
+import ProfilePic from "./ProfilePic";
 
 export {
   GamesContainer,
-  Loading,
   Navbar,
   PageButton,
   Sort,
@@ -24,4 +24,6 @@ export {
   Select,
   GenresFilter,
   GameDetails,
+  UsersContainer,
+  ProfilePic
 }

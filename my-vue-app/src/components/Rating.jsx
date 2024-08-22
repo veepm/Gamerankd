@@ -1,6 +1,6 @@
 import { FaStar, FaStarHalf} from "react-icons/fa"
 import classes from "./css/rating.module.css"
-import { useEffect, useRef, useState, memo } from "react"
+import { useState, memo } from "react"
 import axios from "axios";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAppContext } from "../context/appContext";
@@ -43,7 +43,6 @@ const Rating = ({avgRating, isInteractable, gameId, userRating, size}) => {
     },
     onSettled: () => {
       queryClient.invalidateQueries({queryKey: ["users", user?.username, "games", gameId]});
-      
     }
   });
 

@@ -1,9 +1,9 @@
 .container{
   display: flex;
-  gap: 2rem;
-  margin: 120px 160px;
+  justify-content: center;
+  gap: 3rem;
+  margin: 120px 50px;
 }
-
 
 .cover{
   position: sticky;
@@ -49,4 +49,17 @@
   align-items: center;
   gap: 0.5rem;
   margin-left: auto;
+}
+
+.loader{
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.genres > a {
+  text-decoration: underline;
+  color: var(--textLight);
 }

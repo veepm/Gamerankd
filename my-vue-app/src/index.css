@@ -9,6 +9,8 @@
   margin: 0;
   padding: 0;
   font-family: "Inter", sans-serif;
+  font-weight: 400;
+  line-height: calc(1em + 0.5rem);
 }
 
 :root{
@@ -16,8 +18,12 @@
   --background: #01011e;
   /* --text: #fff7d6; */
   --text: #FFFFF0;
+  --textLight: rgba(255, 255, 240, 0.8);
   --primary: #00c7c4;
+  --secondary:#00e6a0;
   --accent:#4147f1;
+  --error:red;
+  --success:green;
   --light: rgb(207, 230, 249);
 
   /* fonts */
@@ -28,8 +34,17 @@
 
 body{
  background-color: var(--background); 
- line-height: 1.5rem;
  color: var(--text);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6{
+  letter-spacing: -0.05em;
+  font-weight: 700;
 }
 
 label{
@@ -52,22 +67,28 @@ button{
 
 .navbar{
   position: fixed;
-  background: var(--accent);
+  background: var(--background);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   left: 0;
   top: 0;
   right: 0;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
   height: 3rem;
   z-index: 1000;
-  justify-content: space-between;
 }
 
-.loading{
-  margin-top: 50vh;
-  margin-left: 50vw;
+.navbar > div {
+  display: flex;
+  gap: 1rem;
+}
+
+.navbar a:hover{
+  text-decoration: underline;
 }
 
 .active {
-  color: red;
+  text-decoration: underline;
 }

@@ -7,6 +7,7 @@ import { PiListBulletsLight, PiListChecksLight } from "react-icons/pi";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAppContext } from "../context/appContext";
 import useUserInfo from "../useUserInfo";
+import PuffLoader from "react-spinners/PuffLoader";
 
 const UserGameInfo = ({gameId}) => {
   const {user} = useAppContext();
@@ -58,7 +59,9 @@ const UserGameInfo = ({gameId}) => {
     }
   });
 
-  if (userInfoQuery.isLoading) return <div>Loading</div>;
+  if (userInfoQuery.isLoading) return <PuffLoader color="white" size="1.75rem"/>;
+
+  if (!user) return <div>Login</div>;
       
   return (
     <div className={classes.container}>
