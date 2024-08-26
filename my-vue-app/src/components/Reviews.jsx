@@ -1,15 +1,13 @@
 import { useState, memo, useEffect } from "react";
 import classes from "./css/reviews.module.css";
-import Rating from "./Rating";
 import { IoAdd } from "react-icons/io5";
 import { MdEdit, MdDelete } from "react-icons/md";
 import axios from "axios";
 import { useAppContext } from "../context/appContext";
-import { Link } from "react-router-dom";
 import { useMutation, useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import useUserInfo from "../useUserInfo";
 import PuffLoader from "react-spinners/PuffLoader";
-import ProfilePic from "./ProfilePic";
+import SingleReview from "./SingleReview";
 
 const Reviews = ({gameId}) => {
   const {user} = useAppContext();
@@ -82,7 +80,7 @@ const Reviews = ({gameId}) => {
   return (
     <div className={classes.container}>
       <header>
-        <h2>Reviews</h2>
+        <h2>{reviewsQuery?.data?.pages[0].review_count} Reviews</h2>
         <div className={classes.reviewActions}>
           { userInfoQuery?.data?.review_text ? (
             <>
@@ -133,27 +131,7 @@ const GameReviews = memo(({pages}) => {
   return (
     pages[0].review_count > 0 ? (
       pages.map((page)=>{
-        return (
-          page.reviews.map((review)=>{
-            return (
-              <div key={review.review_id} className={classes.reviewContainer}>
-                <header>
-                  <div>
-                    <Link to={`/users/${review.username}`}>
-                      <ProfilePic username={review.username} size="2rem" fontSize="1rem"/>
-                      {review.username}
-                    </Link>
-                    <Rating avgRating={review.rating} size={"0.75em"}/>
-                  </div>
-                  <div>
-                    <small>{(new Date(review.created_at)).toLocaleDateString("en-UK")}</small>
-                  </div>
-                </header>
-                <p>{review.review_text}</p>
-              </div>
-            )
-          })
-        );
+        return page.reviews.map((review)=> <SingleReview review={review}/>);
       })
     )
     :

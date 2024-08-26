@@ -1,5 +1,5 @@
 import { createBrowserRouter,RouterProvider, ScrollRestoration, Outlet } from "react-router-dom";
-import {Games, Error, Landing, SharedLayout, SingleGame, Register, ProtectedRoute} from "./pages/index";
+import {Games, Error, Landing, SharedLayout, SingleGame, Register, ProtectedRoute, SingleUser} from "./pages/index";
 import "./axios";
 import Users from "./pages/Users";
 
@@ -22,6 +22,7 @@ const router = createBrowserRouter([
           {path: "games", element: <Games/>},
           {path: "games/:gameId", element: <SingleGame/>},
           {path: "users", element: <Users/>},
+          {path: "users/:username", element: <SingleUser/>},
           {path: "/users/:username/lists/:listName", element: <Games/>}
         ]
       }

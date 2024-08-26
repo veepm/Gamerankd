@@ -1,7 +1,7 @@
 import { Link, useParams } from "react-router-dom"
-import {GameDetails, Rating, Reviews, UserGameInfo} from "../components/index"
+import {Rating, Reviews, UserGameInfo} from "../components/index"
 import classes from "./css/singleGame.module.css";
-import { memo } from "react";
+import { memo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import PuffLoader from "react-spinners/PuffLoader";
@@ -10,7 +10,7 @@ const SingleGame = () => {
   const {gameId} = useParams();
 
   const gameInfoQuery = useQuery({
-    queryKey: ["games", gameId],
+    queryKey: ["games", {id:gameId}],
     queryFn: async () => {
       const {data} = await axios.get(`/games?fields=name,cover.url,summary,genres.name,first_release_date,involved_companies.publisher,involved_companies.developer,involved_companies.company.name,platforms.name&coverSize=cover_big_2x&id[]=${gameId}`);
       return data;
@@ -25,12 +25,10 @@ const SingleGame = () => {
 
   return (
     <div className={classes.container}>
-      <div>
         <div className={classes.cover}>
           <img src={game.cover}/>
           <UserGameInfo gameId={gameId}/>
         </div>
-      </div>
       <div className={classes.besideCover}>
         <div className={classes.info}>
           <section>
@@ -49,7 +47,7 @@ const SingleGame = () => {
           </section>
           <GameDetails developers={game.developers} publishers={game.publishers} platforms={game.platforms}/>
         </div>
-        <Reviews gameId={gameId} userReviewed={"ree"} userRating={5} setUserRating={()=>{}}/>
+        <Reviews gameId={gameId}/>
       </div>
     </div>
   )
@@ -67,6 +65,31 @@ const GameGenres = memo(({genres}) => {
                 {genre.name}
               </Link>
       })}
+    </div>
+  )
+});
+
+const GameDetails = memo((props) => {
+  const [selectedTab, setSelectedTab] = useState("developers");
+
+  return (
+    <div className={classes.details}>
+      <header>
+        <button onClick={()=>setSelectedTab("developers")}>
+          Developers
+        </button>
+        <button onClick={()=>setSelectedTab("publishers")}>
+          Publishers
+        </button>
+        <button onClick={()=>setSelectedTab("platforms")}>
+          Platforms
+        </button>
+      </header>
+      <div>
+        {props[selectedTab]?.map((info => {
+          return <div key={info.id}>{info.name}</div>;
+        }))}
+      </div>
     </div>
   )
 });

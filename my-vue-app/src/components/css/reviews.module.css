@@ -69,30 +69,6 @@
   border-top-right-radius: var(--border-radius);
 }
 
-.reviewContainer{
-  border-bottom: 0.5px solid;
-  max-width: 60ch;
-}
-
-.reviewContainer > header{
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 0.5px solid;
-  padding: 0.25em 0;
-}
-
-.reviewContainer > header > div{
-  display: flex;
-  align-items: center;
-  gap: 0.5em;
-}
-
-.reviewContainer > p{
-  padding-bottom: 0.5em;
-  padding-top: 0.5em;
-}
-
 .loader{
   max-width: 100%;
   display: flex;

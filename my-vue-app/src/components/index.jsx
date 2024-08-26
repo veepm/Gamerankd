@@ -8,9 +8,9 @@ import Reviews from "./Reviews";
 import UserGameInfo from "./UserGameInfo";
 import Select from "./Select";
 import GenresFilter from "./GenresFilter";
-import GameDetails from "./GameDetails";
 import UsersContainer from "./UsersContainer";
 import ProfilePic from "./ProfilePic";
+import SingleReview from "./SingleReview";
 
 export {
   GamesContainer,
@@ -23,7 +23,7 @@ export {
   UserGameInfo,
   Select,
   GenresFilter,
-  GameDetails,
   UsersContainer,
-  ProfilePic
+  ProfilePic,
+  SingleReview
 }

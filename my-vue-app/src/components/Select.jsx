@@ -2,7 +2,7 @@ import { useState } from "react";
 import {IoChevronDownSharp} from "react-icons/io5";
 import classes from "./css/select.module.css";
 
-const Select = ({options, value, label, onChange, multiselect}) => {
+const Select = ({options, value, onChange, multiselect, children, background, color, width}) => {
   const [isActive,setIsActive] = useState(false);
 
   const handleClick = (option) => {
@@ -28,8 +28,8 @@ const Select = ({options, value, label, onChange, multiselect}) => {
   }
 
   return (
-    <div className={classes.container} onClick={()=>setIsActive(!isActive)} onBlur={()=>setIsActive(false)} tabIndex={0}>
-      <div className={classes.label}>{label || value.label}</div>
+    <div className={classes.container} onClick={()=>setIsActive(!isActive)} onBlur={()=>setIsActive(false)} tabIndex={0} style={{background, color, width}}>
+      <div className={classes.label}>{children || value.label}</div>
       <IoChevronDownSharp/>
       { isActive && (
         <div className={classes.dropdownContent}>
@@ -39,7 +39,7 @@ const Select = ({options, value, label, onChange, multiselect}) => {
               {option.options.map((o) =>
                 <div
                   key={o.value} 
-                  className={`${classes.option} ${isSelected(o) && classes.selected}`} 
+                  className={`${classes.option} ${isSelected(o) ? classes.selected : ""}`} 
                   onClick={()=>handleClick(o)}
                 >
                   {o.label}

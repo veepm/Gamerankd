@@ -1,5 +1,5 @@
 .container{
-  background: var(--secondary);
+  background: var(--primary);
   color: black;
   display: flex;
   align-items: center;
@@ -7,9 +7,10 @@
   position: relative;
   border-radius: var(--border-radius);
   padding: 0.5em;
-  min-width: 7em;
+  width: 7em;
   height: 2rem;
   user-select: none;
+  cursor: pointer;
 }
 
 .dropdownContent{

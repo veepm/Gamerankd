@@ -8,13 +8,13 @@
 .cover{
   position: sticky;
   top: 5rem;
+  height: 100%;
 }
 
 .cover img{
   border-radius: var(--border-radius);
-  border: 1.2px solid var(--light);
+  border: 1px solid rgba(255, 255, 255, 0.5);
   max-width: 20rem;
-  height: auto;
 }
 
 .besideCover{
@@ -25,13 +25,15 @@
 
 .info{
   display: flex;
-  gap: 5rem;
-  margin-bottom: 20rem;
+  gap: 3rem;
+  margin-bottom: 10rem;
 }
 
 .info > section > p{
   max-width: 60ch;
   margin-top: 1rem;
+  height: calc(var(--line-height) * 16);
+  overflow: hidden;
 }
 
 .header{
@@ -62,4 +64,16 @@
 .genres > a {
   text-decoration: underline;
   color: var(--textLight);
+}
+
+.details{
+
+}
+
+.details button{
+  background: var(--accent);
+  border: none;
+  border-right: 1px solid;
+  padding: 0.5em;
+  cursor: pointer;
 }

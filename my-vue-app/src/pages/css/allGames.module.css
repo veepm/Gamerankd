@@ -9,8 +9,10 @@
 .container > header{
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
   width: 75%;
   margin-bottom: 1rem;
+  gap: 0.5rem;
 }
 
 .filters{

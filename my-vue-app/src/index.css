@@ -10,31 +10,36 @@
   padding: 0;
   font-family: "Inter", sans-serif;
   font-weight: 400;
-  line-height: calc(1em + 0.5rem);
+  line-height: var(--line-height);
 }
 
 :root{
   /* colors */
-  --background: #01011e;
-  /* --text: #fff7d6; */
-  --text: #FFFFF0;
+  /* --text: #FFFFF0; */
+  --neutral-100: #FBFBFF;
+  /* --neutral-900: #01011e; */
+  --neutral-900: #01011E;
   --textLight: rgba(255, 255, 240, 0.8);
-  --primary: #00c7c4;
+  --primary: #15E0B1;
+  --primary-100: #EAFBF7;
+  --primary-900: #014031;
+  /* --primary: #00c7c4; */
   --secondary:#00e6a0;
   --accent:#4147f1;
-  --error:red;
-  --success:green;
+  --error: hsl(2,80,50);
+  --success: hsl(120,80,50);
   --light: rgb(207, 230, 249);
 
   /* fonts */
   
+  --line-height: calc(1em + 0.5rem);
 
   --border-radius: 0.25rem;
 }
 
 body{
- background-color: var(--background); 
- color: var(--text);
+ background-color: var(--neutral-900); 
+ color: var(--neutral-100);
 }
 
 h1,
@@ -67,26 +72,36 @@ button{
 
 .navbar{
   position: fixed;
-  background: var(--background);
+  background: var(--neutral-900);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   left: 0;
   top: 0;
   right: 0;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 2rem;
-  height: 3rem;
+  justify-content: center;
+  height: 3.2rem;
   z-index: 1000;
 }
-
 .navbar > div {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 75%;
+}
+.navbar > div > div {
+  display: flex;
+  align-items: center;
   gap: 1rem;
 }
 
 .navbar a:hover{
   text-decoration: underline;
+}
+
+.icon{
+ font-size: 40px;
+ display: block;
+ color: var(--primary);
 }
 
 .active {

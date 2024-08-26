@@ -1,4 +1,14 @@
-.container h3{
+.contaner{
+  width: 10rem;
+}
+
+.user{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.user h3{
   display: inline;
   margin-right: 1rem;
 }

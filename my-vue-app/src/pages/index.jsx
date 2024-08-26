@@ -5,6 +5,7 @@ import SharedLayout from "./SharedLayout";
 import SingleGame from "./SingleGame";
 import Register from "./Register";
 import ProtectedRoute from "./ProtectedRoute";
+import SingleUser from "./SingleUser";
 
 export {
   Games,
@@ -13,5 +14,6 @@ export {
   SharedLayout,
   SingleGame,
   Register,
-  ProtectedRoute
+  ProtectedRoute,
+  SingleUser
 }

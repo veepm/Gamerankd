@@ -1,0 +1,16 @@
+.container{
+  margin-top: 5rem;
+  margin-left: 2.5rem;
+}
+
+.list{
+  margin-bottom: 2rem;
+}
+
+.option{
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  text-transform: capitalize;
+  margin-bottom: 0.5em;
+}
