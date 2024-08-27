@@ -36,3 +36,25 @@ CREATE TABLE list_games(
   created_at TIMESTAMP DEFAULT NOW(),
   PRIMARY KEY (list_id, game_id)
 );
+
+CREATE OR REPLACE FUNCTION update_lists_updated_at_fun()
+RETURNS TRIGGER AS $$
+BEGIN 
+UPDATE lists SET updated_at = NOW() WHERE list_id = NEW.list_id;
+RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER update_lists_updated_at_trg AFTER INSERT ON list_games
+FOR EACH ROW EXECUTE FUNCTION update_lists_updated_at_fun();
+
+CREATE OR REPLACE FUNCTION update_reviews_updated_at_fun()
+RETURNS TRIGGER AS $$
+BEGIN 
+NEW.updated_at = NOW();
+RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER update_reviews_updated_at_trg BEFORE UPDATE ON reviews
+FOR EACH ROW EXECUTE FUNCTION update_reviews_updated_at_fun();

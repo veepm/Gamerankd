@@ -26,7 +26,7 @@ export const createList = async (req,res) => {
 
   await pool.query(query,[name,userId]);
 
-  res.send()
+  res.status(StatusCodes.CREATED).send();
 };
 
 export const deleteList = async (req,res) => {
@@ -49,31 +49,9 @@ export const addListGame = async (req,res) => {
   const {listName} = req.params;
   const {userId} = req.user;
 
-  const client = await pool.connect();
+  const query = "INSERT INTO list_games (game_id,list_id) VALUES ($1, (SELECT list_id FROM lists WHERE list_name=$2 AND user_id=$3));"
 
-  // transaction to create list first if it doesn't exist
-  try {
-    await client.query("BEGIN");
-
-    const validateQuery = "SELECT * FROM lists WHERE list_name = $1 AND user_id = $2;";
-    const list = await client.query(validateQuery,[listName,userId]);
-
-    let newList;
-    if (list.rowCount === 0){
-      const createListQuery = "INSERT INTO lists (list_name,user_id) VALUES ($1,$2) RETURNING *;";
-      newList = await client.query(createListQuery,[listName,userId]);
-    }
-
-    const insertGame = "INSERT INTO list_games (game_id,list_id) VALUES ($1,$2)"
-    await client.query(insertGame,[gameId, list.rows[0]?.list_id || newList.rows[0]?.list_id]);
-
-    await client.query("COMMIT");
-  } catch (error) {
-    await client.query("ROLLBACK");
-    throw error;
-  } finally {
-    client.release();
-  }
+  await pool.query(query,[gameId,listName,userId]);
 
   res.status(StatusCodes.CREATED).send();
 };
@@ -108,7 +86,7 @@ export const getUserLists = async (req,res) => {
   const {username} = req.params;
 
   const query =  `
-    SELECT l.*, ARRAY_AGG(game_id) FILTER (WHERE game_id IS NOT NULL)  AS games
+    SELECT l.*, COALESCE(ARRAY_AGG(game_id) FILTER (WHERE game_id IS NOT NULL), '{}')  AS games
     FROM lists l
     LEFT JOIN list_games lg ON l.list_id = lg.list_id
     LEFT JOIN users u ON l.user_id = u.user_id
@@ -118,14 +96,14 @@ export const getUserLists = async (req,res) => {
 
   const lists = await pool.query(query,[username]);
 
-  res.status(StatusCodes.OK).send(lists.rows);
+  res.status(StatusCodes.OK).send({lists:lists.rows});
 };
 
 export const getUserList = async (req,res) => {
   const {username, listName} = req.params;
 
   const query = `
-    SELECT l.*, ARRAY_AGG(game_id) FILTER (WHERE game_id IS NOT NULL)  AS games
+    SELECT l.*, COALESCE(ARRAY_AGG(game_id) FILTER (WHERE game_id IS NOT NULL), '{}') AS games
     FROM lists l
     LEFT JOIN list_games lg ON l.list_id = lg.list_id
     LEFT JOIN users u ON l.user_id = u.user_id
@@ -135,5 +113,5 @@ export const getUserList = async (req,res) => {
 
   const result = await pool.query(query,[username,listName]);
 
-  res.status(StatusCodes.OK).send({list:result.rows[0]})
+  res.status(StatusCodes.OK).send(result.rows[0]);
 }

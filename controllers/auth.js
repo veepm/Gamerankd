@@ -14,10 +14,27 @@ export const register = async (req,res)=>{
   
   const salt = await bcrypt.genSalt(10);
   const hashed = await bcrypt.hash(password,salt);
-  const query = "INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3) RETURNING *;";
 
-  const result = await pool.query(query,[username,email,hashed]);
-  const user = result.rows[0];
+  const client = await pool.connect();
+  let user;
+
+  // transaction to create wishlist and played list while regsitering user
+  try {
+    await client.query("BEGIN");
+
+    const userQuery = "INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3) RETURNING user_id, username, email;";
+    const userResult = await client.query(userQuery,[username,email,hashed]); 
+    user = userResult.rows[0];
+
+    const createListQuery = "INSERT INTO lists (list_name,user_id) VALUES ('wishlist',$1), ('played',$1);";
+    await client.query(createListQuery,[user.user_id]);
+
+    await client.query("COMMIT");
+  } catch (error) {
+    await client.query("ROLLBACK");
+  } finally {
+    client.release();
+  }
 
   const {accessToken, refreshToken} = await generateTokens(user.user_id);
 
@@ -62,7 +79,7 @@ export const login = async (req,res) => {
 export const logout = async (req,res) => {
   const {userId} = req.user;
   
-  const query = "UPDATE users SET refresh_token = NULL WHERE user_id=$1;"
+  const query = "UPDATE users SET refresh_token = NULL WHERE user_id=$1;";
 
   await pool.query(query,[userId]);
 
