@@ -2,10 +2,10 @@
   max-width: 60ch;
 }
 
-.container > header{
+.header{
   display: flex;
-  justify-content: space-between;
   margin-bottom: 1rem;
+  gap: 1rem;
 }
 
 .container > button{

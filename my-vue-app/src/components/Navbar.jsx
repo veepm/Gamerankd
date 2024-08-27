@@ -1,11 +1,39 @@
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
 import { useAppContext } from "../context/appContext";
-import { TbSquareLetterGFilled,TbHexagonLetterGFilled } from "react-icons/tb";
+import { memo } from "react";
+import { TbSquareLetterGFilled, TbHexagonLetterGFilled } from "react-icons/tb";
 import ProfilePic from "./ProfilePic";
 import Select from "./Select";
 
 const Navbar = () => {
   const { user, logoutUser } = useAppContext();
+  const navigate = useNavigate();
+
+  const options = [
+    {
+      options: [
+        {
+          label: "My Page",
+          value: () => navigate(`/users/${user.username}`),
+        },
+      ],
+    },
+    {
+      options: [
+        {
+          label: "Sign Out",
+          value: () => {
+            navigate("/");
+            logoutUser();
+          },
+        },
+      ],
+    },
+  ];
+
+  const handleChange = (option) => {
+    option.value();
+  };
 
   return (
     <nav className="navbar">
@@ -23,20 +51,18 @@ const Navbar = () => {
           {!user ? (
             <NavLink to="/register">Sign Up</NavLink>
           ) : (
-            <>
-              <NavLink to={`/users/${user.username}/lists/wishlist`}>
-                Wishlist
-              </NavLink>
-              <NavLink to={`/users/${user.username}/lists/played`}>
-                Played
-              </NavLink>
-              <Link to="/" onClick={logoutUser}>
-                Sign Out
-              </Link>
-              <Select options={[{options:[{label:"Any Genre",value:"any"}]}]} onChange={(o)=>console.log(o)} color={"inherit"} background={"none"} width="75px">
-                <ProfilePic username={user.username} size="30px"/>
-              </Select>
-            </>
+            <Select
+              options={options}
+              onChange={handleChange}
+              color={"inherit"}
+              background={"none"}
+              width="70px"
+            >
+              <div>
+                <ProfilePic username={user.username} size="30px" />
+                {/* {user.username} */}
+              </div>
+            </Select>
           )}
         </div>
       </div>
@@ -44,4 +70,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default memo(Navbar);

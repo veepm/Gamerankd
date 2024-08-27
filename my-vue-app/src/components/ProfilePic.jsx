@@ -28,9 +28,9 @@ const HSLtoString = (hsl) => {
 
 const ProfilePic = ({username, size="50px", fontSize="16px"}) => {
   return (
-    <div className={classes.pic} style={{background:HSLtoString(generateHSL(username)), width:size, height:size, lineHeight:size, fontSize}}>
+    <span className={classes.pic} style={{background:HSLtoString(generateHSL(username)), width:size, height:size, lineHeight:size, fontSize}}>
       {username.charAt(0).toUpperCase()}
-    </div>
+    </span>
   )
 };
 

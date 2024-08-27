@@ -2,7 +2,8 @@
   display: flex;
   justify-content: center;
   gap: 3rem;
-  margin: 120px 50px;
+  width: 75%;
+  margin: 5rem auto;
 }
 
 .cover{
@@ -29,7 +30,7 @@
   margin-bottom: 10rem;
 }
 
-.info > section > p{
+.summary{
   max-width: 60ch;
   margin-top: 1rem;
   height: calc(var(--line-height) * 16);

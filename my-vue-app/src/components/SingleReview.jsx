@@ -47,7 +47,7 @@ const SingleReview = memo(({review, showGame}) => {
             )}
             <Rating avgRating={review.rating} size={"0.75em"}/>
           </div>
-          <small>{(new Date(review.created_at)).toLocaleDateString("en-UK")}</small>
+          <small>{review.created_at === review.updated_at ? (new Date(review.created_at)).toLocaleDateString("en-UK") : "Edited " + (new Date(review.updated_at)).toLocaleDateString("en-UK")}</small>
         </header>
         <p>{review.review_text}</p>
       </div>

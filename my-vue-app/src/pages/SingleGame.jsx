@@ -10,7 +10,7 @@ const SingleGame = () => {
   const {gameId} = useParams();
 
   const gameInfoQuery = useQuery({
-    queryKey: ["games", {id:gameId}],
+    queryKey: ["games", gameId],
     queryFn: async () => {
       const {data} = await axios.get(`/games?fields=name,cover.url,summary,genres.name,first_release_date,involved_companies.publisher,involved_companies.developer,involved_companies.company.name,platforms.name&coverSize=cover_big_2x&id[]=${gameId}`);
       return data;
@@ -43,7 +43,7 @@ const SingleGame = () => {
               </header>
               <GameGenres genres={game.genres}/>
             </div>
-            <p>{game.summary}</p>
+            <p className={classes.summary}>{game.summary}</p>
           </section>
           <GameDetails developers={game.developers} publishers={game.publishers} platforms={game.platforms}/>
         </div>

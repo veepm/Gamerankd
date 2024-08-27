@@ -32,7 +32,7 @@ const Games = () => {
     }
   });
 
-  let url = `/games?coverSize=cover_big_2x&limit=48&page=${page}&sortBy=${sortBy}&fields=cover.url,name`;
+  let url = `/games?coverSize=cover_big&limit=48&page=${page}&sortBy=${sortBy}&fields=cover.url,name`;
 
   if (search){
     url += `&search=${search}`;
