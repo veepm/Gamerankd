@@ -1,45 +1,66 @@
-@import url('https://fonts.googleapis.com/css2?family=Mukta:wght@200;300;400;500;600;700;800&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
+@import url("https://api.fontshare.com/v2/css?f[]=satoshi@1,2&display=swap");
+@import url("https://api.fontshare.com/v2/css?f[]=general-sans@1&display=swap");
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
 * {
   margin: 0;
   padding: 0;
-  font-family: "Inter", sans-serif;
+  font-family: "General Sans", sans-serif;
   font-weight: 400;
   line-height: var(--line-height);
 }
 
-:root{
+:root {
   /* colors */
   /* --text: #FFFFF0; */
-  --neutral-100: #FBFBFF;
-  /* --neutral-900: #01011e; */
-  --neutral-900: #01011E;
+  /* --neutral-100: #fbfbff; */
+  --neutral-100: #fffff0;
+  --neutral-300: #9999b0;
+  --neutral-500: #4a4a6c;
+  --neutral-700: #292953;
+  /* --neutral-900: #121212; */
+  --neutral-900: #020617;
   --textLight: rgba(255, 255, 240, 0.8);
-  --primary: #15E0B1;
-  --primary-100: #EAFBF7;
-  --primary-900: #014031;
+  --primary-400: #2dd4bf;
+  --primary-700: #0f766e;
   /* --primary: #00c7c4; */
-  --secondary:#00e6a0;
-  --accent:#4147f1;
-  --error: hsl(2,80,50);
-  --success: hsl(120,80,50);
+  --secondary: #00e6a0;
+  --accent: #d946ef;
+  /* --accent: #4147f1; */
+  --error: #ef4444;
+  --success: hsl(120, 80%, 50%);
   --light: rgb(207, 230, 249);
 
   /* fonts */
-  
+  --size-xxs: 0.5rem;
+  --size-xs: 0.75rem;
+  --size-sm: 0.875rem;
+  --size-base: 1rem;
+  --size-lg: 1.125rem;
+  --size-xl: 1.25rem;
+  --size-2xl: 1.5rem;
+  --size-3xl: 1.875rem;
+  --size-4xl: 2.25rem;
+  --size-5xl: 3rem;
+  --size-6xl: 3.75rem;
+  --size-7xl: 4.5rem;
+  --size-8xl: 6rem;
+  --size-9xl: 8rem;
+  --size-10xl: 10rem;
   --line-height: calc(1em + 0.5rem);
 
   --border-radius: 0.25rem;
 }
 
-body{
- background-color: var(--neutral-900); 
- color: var(--neutral-100);
+body {
+  background-color: var(--neutral-900);
+  color: var(--neutral-100);
 }
 
 h1,
@@ -47,30 +68,31 @@ h2,
 h3,
 h4,
 h5,
-h6{
-  letter-spacing: -0.05em;
+h6 {
+  letter-spacing: -0.03em;
   font-weight: 700;
 }
 
-label{
+label {
   text-transform: capitalize;
 }
 
-a{
+a {
   text-decoration: none;
   color: var(--text);
 }
 
-button{
+button {
   background: none;
   border: none;
   cursor: pointer;
   color: inherit;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
 }
 
-.navbar{
+.navbar {
   position: fixed;
   background: var(--neutral-900);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -82,28 +104,45 @@ button{
   height: 3.5rem;
   z-index: 1000;
 }
+
 .navbar > div {
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 75%;
 }
-.navbar > div > div {
+.options {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 2rem;
 }
 
-.navbar a:hover{
-  text-decoration: underline;
+.options a {
+  transition: 0.3s;
 }
 
-.icon{
- font-size: 40px;
- display: block;
- color: var(--primary);
+.options a:hover {
+  opacity: 0.5;
+}
+
+.icon {
+  font-size: 2.5rem;
+  display: block;
+  color: var(--primary-400);
 }
 
 .active {
-  text-decoration: underline;
+  /* text-decoration: underline; */
+}
+
+.user {
+  color: var(--neutral-100);
+  background: none;
+  width: 4.5rem;
+}
+
+.profilePic {
+  width: 2rem;
+  height: 2rem;
+  line-height: 2rem;
 }

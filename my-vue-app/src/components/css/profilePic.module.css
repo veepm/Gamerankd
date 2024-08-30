@@ -1,4 +1,8 @@
 .pic{
+  width: 3rem;
+  height: 3rem;
+  line-height: 3rem;
+  font-size: 1rem;
   color: black;
   border-radius: 50%;
   text-align: center;

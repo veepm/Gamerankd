@@ -1,8 +1,7 @@
-import { useNavigate } from "react-router-dom";
 import classes from "./css/gamesContainer.module.css";
+import Game from "./Game";
 
 const GamesContainer = ({ gamesQuery, gameCount }) => {
-  const navigate = useNavigate();
   return (
     <div className={classes.gamesContainer}>
       {gamesQuery?.isLoading
@@ -10,27 +9,9 @@ const GamesContainer = ({ gamesQuery, gameCount }) => {
             return <div key={i} className={classes.placeholder}></div>;
           })
         : gamesQuery?.isSuccess &&
-          gamesQuery.data.games.map((game, i) => {
-            return (
-              <div
-                key={game.id}
-                className={classes.game}
-                onClick={() => navigate(`/games/${game.id}`)}
-              >
-                <img
-                  title={game.name}
-                  className={classes.cover}
-                  src={game.cover ? `https:${game.cover}` : "../vite.svg"}
-                  loading="lazy"
-                />
-                <img
-                  className={classes.background}
-                  src={game.cover ? `https:${game.cover}` : "../vite.svg"}
-                  loading="lazy"
-                />
-              </div>
-            );
-          })}
+          gamesQuery.data.games.map((game, i) => (
+            <Game key={game.id} game={game} />
+          ))}
     </div>
   );
 };

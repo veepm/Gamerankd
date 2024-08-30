@@ -1,4 +1,4 @@
-.reviewContainer{
+.reviewContainer {
   display: flex;
   margin-bottom: 1.5rem;
   gap: 0.5em;
@@ -16,14 +16,17 @@
   height: fit-content;
 }
 
-.reviewContainer > div > header{
+.reviewContainer > div > header {
   display: flex;
   justify-content: space-between;
 }
 
-.reviewContainer > div > header > div{
+.reviewContainer > div > header > div {
   display: flex;
   align-items: center;
   gap: 0.5em;
 }
 
+.cover {
+  max-width: 7rem;
+}

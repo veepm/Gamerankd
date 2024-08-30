@@ -4,10 +4,11 @@
   align-items: center;
 }
 
-.container button{
+.action{
   font-size: 1.75rem;
+  transition: 0.3s;
 }
 
-.container button:hover{
+.action:hover{
   opacity: 0.7;
 }

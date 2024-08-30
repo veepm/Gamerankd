@@ -1,16 +1,29 @@
-.container{
-  margin-top: 5rem;
-  margin-left: 2.5rem;
+.container {
+  width: 75%;
+  margin: 5rem auto;
 }
 
-.list{
+.user{
+  display: flex;
+  align-items: center;
   margin-bottom: 2rem;
+  gap: 1rem;
 }
 
-.option{
+.list {
+  margin-bottom: 1rem;
+}
+
+.option {
   display: flex;
   align-items: center;
   gap: 0.5em;
   text-transform: capitalize;
   margin-bottom: 0.5em;
+  padding-left: 0.5em;
+  border-left: 2px solid var(--primary-400);
+  width: fit-content;
+}
+
+.reviews {
 }

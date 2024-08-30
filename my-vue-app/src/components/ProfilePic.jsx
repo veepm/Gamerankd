@@ -26,12 +26,17 @@ const HSLtoString = (hsl) => {
   return `hsl(${hsl[0]}, ${hsl[1]}%, ${hsl[2]}%)`;
 };
 
-const ProfilePic = ({username, size="50px", fontSize="16px"}) => {
+const ProfilePic = ({ username, className }) => {
   return (
-    <span className={classes.pic} style={{background:HSLtoString(generateHSL(username)), width:size, height:size, lineHeight:size, fontSize}}>
+    <div
+      className={`${classes.pic} ${className}`}
+      style={{
+        background: HSLtoString(generateHSL(username)),
+      }}
+    >
       {username.charAt(0).toUpperCase()}
-    </span>
-  )
+    </div>
+  );
 };
 
 export default memo(ProfilePic);

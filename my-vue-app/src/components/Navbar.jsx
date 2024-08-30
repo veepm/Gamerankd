@@ -41,7 +41,7 @@ const Navbar = () => {
         <NavLink to="/" title="Home">
           <TbHexagonLetterGFilled className="icon" />
         </NavLink>
-        <div>
+        <div className="options">
           <NavLink to="/games" end>
             Games
           </NavLink>
@@ -54,12 +54,10 @@ const Navbar = () => {
             <Select
               options={options}
               onChange={handleChange}
-              color={"inherit"}
-              background={"none"}
-              width="70px"
+              className={"user"}
             >
               <div>
-                <ProfilePic username={user.username} size="30px" />
+                <ProfilePic username={user.username} className={"profilePic"}/>
                 {/* {user.username} */}
               </div>
             </Select>

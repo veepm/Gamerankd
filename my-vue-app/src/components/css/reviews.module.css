@@ -1,46 +1,52 @@
-.container{
+.container {
   max-width: 60ch;
+  display: flex;
+  flex-direction: column;
 }
 
-.header{
+.header {
   display: flex;
-  margin-bottom: 1rem;
   gap: 1rem;
 }
 
-.container > button{
-  background: var(--accent);
+.container > button {
+  background: var(--primary-400);
+  color: var(--neutral-900);
   border-radius: var(--border-radius);
   padding: 0.5em;
+  width: 5em;
+  margin-left: auto;
 }
 
-.reviewActions{
+.reviewActions {
   display: flex;
   gap: 1rem;
+  margin-right: auto;
 }
 
-.reviewActions > button{
+.reviewActions > button {
   font-size: 1.2rem;
 }
 
-.add{
+.add {
   transition: 0.5s ease-in;
   font-size: 1.7rem;
 }
-.add.rotated{
+.add.rotated {
   transform: rotate(225deg);
 }
 
-.inputContainer{
+.inputContainer {
   visibility: hidden;
   max-height: 0;
-  transition: 1s;
+  transition: margin 0.5s, max-height 1s, visibility 1s;
   overflow: hidden;
 }
 
-.inputContainer.active{
+.inputContainer.active {
   visibility: visible;
   max-height: 15rem;
+  margin: 1rem 0;
 }
 
 .inputContainer > div {
@@ -50,14 +56,19 @@
   border-bottom-right-radius: var(--border-radius);
 }
 
-.inputContainer button{
-  background: var(--accent);
-  margin-top: 0.5em;
-  padding: 0.5em;
-  border-radius: var(--border-radius);
+.inputContainer > p {
+  color: var(--error);
 }
 
-.reviewInput{
+.inputContainer button {
+  background: var(--primary-400);
+  margin: 0.5em;
+  padding: 0.5em;
+  border-radius: var(--border-radius);
+  color: var(--neutral-900);
+}
+
+.reviewInput {
   width: 100%;
   padding: 1em;
   height: 7em;
@@ -69,8 +80,12 @@
   border-top-right-radius: var(--border-radius);
 }
 
-.loader{
+.loader {
   max-width: 100%;
   display: flex;
   justify-content: center;
+}
+
+.sortBy {
+  width: 5rem;
 }

@@ -39,7 +39,7 @@ const GenresFilter = () => {
     setSearchParams(searchParams);
   };
 
-  if (genresQuery.isLoading) return;
+  if (genresQuery.isLoading) return <Select enabled={false}>Genres</Select>;
 
   const genres = genresQuery.data.genres.map((genre) => ({
     options: [{ label: genre.name, value: genre.id }],

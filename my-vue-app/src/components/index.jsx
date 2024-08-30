@@ -11,6 +11,7 @@ import GenresFilter from "./GenresFilter";
 import UsersContainer from "./UsersContainer";
 import ProfilePic from "./ProfilePic";
 import SingleReview from "./SingleReview";
+import Game from "./Game";
 
 export {
   GamesContainer,
@@ -25,5 +26,6 @@ export {
   GenresFilter,
   UsersContainer,
   ProfilePic,
-  SingleReview
-}
+  SingleReview,
+  Game,
+};

@@ -1,33 +1,65 @@
-import { useQuery } from "@tanstack/react-query"
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { PageButton, SearchBar, UsersContainer } from "../components";
+import { PageButton, SearchBar, Sort, UsersContainer } from "../components";
 import { useSearchParams } from "react-router-dom";
 import classes from "./css/users.module.css";
+import { useEffect, useState } from "react";
+
+const options = [
+  {
+    group: "Games Played",
+    options: [
+      { label: "Highest", value: "highest" },
+      { label: "Lowest", value: "lowest" },
+    ],
+  },
+  {
+    group: "Average Rating",
+    options: [
+      { label: "Highest Rated", value: "highestRated" },
+      { label: "Lowest Rated", value: "lowestRated" },
+    ],
+  },
+  {
+    group: "Year Made",
+    options: [
+      { label: "Latest", value: "latest" },
+      { label: "Oldest", value: "oldest" },
+    ],
+  },
+];
 
 const Users = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const search = searchParams.get("search") || "";
   const page = Number(searchParams.get("page")) || 1;
-  const limit = 10;
+  const limit = 9;
 
   const usersQuery = useQuery({
-    queryKey: ["users",{search},{page}],
+    queryKey: ["users", { search }, { page }],
     queryFn: async () => {
-      const {data} = await axios.get(`users?search=${search}&page=${page}&limit=${limit}`);
+      const { data } = await axios.get(
+        `users?search=${search}&page=${page}&limit=${limit}`
+      );
       return data;
-    }
+    },
   });
 
   if (usersQuery.isError) console.log(usersQuery.error);
 
   return (
     <div className={classes.container}>
-      <SearchBar placeholder="Search For Users By Username"/>
+      <header>
+        <SearchBar placeholder="Search For Users By Username" />
+        <Sort options={options} />
+      </header>
       <div className={classes.users}>
-        {usersQuery.isSuccess && <UsersContainer users={usersQuery.data.users}/>}
+        {usersQuery.isSuccess && (
+          <UsersContainer users={usersQuery.data.users} />
+        )}
       </div>
-      <PageButton lastPage={usersQuery.data?.last_page}/>
+      <PageButton totalPages={usersQuery?.data?.total_pages} />
     </div>
-  )
-}
-export default Users
+  );
+};
+export default Users;
