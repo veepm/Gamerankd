@@ -21,6 +21,6 @@ const Sort = ({ options }) => {
     setSearchParams(searchParams, { replace: true });
   };
 
-  return <Select options={options} value={sortBy} onChange={handleChange} />;
+  return <Select options={options} value={sortBy} onChange={handleChange} openOnHover/>;
 };
 export default Sort;

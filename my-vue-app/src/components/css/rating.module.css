@@ -3,15 +3,11 @@
   align-content: center;
 }
 
-.star{
-  color:  #b0b3b8;
+.star, .active{
+  color: var(--yellow);
 }
 
 .star.clickable {
   cursor: pointer;
   transition: all 0.5s;
-}
-
-.star.active{
-  color: #fcba03;
 }

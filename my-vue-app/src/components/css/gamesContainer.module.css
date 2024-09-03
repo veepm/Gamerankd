@@ -8,8 +8,7 @@
 
 .placeholder {
   aspect-ratio: 3/4;
-  background: gray;
-  border: 0.5px solid rgba(255, 255, 255, 0.2);
+  background: var(--dark-10);
   border-radius: var(--border-radius);
 }
 

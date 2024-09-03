@@ -26,6 +26,8 @@
   --neutral-700: #292953;
   /* --neutral-900: #121212; */
   --neutral-900: #020617;
+  --dark-15: rgb(40, 43, 58);
+  --dark-10: rgb(22, 26, 42);
   --textLight: rgba(255, 255, 240, 0.8);
   --primary-400: #2dd4bf;
   --primary-700: #0f766e;
@@ -35,7 +37,7 @@
   /* --accent: #4147f1; */
   --error: #ef4444;
   --success: hsl(120, 80%, 50%);
-  --light: rgb(207, 230, 249);
+  --yellow: #fcba03;
 
   /* fonts */
   --size-xxs: 0.5rem;
@@ -56,6 +58,15 @@
   --line-height: calc(1em + 0.5rem);
 
   --border-radius: 0.25rem;
+
+  /* Toastify override */
+  --toastify-color-dark: var(--dark-15) !important;
+  --toastify-color-progress-dark: var(--accent) !important;
+  --toastify-text-color-dark: var(--neutral-100) !important;
+}
+
+.Toastify__toast {
+  font-family: "General Sans", sans-serif !important;;
 }
 
 body {
@@ -138,7 +149,7 @@ button {
 .user {
   color: var(--neutral-100);
   background: none;
-  width: 4.5rem;
+  padding: 0;
 }
 
 .profilePic {

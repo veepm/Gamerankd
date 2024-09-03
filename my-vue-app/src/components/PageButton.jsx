@@ -3,18 +3,11 @@ import { IoChevronForwardSharp, IoChevronBackSharp } from "react-icons/io5";
 import classes from "./css/pageButton.module.css";
 import { memo, useEffect, useState } from "react";
 
-const PageButton = ({ totalPages }) => {
+const PageButton = ({ totalPages, siblingCount = 1 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const page = Number(searchParams.get("page")) || 1;
-  const [lastPageNum, setLastPageNum] = useState(totalPages);
 
-  useEffect(() => {
-    if (totalPages) {
-      setLastPageNum(totalPages);
-    }
-  }, [totalPages]);
-
-  const pages = Array.from({ length: lastPageNum }, (_, index) => {
+  const pages = Array.from({ length: totalPages }, (_, index) => {
     return index + 1;
   });
 
@@ -25,14 +18,23 @@ const PageButton = ({ totalPages }) => {
 
   return (
     <div className={classes.container}>
-      <button onClick={() => changePage(page - 1)} className={`${classes.btn} ${page === 1 ? classes.disabled : ""}`}>
+      <button
+        onClick={() => changePage(page - 1)}
+        className={`${classes.btn} ${page === 1 ? classes.disabled : ""} ${
+          classes.prev
+        }`}
+      >
         <IoChevronBackSharp /> Previous
       </button>
       {pages.map((pageNum) => {
+        const middle = (4 + 2 * siblingCount + 1) / 2;
         if (
-          (pageNum <= page + 1 && pageNum >= page - 1) ||
+          (page < 1 + middle && pageNum < 1 + (middle + siblingCount)) ||
+          (page > totalPages - middle &&
+            pageNum > totalPages - (siblingCount + middle)) ||
+          (pageNum <= page + siblingCount && pageNum >= page - siblingCount) ||
           pageNum === 1 ||
-          pageNum === lastPageNum
+          pageNum === totalPages
         ) {
           return (
             <button
@@ -44,10 +46,11 @@ const PageButton = ({ totalPages }) => {
               }
               key={pageNum}
             >
+              {/* {Intl.NumberFormat('en-US', {notation:"compact"}).format(pageNum)} */}
               {pageNum}
             </button>
           );
-        } else if (pageNum === 2 || pageNum === lastPageNum - 1) {
+        } else if (pageNum === 2 || pageNum === totalPages - 1) {
           return (
             <div className={classes.dots} key={pageNum}>
               &#x2026;
@@ -55,7 +58,12 @@ const PageButton = ({ totalPages }) => {
           );
         }
       })}
-      <button onClick={() => changePage(page + 1)} className={`${classes.btn} ${page === lastPageNum ? classes.disabled : ""}`}>
+      <button
+        onClick={() => changePage(page + 1)}
+        className={`${classes.btn} ${
+          page === totalPages ? classes.disabled : ""
+        } ${classes.next}`}
+      >
         Next <IoChevronForwardSharp />
       </button>
     </div>

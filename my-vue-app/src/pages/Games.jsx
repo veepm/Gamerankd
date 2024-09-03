@@ -64,26 +64,35 @@ const Games = () => {
     filteredGenres = filteredGenres.filter((genre) => !isNaN(genre));
   }
 
+  let listGamesUrl = `/users/${username}/lists/${listName}?search=${search}&genres=${filteredGenres}`;
+  let gameUrl = `/games?coverSize=cover_big_2x&limit=48&page=${page}&sortBy=${sortBy}&fields=cover.url,name`;
+
+  if (search) {
+    gameUrl += `&search=${search}`;
+  }
+  if (filteredGenres.length > 0) {
+    gameUrl += `&genres=${filteredGenres}`;
+  }
+
   const listGamesQuery = useQuery({
-    queryKey: ["users", username, "lists", listName],
+    queryKey: [
+      "users",
+      username,
+      "lists",
+      listName,
+      { genres: filteredGenres },
+      { search },
+    ],
     enabled: username != null && listName != null, // Only run for lists route
     queryFn: async () => {
-      const { data } = await axios.get(`/users/${username}/lists/${listName}`);
+      const { data } = await axios.get(listGamesUrl);
       return data;
     },
   });
 
-  let url = `/games?coverSize=cover_big&limit=48&page=${page}&sortBy=${sortBy}&fields=cover.url,name`;
-
-  if (search) {
-    url += `&search=${search}`;
-  }
-  if (filteredGenres.length > 0) {
-    url += `&genres=${filteredGenres}`;
-  }
   if (listGamesQuery?.data?.games?.length > 0) {
     listGamesQuery.data.games.forEach((id) => {
-      url += `&id[]=${id}`;
+      gameUrl += `&id[]=${id}`;
     });
   }
 
@@ -99,7 +108,7 @@ const Games = () => {
     enabled:
       (!username && !listName) || listGamesQuery?.data?.games?.length > 0,
     queryFn: async () => {
-      const { data } = await axios.get(url);
+      const { data } = await axios.get(gameUrl);
       return data;
     },
   });
@@ -129,7 +138,10 @@ const Games = () => {
         />
       )}
       {!listGamesQuery.isLoading && (
-        <PageButton totalPages={allGamesQuery.data?.total_pages} />
+        <PageButton
+          totalPages={allGamesQuery.data?.total_pages}
+          siblingCount={2}
+        />
       )}
     </div>
   );

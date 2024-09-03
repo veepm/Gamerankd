@@ -55,10 +55,10 @@ const Navbar = () => {
               options={options}
               onChange={handleChange}
               className={"user"}
+              displayIcon={false}
             >
               <div>
                 <ProfilePic username={user.username} className={"profilePic"}/>
-                {/* {user.username} */}
               </div>
             </Select>
           )}

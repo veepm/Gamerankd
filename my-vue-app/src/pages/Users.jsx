@@ -1,9 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { PageButton, SearchBar, Sort, UsersContainer } from "../components";
 import { useSearchParams } from "react-router-dom";
 import classes from "./css/users.module.css";
-import { useEffect, useState } from "react";
 
 const options = [
   {
@@ -43,6 +42,7 @@ const Users = () => {
       );
       return data;
     },
+    placeholderData: keepPreviousData,
   });
 
   if (usersQuery.isError) console.log(usersQuery.error);

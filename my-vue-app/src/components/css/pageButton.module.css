@@ -8,8 +8,8 @@
   background: var(--primary-400);
   color: var(--neutral-900);
   border-radius: var(--border-radius);
-  height: 2.5rem;
-  min-width: 2.5rem;
+  height: 2rem;
+  min-width: 2rem;
   padding: 0.5em;
   transition: 0.3s;
 }
@@ -20,8 +20,16 @@
   color: var(--neutral-100);
 }
 
+.next,
+.prev {
+  height: 2rem;
+  width: 5rem;
+}
+
 .dots {
-  padding: 0.5em;
+  height: 2rem;
+  min-width: 2rem;
+  text-align: center;
 }
 
 .btn:hover,

@@ -1,10 +1,11 @@
 import { Link, useParams } from "react-router-dom";
-import { Rating, Reviews, UserGameInfo } from "../components/index";
+import { Rating, Reviews, Select, UserGameInfo } from "../components";
 import classes from "./css/singleGame.module.css";
-import { memo, useState } from "react";
+import React, { memo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import PuffLoader from "react-spinners/PuffLoader";
+import { IoChevronDownSharp } from "react-icons/io5";
 
 const SingleGame = () => {
   const { gameId } = useParams();
@@ -13,7 +14,7 @@ const SingleGame = () => {
     queryKey: ["games", gameId],
     queryFn: async () => {
       const { data } = await axios.get(
-        `/games?fields=name,cover.url,summary,genres.name,first_release_date,involved_companies.publisher,involved_companies.developer,involved_companies.company.name,platforms.name&coverSize=cover_big_2x&id[]=${gameId}`
+        `/games/${gameId}?coverSize=cover_big_2x`
       );
       return data;
     },
@@ -22,11 +23,11 @@ const SingleGame = () => {
   if (gameInfoQuery.isLoading)
     return (
       <div className={classes.loader}>
-        <PuffLoader color="white" />
+        <PuffLoader color="var(--primary-400)" />
       </div>
     );
 
-  const game = gameInfoQuery.data?.games[0];
+  const game = gameInfoQuery.data;
 
   const releaseDate = new Date(game.first_release_date * 1000);
 
@@ -45,10 +46,11 @@ const SingleGame = () => {
                   <h1>{game.name}</h1>
                   <h4>{releaseDate?.getFullYear()}</h4>
                 </span>
-                <span className={classes.avgRating}>
-                  <span>{game.avg_rating?.toFixed(1) || "Not Rated"}</span>
-                  <Rating avgRating={game.avg_rating} size="1rem" />
-                </span>
+                <GameRating
+                  avgRating={game.avg_rating}
+                  ratingCount={game.rating_count}
+                  ratingDistribution={game.rating_distribution}
+                />
               </header>
               <GameGenres genres={game.genres} />
             </div>
@@ -65,6 +67,36 @@ const SingleGame = () => {
     </div>
   );
 };
+
+const GameRating = memo(({ avgRating, ratingCount, ratingDistribution }) => {
+  return (
+    <span className={classes.avgRating}>
+      <span>{avgRating?.toFixed(1) || "Not Rated"}</span>
+      <Rating avgRating={avgRating} size="1rem" />
+      <IoChevronDownSharp />
+      <div className={classes.breakdownContainer}>
+        <small>From {ratingCount} user ratings</small>
+        {[...Array(5)].map((_, i) => {
+          const rating = i + 1;
+          const ratio = (ratingDistribution?.[rating] / ratingCount) * 100 || 0;
+          return (
+            <div key={i} className={classes.breakdownRow}>
+              <small>{rating}</small>
+              <div
+                className={classes.breakdownFill}
+                style={{
+                  background: `linear-gradient(to right, var(--yellow) ${ratio}%, transparent ${ratio}%)`,
+                }}
+              >
+                <small>{ratio}%</small>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </span>
+  );
+});
 
 const GameGenres = memo(({ genres }) => {
   return (
@@ -95,19 +127,31 @@ const GameDetails = memo((props) => {
       <header>
         <button
           onClick={() => setSelectedTab("developers")}
-          className={ classes.option + " " + (selectedTab === "developers" ? classes.active : "")}
+          className={
+            classes.option +
+            " " +
+            (selectedTab === "developers" ? classes.active : "")
+          }
         >
           Developers
         </button>
         <button
           onClick={() => setSelectedTab("publishers")}
-          className={classes.option + " " + (selectedTab === "publishers" ? classes.active : "")}
+          className={
+            classes.option +
+            " " +
+            (selectedTab === "publishers" ? classes.active : "")
+          }
         >
           Publishers
         </button>
         <button
           onClick={() => setSelectedTab("platforms")}
-          className={classes.option + " " + (selectedTab === "platforms" ? classes.active : "")}
+          className={
+            classes.option +
+            " " +
+            (selectedTab === "platforms" ? classes.active : "")
+          }
         >
           Platforms
         </button>

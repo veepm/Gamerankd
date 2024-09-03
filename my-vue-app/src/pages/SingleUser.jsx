@@ -57,7 +57,7 @@ const SingleUser = () => {
       </div>
       {gameQueries.map((game, i) => {
         return (
-          <div key={i} className={classes.list}>
+          <div key={userListsQuery.data?.lists[i]?.list_id} className={classes.list}>
             <Link
               className={classes.option}
               to={`lists/${userListsQuery.data?.lists[i]?.list_name}`}

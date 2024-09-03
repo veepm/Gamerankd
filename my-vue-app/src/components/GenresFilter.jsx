@@ -61,6 +61,7 @@ const GenresFilter = () => {
       value={filteredGenres}
       onChange={handleToggle}
       multiselect
+      openOnHover
     >
       Genres
     </Select>

@@ -8,6 +8,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAppContext } from "../context/appContext";
 import useUserInfo from "../useUserInfo";
 import PuffLoader from "react-spinners/PuffLoader";
+import { toast } from "react-toastify";
 
 const UserGameInfo = ({ gameId }) => {
   const { user } = useAppContext();
@@ -57,6 +58,7 @@ const UserGameInfo = ({ gameId }) => {
         queryKey: ["users", user.username, "lists", listName],
         refetchType: "all",
       });
+      toast.success(`Game added to ${listName}`);
     },
   });
 
@@ -100,6 +102,7 @@ const UserGameInfo = ({ gameId }) => {
         queryKey: ["users", user.username, "lists", listName],
         refetchType: "all",
       });
+      toast.success(`Game deleted from ${listName}`);
     },
   });
 

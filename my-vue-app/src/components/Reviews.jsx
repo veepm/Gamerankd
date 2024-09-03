@@ -11,8 +11,8 @@ import {
 } from "@tanstack/react-query";
 import useUserInfo from "../useUserInfo";
 import PuffLoader from "react-spinners/PuffLoader";
-import SingleReview from "./SingleReview";
-import Select from "./Select";
+import { SingleReview, Select } from "./index";
+import { toast } from "react-toastify";
 
 const Reviews = ({ gameId }) => {
   const { user } = useAppContext();
@@ -102,6 +102,7 @@ const Reviews = ({ gameId }) => {
         />
       </header>
       <ReviewInput
+        gameId={gameId}
         rated={userInfoQuery?.data?.rating}
         defaultText={userInfoQuery?.data?.review_text}
         isReviewing={isReviewing}
@@ -146,10 +147,10 @@ const GameReviews = memo(({ pages }) => {
 });
 
 const ReviewInput = memo(
-  ({ rated, defaultText, isReviewing, setIsReviewing }) => {
-    const [reviewError, setReviewError] = useState("");
+  ({ gameId, rated, defaultText, isReviewing, setIsReviewing }) => {
     const [reviewText, setReviewText] = useState(defaultText);
     const queryClient = useQueryClient();
+    const { user } = useAppContext();
 
     useEffect(() => {
       setReviewText(defaultText || "");
@@ -164,9 +165,9 @@ const ReviewInput = memo(
       if (rated && reviewText.trim()) {
         submitReviewMutation.mutate();
       } else if (!rated) {
-        setReviewError("Rating required");
+        toast.error("Rating required");
       } else if (!reviewText.trim()) {
-        setReviewError("Review can not be empty");
+        toast.error("Review can not be empty");
       }
     };
 
@@ -185,8 +186,9 @@ const ReviewInput = memo(
           queryKey: ["users", user?.username, "games", gameId],
         });
         setIsReviewing(false);
-        setReviewError("");
+        toast.success("Submitted Review");
       },
+      onError: (error) => console.log(error),
     });
 
     return (
@@ -196,7 +198,6 @@ const ReviewInput = memo(
         }`}
         onSubmit={submitReview}
       >
-        <p>{reviewError}</p>
         <textarea
           className={classes.reviewInput}
           placeholder="What are your thoughts on this game?"
