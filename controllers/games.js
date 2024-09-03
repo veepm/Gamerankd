@@ -1,208 +1,307 @@
 import { StatusCodes } from "http-status-codes";
-import instance from "../axios.js"
-import { BadRequestError } from "../errors/index.js"
+import instance from "../axios.js";
+import { BadRequestError } from "../errors/index.js";
 import { pool } from "../database.js";
 
 export const getGames = async (req, res) => {
-  let {fields, coverSize="thumb", search, genres, rating, minYear, maxYear, limit=10, page=1, id, sortBy} = req.query;
+  let {
+    fields,
+    coverSize = "thumb",
+    search = "",
+    genres = "",
+    minYear,
+    maxYear,
+    limit = 10,
+    page = 1,
+    id,
+    sortBy,
+  } = req.query;
   page = Number(page);
   limit = Number(limit);
   let query = "";
-
+  query += `limit ${limit};`;
   // using IGDB rating_count to get more popular games first
-  if (fields){
-    if (fields.includes("avg_rating")){
-      fields = fields.replace("avg_rating");
-    }
-    query += `fields ${fields};`; 
+  if (fields) {
+    query += `fields ${fields};`;
   }
 
-  const offset = limit*(page-1);
+  const offset = limit * (page - 1);
+  const filters = [];
 
-  const filters = getFilters(genres,minYear,maxYear,search,id);
+  if (genres) {
+    filters.push(`genres=(${genres})`); // finds all games with a genre in the list
+  }
+  if (minYear) {
+    const unixTime = Math.floor(new Date(`${minYear}-01-01`).getTime() / 1000);
+    filters.push(`first_release_date >= ${unixTime}`);
+  }
+  if (maxYear) {
+    const unixTime = Math.floor(new Date(`${maxYear}-12-31`).getTime() / 1000);
+    filters.push(`first_release_date <= ${unixTime}`);
+  }
+  if (search) {
+    filters.push(`name ~ *"${search}"*`);
+  }
+  if (id) {
+    filters.push(`id=(${id})`);
+  }
 
-  if (sortBy === "popularity"){
+  if (sortBy === "popularity") {
     query += "sort rating_count desc;";
-  }
-  else if (sortBy === "a-z"){
+  } else if (sortBy === "a-z") {
     query += "sort name asc;";
-  }
-  else if (sortBy === "z-a"){
+  } else if (sortBy === "z-a") {
     query += "sort name desc;";
-  }
-  else if (sortBy === "latest"){
+  } else if (sortBy === "latest") {
     query += "sort first_release_date desc;";
-  }
-  else if (sortBy === "oldest"){
+  } else if (sortBy === "oldest") {
     query += "sort first_release_date asc;";
   }
 
-  let ratingSortedGames;
-  let sortedGamesCount;
+  let ratingRatedGames;
   let unratedGamesQuery;
   // only want to paginate IGDB request when not using postgres db for rating sorting
-  if (!(sortBy === "lowestRated" || sortBy === "highestRated")){
+  if (!(sortBy === "lowestRated" || sortBy === "highestRated")) {
     query += `offset ${offset};`;
-    query += `limit ${limit};`;
-  }
-  else{
-    const order = sortBy === "lowestRated" ? "ASC" : "DESC";
-    
-    // can use non parameterized query for order here since it can't be injected with something else
-    const pgQuery = `
-      SELECT game_id
-      FROM reviews
-      GROUP BY game_id
-      ORDER BY AVG(rating) ${order}, COUNT(*) DESC
-      LIMIT $1
-      OFFSET $2;
-    `;
+  } else {
+    ratingRatedGames = await getRatedGames(
+      sortBy,
+      genres,
+      search,
+      limit,
+      offset,
+      id
+    );
 
-    ratingSortedGames = await pool.query(pgQuery,[limit,offset]);
+    if (ratingRatedGames?.game_ids?.length < limit) {
+      unratedGamesQuery = query.replace(
+        `limit ${limit};`,
+        `limit ${limit - ratingRatedGames.game_ids.length};`
+      );
+      const unratedFilters = [
+        ...filters,
+        `id!=(${[...ratingRatedGames.game_ids,...ratingRatedGames.previous_game_ids]})`,
+      ].join("&");
 
-    sortedGamesCount = ratingSortedGames.rowCount;
-    const sortedGamesId = ratingSortedGames?.rows.map(game => game.game_id);
+      unratedGamesQuery += `where ${unratedFilters};`;
 
-    if (sortedGamesCount > 0){
-
-      // not enough games provided since postgres can only return rated games
-      if (sortedGamesCount < limit){
-        unratedGamesQuery = query.replace(`limit ${limit};`, `limit ${limit-sortedGamesCount};`);
-        unratedGamesQuery += "sort rating_count desc;"; // for games not rated yet
-        const unratedFilters = [...filters, (`id!=(${sortedGamesId});`)].join("&");
-        unratedGamesQuery += `where ${unratedFilters}`;
-      }
-      filters.push(`id=(${sortedGamesId})`);
+      const ratedPages = Math.ceil(ratingRatedGames.count / limit);
+      const extraOffset = page - ratedPages > 0 ? limit - (ratingRatedGames.count % limit) : 0; // Maybe can move if statement up
+      unratedGamesQuery += `offset ${
+        limit * Math.max(page - ratedPages - 1, 0) + extraOffset
+      };`;
+      unratedGamesQuery += "sort rating_count desc;";
+      query += "sort rating_count desc;";
     }
-    else{
-      // TODO: make sure that works when reviews count is 0
-      const ratedPages = Math.ceil(sortedGamesCount/limit);
-      const extraOffset = limit - (result.rowCount % limit);
-      query += `offset ${limit*(page-ratedPages-1) + extraOffset};`;
-      query += "sort rating_count desc;"; // for games not rated yet
-      filters.push(`id!=(${result.rows.map(game => game.game_id)})`);
+
+    if (ratingRatedGames?.game_ids?.length > 0) {
+      filters.push(`id=(${ratingRatedGames.game_ids})`);
     }
   }
 
   // construct where query if valid
-  if (filters.length > 0){
+  if (filters.length > 0) {
     query += `where ${filters.join("&")};`;
   }
 
-  query = `query games "games" {${query}};`
+  query = `query games "games" {${query}};`;
 
-  if (!id){
-    query += `query games/count "gamesCount"{};`
+  if (!id) {
+    query += `query games/count "gamesCount" {${
+      filters.length > 0 ? "where " + filters.join("&") + ";" : ""
+    }};`;
   }
-  if (unratedGamesQuery){
+  if (unratedGamesQuery) {
     query += `query games "unratedGames"{${unratedGamesQuery}};`;
   }
 
-  const {data} = await instance.post("/multiquery", `${query}`);
+  const { data } = await instance.post("/multiquery", `${query}`);
 
   let games = data.find((item) => item.name === "games").result;
-  const count = data.find((item) => item.name === "gamesCount")?.count;
+  const count =
+    data.find((item) => item.name === "gamesCount")?.count || id.length;
+  const unratedGames =
+    data.find((item) => item.name === "unratedGames")?.result || [];
 
   // sort results by rating if neccessary
-  if (sortedGamesCount > 0){
-    const idMap = ratingSortedGames.rows.reduce((map,game,i) => (map[game.game_id] = i, map),{});
-    games.sort((a,b) => idMap[a.id] - idMap[b.id]);
-    
-    const ratedGames = games.slice(offset, offset+Number(limit));
-    let unratedGames = data.find((item) => item.name === "unratedGames")?.result || [];
-    
-    if (ratedGames.length < limit){
-      unratedGames = unratedGames.slice()
-    }
-    // TODO: games not selected when filters included because of postgres limit
-    games = [...ratedGames, ...unratedGames];
-  }
-  else{
-    games = [...games];
+  if (ratingRatedGames?.game_ids?.length > 0) {
+    const gameIndexMap = ratingRatedGames.game_ids.reduce(
+      (map, game_id, i) => ((map[game_id] = i), map),
+      {}
+    );
+    games.sort((a, b) => gameIndexMap[a.id] - gameIndexMap[b.id]);
+
+    games = [...games, ...unratedGames];
+  } else if (sortBy === "lowestRated" || sortBy === "highestRated") {
+    games = [...unratedGames];
   }
 
-  formatCompanies(games);
-  resizeCover(games,coverSize);
+  resizeCover(games, coverSize);
 
   // get avg rating from database for the games returned from IGDB
   const ratingQuery = `
-    SELECT game_id, CAST(AVG(rating) AS FLOAT) AS avg_rating, COUNT(*) as rating_count
+    SELECT game_id, CAST(AVG(rating) AS FLOAT) AS avg_rating
     FROM reviews
     WHERE game_id = ANY($1::int[])
     GROUP BY game_id;
   `;
 
-  const result = await pool.query(ratingQuery,[id]);
+  const result = await pool.query(ratingQuery, [
+    id || games.map((game) => game.id),
+  ]);
 
-  const ratingMap = result.rows.reduce((map,game) => (map[game.game_id] = {avg_rating:game.avg_rating,rating_count:game.rating_count}, map),{});
-  games.forEach((game,i) => {
-    games[i] = {...game, ...ratingMap[game.id]};
-  })
+  const ratingMap = result.rows.reduce(
+    (map, game) => (
+      (map[game.game_id] = {
+        avg_rating: game.avg_rating,
+      }),
+      map
+    ),
+    {}
+  );
 
-  res.status(StatusCodes.OK).send({games,count,last_page: Math.ceil(count / limit)});
+  games.forEach((game, i) => {
+    games[i] = {
+      ...game,
+      avg_rating: null,
+      ...ratingMap[game.id],
+    };
+  });
+
+  res
+    .status(StatusCodes.OK)
+    .send({ games, count, total_pages: Math.ceil(count / limit) });
 };
 
-const getFilters = (genres,minYear,maxYear,search,id) => {
-  const filters = [];
+export const getSingleGame = async (req, res) => {
+  const { gameId } = req.params;
+  const { coverSize } = req.query;
 
-  if (genres){
-    filters.push(`genres=(${genres})`); // finds all games with a genre in the list
-  } 
-  if (minYear){
-    const unixTime = Math.floor(new Date(`${minYear}-01-01`).getTime()/1000);
-    filters.push(`first_release_date >= ${unixTime}`);
-  }
-  if (maxYear){
-    const unixTime = Math.floor(new Date(`${maxYear}-12-31`).getTime()/1000);
-    filters.push(`first_release_date <= ${unixTime}`);
-  }
-  if (search){
-    filters.push(`name ~ *"${search}"*`);
-  }
-  if (id){
-    filters.push(`id=(${id})`);
+  let query = `fields name,cover.url,summary,genres.name,first_release_date,involved_companies.publisher,involved_companies.developer,involved_companies.company.name,platforms.name; where id=${gameId};`;
+
+  const { data } = await instance.post("/games", query);
+
+  await addGameToDB(
+    gameId,
+    data[0].genres.map((genre) => genre.id),
+    data[0].name
+  );
+
+  resizeCover(data, coverSize);
+  formatCompanies(data);
+
+  const ratingQuery = `
+    WITH ratings AS (
+      SELECT game_id,rating, COUNT(rating), SUM(rating)
+      FROM reviews
+      WHERE game_id=$1
+      GROUP BY game_id, rating
+    )
+
+    SELECT CAST(SUM(sum)/SUM(count) AS FLOAT) AS avg_rating, JSON_OBJECT_AGG(rating, count) as rating_distribution, CAST(SUM(count) AS INT) as rating_count
+    FROM ratings
+    GROUP BY game_id;
+  `;
+
+  const result = await pool.query(ratingQuery, [gameId]);
+
+  const game = {
+    ...data[0],
+    avg_rating: 0,
+    rating_count: 0,
+    rating_distribution: null,
+    ...result.rows[0],
+  };
+
+  res.status(StatusCodes.OK).json(game);
+};
+
+const getRatedGames = async (sortBy, genres="", search="", limit, offset, gameIds) => {
+  const order = sortBy === "lowestRated" ? "ASC" : "DESC";
+  let filter = "";
+  let values = [limit, offset, `{${genres}}`, `%${search}%`];
+
+  if (gameIds?.length > 0){
+    filter =  "AND r.game_id = ANY($5::int[])";
+    values.push(`{${gameIds}}`);
   }
 
-  return filters;
-}
+  // can use non parameterized query for order here since it can't be injected with something else
+  const ratedGamesQuery = `
+    SELECT (ARRAY_AGG(game_id))[1+$2:$1+$2] AS game_ids, COUNT(game_id), (ARRAY_AGG(game_id))[1:$2] AS previous_game_ids
+    FROM (
+        SELECT r.game_id
+        FROM reviews r
+        JOIN viewed_games vg ON r.game_id = vg.game_id
+        WHERE $3 <@ genres AND UPPER(title) LIKE UPPER($4) ${filter}
+        GROUP BY r.game_id
+        ORDER BY AVG(rating) ${order}, COUNT(*) DESC
+    );
+  `;
 
+  const ratedGames = (
+    await pool.query(ratedGamesQuery, values)
+  ).rows[0];
+
+  if (gameIds?.length > 0){
+    ratedGames.count = gameIds.length;
+  }
+
+  return ratedGames;
+};
+
+const addGameToDB = async (gameId, gameGenres, gameName) => {
+  const gameQuery = `
+      INSERT INTO viewed_games
+      VALUES ($1,$2,$3)
+      ON CONFLICT (game_id)
+      DO UPDATE
+        SET genres = EXCLUDED.genres,
+        title = EXCLUDED.title
+        WHERE viewed_games.genres <> EXCLUDED.genres OR viewed_games.title <> EXCLUDED.title;
+    `;
+
+  await pool.query(gameQuery, [gameId, gameGenres, gameName]);
+};
 
 const formatCompanies = (games) => {
-  games.forEach(game => {
-    const publisherIds = game.involved_companies?.map(company => company.company.id);
+  games.forEach((game) => {
+    const publisherIds = game.involved_companies?.map(
+      (company) => company.company.id
+    );
 
     game.publishers = game.involved_companies?.flatMap((company) => {
-      if (company.publisher){
-        return {id: company.company.id, name: company.company.name};
+      if (company.publisher) {
+        return { id: company.company.id, name: company.company.name };
       }
       return [];
     });
     game.developers = game.involved_companies?.flatMap((company) => {
-      if (company.developer){
-        return {id: company.company.id, name: company.company.name};
+      if (company.developer) {
+        return { id: company.company.id, name: company.company.name };
       }
       return [];
     });
     delete game.involved_companies;
-  })
+  });
 };
 
 // change default cover size provided by IGDB
-const resizeCover = (games,coverSize) => {
-  games.forEach(game => {
-  const cover = game.cover?.url.replace("thumb", coverSize);
-  game.cover = cover;
-})};
+const resizeCover = (games, coverSize) => {
+  games.forEach((game) => {
+    const cover = game.cover?.url.replace("thumb", coverSize);
+    game.cover = cover;
+  });
+};
 
 var startTime, endTime;
-
 function start() {
   startTime = performance.now();
-};
+}
 
 function end() {
   endTime = performance.now();
-  var timeDiff = endTime - startTime; //in ms 
+  var timeDiff = endTime - startTime; //in ms
 
   console.log(timeDiff + " m seconds");
 }

@@ -37,6 +37,14 @@ CREATE TABLE list_games(
   PRIMARY KEY (list_id, game_id)
 );
 
+-- Need this to filter by genre or title when sorting by ratings or viewing list
+CREATE TABLE viewed_games(
+  game_id INTEGER NOT NULL,
+  genres INTEGER[],
+  title TEXT NOT NULL,
+  PRIMARY KEY (game_id)
+);
+
 CREATE OR REPLACE FUNCTION update_lists_updated_at_fun()
 RETURNS TRIGGER AS $$
 BEGIN 

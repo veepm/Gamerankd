@@ -44,7 +44,6 @@ app.use("/genres", genresRoute);
 app.use("/reviews", reviewsRoute);
 app.use("/lists", gamesListsRoute);
 
-
 app.use(errorHandlerMiddleware);
 
 const port = process.env.PORT || 3000;

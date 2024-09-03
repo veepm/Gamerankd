@@ -1,9 +1,9 @@
 import { StatusCodes } from "http-status-codes";
 import { pool } from "../database.js";
 
-export const getUsers = async (req,res) => {
-  const {limit=10,page=1,search} = req.query;
-  const offset = limit*(page-1);
+export const getUsers = async (req, res) => {
+  const { limit = 10, page = 1, search } = req.query;
+  const offset = limit * (page - 1);
 
   let userQuery = `
     SELECT u.username, u.created_at, COUNT(r.rating) AS rated, COUNT(CASE WHEN r.review_text IS NOT NULL THEN 1 END) AS reviewed
@@ -11,10 +11,10 @@ export const getUsers = async (req,res) => {
     LEFT JOIN reviews r ON u.user_id = r.user_id
   `;
 
-  const userValues = [limit,offset];
+  const userValues = [limit, offset];
 
-  if (search){
-    userQuery += "WHERE u.username LIKE $3 ";
+  if (search) {
+    userQuery += "WHERE UPPER(u.username) LIKE UPPER($3) ";
     userValues.push(`%${search}%`);
   }
 
@@ -25,18 +25,24 @@ export const getUsers = async (req,res) => {
   let countQuery = "SELECT CAST(COUNT(*) AS INT) FROM users ";
 
   const countValues = [];
-  if (search){
-    countQuery += "WHERE username LIKE $1;";
+  if (search) {
+    countQuery += "WHERE UPPER(username) LIKE UPPER($1);";
     countValues.push(`%${search}%`);
   }
 
   const count = await pool.query(countQuery, countValues);
 
-  res.status(StatusCodes.OK).send({users:users.rows,count:count.rows[0].count,last_page:Math.ceil(count.rows[0].count / limit)});
-}
+  res
+    .status(StatusCodes.OK)
+    .send({
+      users: users.rows,
+      count: count.rows[0].count,
+      total_pages: Math.ceil(count.rows[0].count / limit),
+    });
+};
 
 export const getUserGameInfo = async (req, res) => {
-  const {username, gameId} = req.params;
+  const { username, gameId } = req.params;
 
   // gets rating of game by user and whether user has reviewed, played, wishlisted game
   const query = `
@@ -54,7 +60,7 @@ export const getUserGameInfo = async (req, res) => {
     WHERE u.username = $2;
   `;
 
-  const result = await pool.query(query,[gameId,username]);
+  const result = await pool.query(query, [gameId, username]);
 
   res.status(StatusCodes.OK).send(result.rows[0]);
-}
+};

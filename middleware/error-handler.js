@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes"
 
 const errorHandlerMiddleware = (err, req, res, next) => {
-
+console.log(err);
   let customError = {
     // err.response.status for IGDB error
     statusCode: err.statusCode || err.response?.status || StatusCodes.INTERNAL_SERVER_ERROR,
