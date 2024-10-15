@@ -1,7 +1,11 @@
 import axios from "axios";
 import fs from "fs";
 
-const token = fs.readFileSync("secret.txt", { encoding: "utf-8" });
+let token = fs.readFileSync("secret.txt", { encoding: "utf-8" });
+
+if (!token){
+  token = await updateToken();
+}
 
 const updateToken = async () => {
   const { data } = await axios.post(
