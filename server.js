@@ -16,7 +16,7 @@ import reviewsRoute from "./routes/reviewsRoute.js";
 import gamesListsRoute from "./routes/gamesListsRoute.js";
 
 app.use(cookieParser());
-app.use(cors({origin: "http://localhost:5173", credentials: true, exposedHeaders: ["set-cookie"]}));
+app.use(cors({origin: "https://gamerankd.onrender.com", credentials: true, exposedHeaders: ["set-cookie"]}));
 
 // Add headers before the routes are defined
 app.use(function (req, res, next) {
