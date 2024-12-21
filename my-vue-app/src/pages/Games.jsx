@@ -90,6 +90,10 @@ const Games = () => {
     },
   });
 
+  if (listGamesQuery.isError){
+    console.log(listGamesQuery.error);
+  }
+
   if (listGamesQuery?.data?.games?.length > 0) {
     listGamesQuery.data.games.forEach((id) => {
       gameUrl += `&id[]=${id}`;
@@ -113,6 +117,10 @@ const Games = () => {
     },
   });
 
+  if (allGamesQuery.isError){
+    console.log(allGamesQuery.error);
+  }
+
   return (
     <div className={classes.container}>
       <header>
@@ -131,18 +139,19 @@ const Games = () => {
           <GenresFilter />
         </div>
       </header>
-      {!listGamesQuery.isLoading && (
-        <GamesContainer
-          gamesQuery={allGamesQuery}
-          gameCount={listGamesQuery.data?.games?.length || 48}
-        />
-      )}
-      {!listGamesQuery.isLoading && (
+      <GamesContainer
+        games={allGamesQuery?.data?.games}
+        gameCount={48}
+        isLoading={listGamesQuery.isLoading || allGamesQuery.isLoading}
+      />
+      <div className={classes.pages}>
         <PageButton
-          totalPages={allGamesQuery.data?.total_pages}
-          siblingCount={2}
+          totalPages={
+            listGamesQuery.isLoading ? null : allGamesQuery.data?.total_pages
+          }
+          siblingCount={1}
         />
-      )}
+      </div>
     </div>
   );
 };

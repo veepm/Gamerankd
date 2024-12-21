@@ -24,15 +24,21 @@
   min-width: 100%;
   white-space: nowrap;
   background: var(--dark-15);
-  overflow: hidden;
+  overflow-y: scroll;
+  max-height: 20rem;
 }
 
-.container, .dropdownContent {
+.container,
+.dropdownContent {
   border-radius: var(--border-radius);
   user-select: none;
-  -webkit-user-select: none; /* Chrome/Safari */        
+  -webkit-user-select: none; /* Chrome/Safari */
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* IE10+ */
+}
+
+.group {
+  padding: 0.125em 0.25em;
 }
 
 .option {
@@ -40,8 +46,10 @@
 }
 
 .option.selected {
-  background: red;
+  background: var(--dark-50);
+  color: var(--neutral-900);
 }
 .option:hover {
-  background: grey;
+  background: var(--dark-25);
+  color: var(--neutral-100);
 }

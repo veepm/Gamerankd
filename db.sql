@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS users,reviews,lists,list_games;
+DROP TABLE IF EXISTS users,reviews,lists,list_games,viewed_games;
 
 CREATE TABLE users(
   user_id SERIAL PRIMARY KEY,
@@ -66,3 +66,16 @@ $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE TRIGGER update_reviews_updated_at_trg BEFORE UPDATE ON reviews
 FOR EACH ROW EXECUTE FUNCTION update_reviews_updated_at_fun();
+
+-- WITH list_counts AS (
+--   SELECT l1.user_id, l1.list_name
+--   FROM lists l1, lists l2, list_games lg1, list_games lg2
+--   WHERE l1.list_id = lg1.list_id AND l1.list_name = 'wishlist' AND l2.list_id = lg2.list_id AND l2.list_name = 'played'
+--   GROUP BY l1.list_id;
+-- )
+
+-- SELECT u.username, u.created_at, COUNT(r.rating) AS rated, COUNT(CASE WHEN r.review_text IS NOT NULL THEN 1 END) AS reviewed
+-- FROM users u
+-- LEFT JOIN reviews r ON u.user_id = r.user_id
+-- LEFT JOIN list_counts lc ON lc.user_id = u.user_id
+-- GROUP BY u.user_id;

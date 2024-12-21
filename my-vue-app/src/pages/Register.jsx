@@ -49,10 +49,18 @@ const Register = () => {
   };
 
   useEffect(()=>{
-    if (Object.keys(formErrors).length === 0 && isSubmitted.current){
-      const url = isLogin ? "/auth/login" : "/auth/register";
-      setupUser(url,formValues);
-    }
+    (async function() {      
+      if (Object.keys(formErrors).length === 0 && isSubmitted.current){
+        const url = isLogin ? "/auth/login" : "/auth/register";  
+        const setupError = await setupUser(url,formValues);
+        if (setupError){   
+          setFormErrors((prev)=>{
+            prev.password = setupError.response.data.msg;
+            return prev;
+          })
+        }
+      }
+    })();
   },[formErrors])
 
   useEffect(() => {

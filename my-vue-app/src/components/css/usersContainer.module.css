@@ -1,19 +1,37 @@
-.container{
+.container {
   width: 25rem;
 }
 
-.user{
+.user {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.user h3{
+.user h3 {
   display: inline;
   margin-left: 0.5em;
 }
 
-.info{
+.info {
   display: flex;
   gap: 1rem;
+}
+
+.pic {
+  size: 2.5rem;
+  font-size: 1.15rem;
+}
+
+@media (max-width: 475px) {
+  .container {
+    width: 18rem;
+    font-size: var(--size-sm);
+  }
+  .pic {
+    width: 2.2rem;
+    height: 2.2rem;
+    line-height: 2.2rem;
+    font-size: 0.8rem;
+  }
 }

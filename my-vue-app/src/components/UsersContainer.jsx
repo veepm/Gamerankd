@@ -11,7 +11,7 @@ const UsersContainer = ({users}) => {
           <div key={user.username}>
             <div className={classes.user}>
               <Link to={`${user.username}`}>
-                <ProfilePic username={user.username} size="2.5rem" fontSize="1.15rem"/>
+                <ProfilePic username={user.username} className={classes.pic}/>
                 <h3>
                   {user.username}
                 </h3>

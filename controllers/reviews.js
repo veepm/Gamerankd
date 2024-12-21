@@ -125,7 +125,18 @@ export const getUserReviews = async (req, res) => {
 
   const reviews = await pool.query(query, [username, limit, offset]);
 
-  res.status(StatusCodes.OK).send({ reviews: reviews.rows });
+  const countQuery =
+    "SELECT CAST(COUNT(*) AS INT) FROM reviews r, users u WHERE r.user_id = u.user_id AND u.username = $1;";
+
+  const count = await pool.query(countQuery, [username]);
+
+  res
+    .status(StatusCodes.OK)
+    .send({
+      reviews: reviews.rows,
+      review_count: count.rows[0].count,
+      total_pages: Math.ceil(count.rows[0].count / limit),
+    });
 };
 
 const getOrder = (sortBy) => {

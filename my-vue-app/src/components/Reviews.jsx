@@ -99,6 +99,7 @@ const Reviews = ({ gameId }) => {
           value={sortBy}
           onChange={setSortBy}
           className={classes.sortBy}
+          openOnHover
         />
       </header>
       <ReviewInput
@@ -118,7 +119,7 @@ const Reviews = ({ gameId }) => {
       <div className={classes.loader}>
         <PuffLoader loading={reviewsQuery.isFetchingNextPage} color="white" />
       </div>
-      {reviewsQuery.hasNextPage && (
+      {!reviewsQuery.isFetchingNextPage && reviewsQuery.hasNextPage && (
         <button
           onClick={
             !reviewsQuery.isFetchingNextPage
@@ -134,15 +135,17 @@ const Reviews = ({ gameId }) => {
 };
 
 // seperating into another comp to reduce re rendering
-const GameReviews = memo(({ pages }) => {
+const GameReviews = memo(({ pages, showGame }) => {
   return pages[0].review_count > 0 ? (
-    pages.map((page) => {
-      return page.reviews.map((review) => (
-        <SingleReview review={review} key={review.review_id} />
-      ));
-    })
+    <div className={classes.reviews}>
+      {pages.map((page) => {
+        return page.reviews.map((review) => (
+          <SingleReview review={review} key={review.review_id} showGame={showGame} />
+        ));
+      })}
+    </div>
   ) : (
-    <div>No reviews yet</div>
+    <div className={classes.reviews}>No reviews yet</div>
   );
 });
 

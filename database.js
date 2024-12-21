@@ -8,5 +8,5 @@ export const pool = new Pool({
   password: process.env.PG_PASSWORD,
   port: process.env.PG_PORT,
   database: process.env.PG_DATABASE,
-  ssl: true
+  ssl: process.env.PG_HOST === "localhost" ? false : true
 });

@@ -60,7 +60,7 @@ const Rating = ({ avgRating, isInteractable, gameId, userRating, size }) => {
       });
     },
   });
-
+  //TODO: round percentage value of rating distribution
   return (
     <div className={classes.rating}>
       {[...Array(5)].map((_, i) => {

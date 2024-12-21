@@ -13,21 +13,6 @@ const SearchBar = ({placeholder}) => {
     setSearchValue(search);
   },[search]);
 
-  // const debounce = useDebounce(
-  //   (e) => {
-  //     if (e.target.value){
-  //       searchParams.set("search",e.target.value);
-  //     }
-  //     else {
-  //       searchParams.delete("search");
-  //     }
-  //     searchParams.delete("page");
-  //     setSearchParams(searchParams);
-  //   },
-  //   (e)=>setSearchValue(e.target.value),
-  //   [location]
-  // )
-
   const debounce = () => {
     let timeoutID;
     return (e) => {
@@ -41,6 +26,8 @@ const SearchBar = ({placeholder}) => {
           searchParams.delete("search");
         }
         searchParams.delete("page");
+        searchParams.delete("sortBy");
+        searchParams.delete("genres");
         setSearchParams(searchParams);
       }, 750);
     };

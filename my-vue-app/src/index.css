@@ -26,8 +26,11 @@
   --neutral-700: #292953;
   /* --neutral-900: #121212; */
   --neutral-900: #020617;
-  --dark-15: rgb(40, 43, 58);
   --dark-10: rgb(22, 26, 42);
+  --dark-15: rgb(40, 43, 58);
+  --dark-20: rgb(53, 56, 69);
+  --dark-25: rgb(65, 68, 81);
+  --dark-50: rgb(129, 131, 139);
   --textLight: rgba(255, 255, 240, 0.8);
   --primary-400: #2dd4bf;
   --primary-700: #0f766e;
@@ -60,13 +63,10 @@
   --border-radius: 0.25rem;
 
   /* Toastify override */
-  --toastify-color-dark: var(--dark-15) !important;
+  --toastify-color-dark: var(--dark-20) !important;
   --toastify-color-progress-dark: var(--accent) !important;
   --toastify-text-color-dark: var(--neutral-100) !important;
-}
-
-.Toastify__toast {
-  font-family: "General Sans", sans-serif !important;;
+  /* --toastify-font-family: "General Sans", sans-serif !important; */
 }
 
 body {
@@ -128,11 +128,11 @@ button {
   gap: 2rem;
 }
 
-.options a {
+.options a, .dropBars {
   transition: 0.3s;
 }
 
-.options a:hover {
+.options a:hover, .dropBars:hover {
   opacity: 0.5;
 }
 
@@ -146,7 +146,7 @@ button {
   /* text-decoration: underline; */
 }
 
-.user {
+.select {
   color: var(--neutral-100);
   background: none;
   padding: 0;
@@ -157,3 +157,35 @@ button {
   height: 2rem;
   line-height: 2rem;
 }
+
+.dropOptions {
+  display: none;
+}
+
+@media (max-width: 640px){
+  .options{
+    display: none;
+  }
+
+  .dropOptions{
+    display: block;
+  }
+}
+
+/* xs */
+/* @media (min-width: 475px) {} */
+
+/* sm */
+/* @media (min-width: 640px) {} */
+
+/* md */
+/* @media (min-width: 768px) {} */
+
+/* lg */
+/* @media (min-width: 1024px) {} */
+
+/* xl */
+/* @media (min-width: 1280px) {} */
+
+/* 2xl */
+/* @media (min-width: 1536px) {} */

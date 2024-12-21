@@ -1,6 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import instance from "../axios.js";
-import { BadRequestError } from "../errors/index.js";
+import { BadRequestError, NotFoundError } from "../errors/index.js";
 import { pool } from "../database.js";
 
 export const getGames = async (req, res) => {
@@ -42,9 +42,9 @@ export const getGames = async (req, res) => {
   if (search) {
     filters.push(`name ~ *"${search}"*`);
   }
-  if (id) {
-    filters.push(`id=(${id})`);
-  }
+  // if (id) {
+  //   filters.push(`id=(${id})`);
+  // }
 
   if (sortBy === "popularity") {
     query += "sort rating_count desc;";
@@ -58,13 +58,23 @@ export const getGames = async (req, res) => {
     query += "sort first_release_date asc;";
   }
 
-  let ratingRatedGames;
+  let ratingSortedGames;
   let unratedGamesQuery;
+  let countQuery;
+
+  if (!id?.length) {
+    countQuery = `query games/count "gamesCount" {${
+      filters.length > 0 ? "where " + filters.join("&") + ";" : ""
+    }};`;
+  }
+  if (id?.length) {
+    filters.push(`id=(${id})`);
+  }
   // only want to paginate IGDB request when not using postgres db for rating sorting
-  if (!(sortBy === "lowestRated" || sortBy === "highestRated")) {
-    query += `offset ${offset};`;
-  } else {
-    ratingRatedGames = await getRatedGames(
+  if (sortBy === "lowestRated" || sortBy === "highestRated") {
+    query += "sort rating_count desc;";
+
+    ratingSortedGames = await getRatedGames(
       sortBy,
       genres,
       search,
@@ -73,30 +83,38 @@ export const getGames = async (req, res) => {
       id
     );
 
-    if (ratingRatedGames?.game_ids?.length < limit) {
+    if (ratingSortedGames?.game_ids?.length < limit) {
       unratedGamesQuery = query.replace(
         `limit ${limit};`,
-        `limit ${limit - ratingRatedGames.game_ids.length};`
+        `limit ${limit - ratingSortedGames.game_ids.length};`
       );
       const unratedFilters = [
         ...filters,
-        `id!=(${[...ratingRatedGames.game_ids,...ratingRatedGames.previous_game_ids]})`,
+        `id!=(${[
+          ...ratingSortedGames.game_ids,
+          ...ratingSortedGames.previous_game_ids,
+        ]})`,
       ].join("&");
 
       unratedGamesQuery += `where ${unratedFilters};`;
-
-      const ratedPages = Math.ceil(ratingRatedGames.count / limit);
-      const extraOffset = page - ratedPages > 0 ? limit - (ratingRatedGames.count % limit) : 0; // Maybe can move if statement up
+      const ratedPages = Math.ceil(ratingSortedGames.count / limit);
+      const extraOffset =
+        page - ratedPages > 0
+          ? limit > ratingSortedGames.count
+            ? limit - ratingSortedGames.count
+            : ratingSortedGames.count % limit
+          : 0;
       unratedGamesQuery += `offset ${
         limit * Math.max(page - ratedPages - 1, 0) + extraOffset
       };`;
       unratedGamesQuery += "sort rating_count desc;";
-      query += "sort rating_count desc;";
     }
+  } else {
+    query += `offset ${offset};`;
+  }
 
-    if (ratingRatedGames?.game_ids?.length > 0) {
-      filters.push(`id=(${ratingRatedGames.game_ids})`);
-    }
+  if (ratingSortedGames?.game_ids?.length) {
+    filters.push(`id=(${ratingSortedGames.game_ids})`);
   }
 
   // construct where query if valid
@@ -106,10 +124,8 @@ export const getGames = async (req, res) => {
 
   query = `query games "games" {${query}};`;
 
-  if (!id) {
-    query += `query games/count "gamesCount" {${
-      filters.length > 0 ? "where " + filters.join("&") + ";" : ""
-    }};`;
+  if (countQuery) {
+    query += countQuery;
   }
   if (unratedGamesQuery) {
     query += `query games "unratedGames"{${unratedGamesQuery}};`;
@@ -119,25 +135,22 @@ export const getGames = async (req, res) => {
 
   let games = data.find((item) => item.name === "games").result;
   const count =
-    data.find((item) => item.name === "gamesCount")?.count || id.length;
+    data.find((item) => item.name === "gamesCount")?.count || id?.length;
   const unratedGames =
     data.find((item) => item.name === "unratedGames")?.result || [];
-
   // sort results by rating if neccessary
-  if (ratingRatedGames?.game_ids?.length > 0) {
-    const gameIndexMap = ratingRatedGames.game_ids.reduce(
+  if (ratingSortedGames?.game_ids?.length > 0) {
+    const gameIndexMap = ratingSortedGames.game_ids.reduce(
       (map, game_id, i) => ((map[game_id] = i), map),
       {}
     );
     games.sort((a, b) => gameIndexMap[a.id] - gameIndexMap[b.id]);
-
     games = [...games, ...unratedGames];
-  } else if (sortBy === "lowestRated" || sortBy === "highestRated") {
+  } else if ((sortBy === "lowestRated" || sortBy === "highestRated") && ratingSortedGames.game_ids) {
     games = [...unratedGames];
   }
-
   resizeCover(games, coverSize);
-
+  
   // get avg rating from database for the games returned from IGDB
   const ratingQuery = `
     SELECT game_id, CAST(AVG(rating) AS FLOAT) AS avg_rating
@@ -181,6 +194,10 @@ export const getSingleGame = async (req, res) => {
 
   const { data } = await instance.post("/games", query);
 
+  if  (!data[0]){
+    throw new NotFoundError("Game doesn't exist");
+  }
+  
   await addGameToDB(
     gameId,
     data[0].genres.map((genre) => genre.id),
@@ -216,36 +233,37 @@ export const getSingleGame = async (req, res) => {
   res.status(StatusCodes.OK).json(game);
 };
 
-const getRatedGames = async (sortBy, genres="", search="", limit, offset, gameIds) => {
+const getRatedGames = async (
+  sortBy,
+  genres = "",
+  search = "",
+  limit,
+  offset,
+  gameIds
+) => {
   const order = sortBy === "lowestRated" ? "ASC" : "DESC";
   let filter = "";
   let values = [limit, offset, `{${genres}}`, `%${search}%`];
 
-  if (gameIds?.length > 0){
-    filter =  "AND r.game_id = ANY($5::int[])";
-    values.push(`{${gameIds}}`);
+  if (gameIds?.length > 0) {
+    filter = "AND r.game_id = ANY($5::int[])";
+    values.push(gameIds);
   }
 
   // can use non parameterized query for order here since it can't be injected with something else
   const ratedGamesQuery = `
-    SELECT (ARRAY_AGG(game_id))[1+$2:$1+$2] AS game_ids, COUNT(game_id), (ARRAY_AGG(game_id))[1:$2] AS previous_game_ids
+    SELECT (ARRAY_AGG(game_id))[1+$2:$1+$2] AS game_ids, CAST(COUNT(game_id) AS INT), (ARRAY_AGG(game_id))[1:$2] AS previous_game_ids
     FROM (
         SELECT r.game_id
         FROM reviews r
         JOIN viewed_games vg ON r.game_id = vg.game_id
-        WHERE $3 <@ genres AND UPPER(title) LIKE UPPER($4) ${filter}
+        WHERE ($3 && vg.genres OR $3 <@ vg.genres) AND UPPER(title) LIKE UPPER($4) ${filter}
         GROUP BY r.game_id
         ORDER BY AVG(rating) ${order}, COUNT(*) DESC
     );
   `;
 
-  const ratedGames = (
-    await pool.query(ratedGamesQuery, values)
-  ).rows[0];
-
-  if (gameIds?.length > 0){
-    ratedGames.count = gameIds.length;
-  }
+  const ratedGames = (await pool.query(ratedGamesQuery, values)).rows[0];
 
   return ratedGames;
 };

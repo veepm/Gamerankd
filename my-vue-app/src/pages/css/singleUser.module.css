@@ -11,18 +11,22 @@
 }
 
 .list {
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
 }
 
 .option {
   display: flex;
-  align-items: center;
-  gap: 0.5em;
+  gap: 1em;
   text-transform: capitalize;
-  margin-bottom: 0.5em;
-  padding-left: 0.5em;
+  margin-bottom: 1rem;
+  padding-left: 0.5rem;
   border-left: 2px solid var(--primary-400);
   width: fit-content;
+}
+
+.option > div{
+  display: flex;
+  align-items: center;
 }
 
 .reviews {

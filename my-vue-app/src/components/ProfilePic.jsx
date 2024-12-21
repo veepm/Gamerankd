@@ -34,7 +34,7 @@ const ProfilePic = ({ username, className }) => {
         background: HSLtoString(generateHSL(username)),
       }}
     >
-      {username.charAt(0).toUpperCase()}
+      {username.charAt(0)}
     </div>
   );
 };

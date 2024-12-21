@@ -6,7 +6,9 @@
 
 .header {
   display: flex;
+  align-items: center;
   gap: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 .container > button {
@@ -26,6 +28,11 @@
 
 .reviewActions > button {
   font-size: 1.2rem;
+  transition: 0.3s;
+}
+
+.reviewActions > button:hover {
+  opacity: 0.7;
 }
 
 .add {
@@ -39,14 +46,13 @@
 .inputContainer {
   visibility: hidden;
   max-height: 0;
-  transition: margin 0.5s, max-height 1s, visibility 1s;
+  transition: max-height 1s, visibility 1s;
   overflow: hidden;
 }
 
 .inputContainer.active {
   visibility: visible;
   max-height: 15rem;
-  margin: 1rem 0;
 }
 
 .inputContainer > div {
@@ -80,6 +86,10 @@
   border-top-right-radius: var(--border-radius);
 }
 
+.reviews {
+  margin-top: 0.5rem;
+}
+
 .loader {
   max-width: 100%;
   display: flex;
@@ -87,5 +97,5 @@
 }
 
 .sortBy {
-  width: 5rem;
+  width: 5em;
 }

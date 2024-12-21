@@ -2,7 +2,7 @@ import { useQueries, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Link, useParams } from "react-router-dom";
 import { GamesContainer, ProfilePic, SingleReview } from "../components";
-import { IoChevronForwardSharp } from "react-icons/io5";
+import { IoChevronForwardSharp, IoLogIn } from "react-icons/io5";
 import classes from "./css/singleUser.module.css";
 
 const SingleUser = () => {
@@ -43,7 +43,7 @@ const SingleUser = () => {
     ],
     queryFn: async () => {
       const { data } = await axios.get(
-        `users/${username}/reviews?limit=10&sortBy=latest`
+        `users/${username}/reviews?limit=3&sortBy=latest`
       );
       return data;
     },
@@ -55,23 +55,31 @@ const SingleUser = () => {
         <ProfilePic username={username} />
         <h2>{username}</h2>
       </div>
-      {gameQueries.map((game, i) => {
+      {gameQueries.map((gameQuery, i) => {
+        const list = userListsQuery.data?.lists[i];
         return (
-          <div key={userListsQuery.data?.lists[i]?.list_id} className={classes.list}>
+          <div key={list?.list_id} className={classes.list}>
             <Link
               className={classes.option}
-              to={`lists/${userListsQuery.data?.lists[i]?.list_name}`}
+              to={`lists/${list?.list_name}`}
             >
-              {userListsQuery.data?.lists[i]?.list_name}{" "}
-              <IoChevronForwardSharp />
+              {list?.list_name}
+              <div>
+                {list?.games?.length}
+                <IoChevronForwardSharp />
+              </div>
             </Link>
-            <GamesContainer gamesQuery={game} />
+            <GamesContainer games={gameQuery?.data?.games} gameCount={5} isLoading={gameQuery.isLoading} resize={false}/>
           </div>
         );
       })}
       <div>
         <Link className={classes.option} to={"reviews"}>
-          Reviews <IoChevronForwardSharp />
+          Reviews 
+          <div>
+            {userReviewsQuery.data?.review_count}
+            <IoChevronForwardSharp />
+          </div>
         </Link>
         <div className={classes.reviews}>
           {userReviewsQuery.data?.reviews?.map((review) => {

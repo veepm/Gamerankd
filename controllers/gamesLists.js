@@ -112,7 +112,7 @@ export const getUserList = async (req, res) => {
     LEFT JOIN list_games lg ON l.list_id = lg.list_id
     LEFT JOIN users u ON l.user_id = u.user_id
     JOIN viewed_games vg ON lg.game_id = vg.game_id
-    WHERE u.username = $1 AND l.list_name = $2 AND $3 <@ vg.genres AND UPPER(vg.title) LIKE UPPER($4)
+    WHERE u.username = $1 AND l.list_name = $2 AND ($3 && vg.genres OR $3 <@ vg.genres) AND UPPER(vg.title) LIKE UPPER($4)
     GROUP BY l.list_id;
   `;
 

@@ -1,11 +1,12 @@
 import { Link, useParams } from "react-router-dom";
-import { Rating, Reviews, Select, UserGameInfo } from "../components";
+import { Rating, Reviews, UserGameInfo } from "../components";
 import classes from "./css/singleGame.module.css";
-import React, { memo, useState } from "react";
+import React, { memo, useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import PuffLoader from "react-spinners/PuffLoader";
 import { IoChevronDownSharp } from "react-icons/io5";
+import Error from "./Error";
 
 const SingleGame = () => {
   const { gameId } = useParams();
@@ -26,6 +27,10 @@ const SingleGame = () => {
         <PuffLoader color="var(--primary-400)" />
       </div>
     );
+
+  if (gameInfoQuery.isError){
+    return <Error/>;
+  }
 
   const game = gameInfoQuery.data;
 
@@ -54,7 +59,7 @@ const SingleGame = () => {
               </header>
               <GameGenres genres={game.genres} />
             </div>
-            <p className={classes.summary}>{game.summary}</p>
+            <GameSummary text={game.summary} />
           </section>
           <GameDetails
             developers={game.developers}
@@ -67,6 +72,38 @@ const SingleGame = () => {
     </div>
   );
 };
+
+const GameSummary = memo(({ text }) => {
+  const summaryRef = useRef();
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isOverflowing, setIsOverflowing] = useState();
+
+  useEffect(() => {
+    if (summaryRef.current.offsetHeight < summaryRef.current.scrollHeight) {
+      setIsOverflowing(true);
+    }
+  }, []);
+
+  return (
+    <>
+      <p
+        ref={summaryRef}
+        className={classes.summary}
+        style={{ display: isExpanded && "block" }}
+      >
+        {text}
+      </p>
+      {isOverflowing && (
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className={classes.expandBtn}
+        >
+          {isExpanded ? "Less" : "More"}
+        </button>
+      )}
+    </>
+  );
+});
 
 const GameRating = memo(({ avgRating, ratingCount, ratingDistribution }) => {
   return (
@@ -156,7 +193,7 @@ const GameDetails = memo((props) => {
           Platforms
         </button>
       </header>
-      <div>
+      <div className={classes.detailsText}>
         {props[selectedTab]?.map((info) => {
           return <div key={info.id}>{info.name}</div>;
         })}

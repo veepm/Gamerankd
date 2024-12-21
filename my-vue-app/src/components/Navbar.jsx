@@ -1,7 +1,10 @@
 import { NavLink, Link, useNavigate } from "react-router-dom";
 import { useAppContext } from "../context/appContext";
 import { memo } from "react";
-import { TbSquareLetterGFilled, TbHexagonLetterGFilled } from "react-icons/tb";
+import {
+  TbBaselineDensityMedium,
+  TbHexagonLetterGFilled,
+} from "react-icons/tb";
 import ProfilePic from "./ProfilePic";
 import Select from "./Select";
 
@@ -9,7 +12,7 @@ const Navbar = () => {
   const { user, logoutUser } = useAppContext();
   const navigate = useNavigate();
 
-  const options = [
+  const userOptions = [
     {
       options: [
         {
@@ -31,6 +34,25 @@ const Navbar = () => {
     },
   ];
 
+  const dropOptions = [
+    {
+      options: [
+        {
+          label: "Games",
+          value: () => navigate(`/games`),
+        },
+      ],
+    },
+    {
+      options: [
+        {
+          label: "Users",
+          value: () => navigate(`/users`),
+        },
+      ],
+    },
+  ].concat(userOptions);
+
   const handleChange = (option) => {
     option.value();
   };
@@ -49,19 +71,27 @@ const Navbar = () => {
             Users
           </NavLink>
           {!user ? (
-            <NavLink to="/register">Sign Up</NavLink>
+            <NavLink to="/register">Login/Sign Up</NavLink>
           ) : (
             <Select
-              options={options}
+              options={userOptions}
               onChange={handleChange}
-              className={"user"}
+              className={"select"}
               displayIcon={false}
             >
-              <div>
-                <ProfilePic username={user.username} className={"profilePic"}/>
-              </div>
+              <ProfilePic username={user.username} className={"profilePic"} />
             </Select>
           )}
+        </div>
+        <div className="dropOptions">
+          <Select
+            options={dropOptions}
+            onChange={handleChange}
+            className={"select"}
+            displayIcon={false}
+          >
+            <TbBaselineDensityMedium size="1.5rem" className="dropBars"/>
+          </Select>
         </div>
       </div>
     </nav>

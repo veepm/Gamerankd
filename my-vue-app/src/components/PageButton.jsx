@@ -24,7 +24,7 @@ const PageButton = ({ totalPages, siblingCount = 1 }) => {
           classes.prev
         }`}
       >
-        <IoChevronBackSharp /> Previous
+        <IoChevronBackSharp />
       </button>
       {pages.map((pageNum) => {
         const middle = (4 + 2 * siblingCount + 1) / 2;
@@ -64,7 +64,7 @@ const PageButton = ({ totalPages, siblingCount = 1 }) => {
           page === totalPages ? classes.disabled : ""
         } ${classes.next}`}
       >
-        Next <IoChevronForwardSharp />
+        <IoChevronForwardSharp />
       </button>
     </div>
   );

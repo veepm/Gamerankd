@@ -1,8 +1,4 @@
 .container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
   width: 75%;
   margin: 5rem auto 0;
 }
@@ -10,7 +6,6 @@
 .container > header {
   display: flex;
   justify-content: space-between;
-  flex-wrap: wrap;
   width: 100%;
   margin-bottom: 1rem;
   gap: 0.5rem;
@@ -19,4 +14,20 @@
 .filters {
   display: flex;
   gap: 0.5rem;
+}
+
+.pages {
+  display: flex;
+  justify-content: center;
+}
+
+@media (max-width: 800px) {
+  .container > header {
+    flex-direction: column;
+    max-width: fit-content;
+  }
+
+  .filters {
+    justify-content: space-between;
+  }
 }

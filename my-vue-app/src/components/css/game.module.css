@@ -15,7 +15,6 @@
 .cover {
   object-fit: contain;
   z-index: 50;
-  position: relative;
 }
 
 .background {

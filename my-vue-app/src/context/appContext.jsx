@@ -1,5 +1,5 @@
 import axios from "axios";
-import { createContext, useContext, useEffect, useReducer, useState } from "react"
+import { createContext, useContext, useState } from "react"
 
 const AppContext = createContext();
 
@@ -15,7 +15,7 @@ const AppProvider = ({children}) => {
       localStorage.setItem("user",JSON.stringify(data.user));
       setUser(data.user);
     } catch (error) {
-      console.log(error);
+      return error;
     }
     finally{
       setIsUserLoading(false);

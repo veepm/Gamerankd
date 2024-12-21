@@ -51,14 +51,15 @@ const Users = () => {
     <div className={classes.container}>
       <header>
         <SearchBar placeholder="Search For Users By Username" />
-        <Sort options={options} />
       </header>
       <div className={classes.users}>
         {usersQuery.isSuccess && (
-          <UsersContainer users={usersQuery.data.users} />
+          <UsersContainer users={usersQuery.data.users}/>
         )}
+        <div className={classes.pages}>
+          <PageButton totalPages={usersQuery?.data?.total_pages}/>
+        </div>
       </div>
-      <PageButton totalPages={usersQuery?.data?.total_pages} />
     </div>
   );
 };

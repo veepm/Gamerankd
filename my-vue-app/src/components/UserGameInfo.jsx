@@ -39,7 +39,6 @@ const UserGameInfo = ({ gameId }) => {
         ["users", user?.username, "games", gameId],
         (old) => ({ ...old, [listName]: true })
       );
-
       return { prevUserInfo };
     },
     onError: (err, listName, context) => {
@@ -54,11 +53,18 @@ const UserGameInfo = ({ gameId }) => {
       });
     },
     onSuccess: (data, listName) => {
-      queryClient.invalidateQueries({
-        queryKey: ["users", user.username, "lists", listName],
-        refetchType: "all",
-      });
       toast.success(`Game added to ${listName}`);
+      queryClient.setQueryData(
+        ["users", user.username, "lists", listName],
+        (oldData) => ({
+          ...oldData,
+          games: [...oldData.games, gameId],
+        })
+      );
+      // queryClient.invalidateQueries({
+      //   queryKey: ["users", user.username, "lists", listName],
+      //   refetchType: "all",
+      // });
     },
   });
 
@@ -98,18 +104,25 @@ const UserGameInfo = ({ gameId }) => {
       });
     },
     onSuccess: (data, listName) => {
-      queryClient.invalidateQueries({
-        queryKey: ["users", user.username, "lists", listName],
-        refetchType: "all",
-      });
       toast.success(`Game deleted from ${listName}`);
+      queryClient.setQueryData(
+        ["users", user.username, "lists", listName],
+        (oldData) => ({
+          ...oldData,
+          games: oldData.games.filter((game) => game.id !== gameId),
+        })
+      );
+      // queryClient.invalidateQueries({
+      //   queryKey: ["users", user.username, "lists", listName],
+      //   refetchType: "all",
+      // });
     },
   });
 
   if (userInfoQuery.isLoading)
     return <PuffLoader color="white" size="1.75rem" />;
 
-  if (!user) return <div>Login</div>;
+  if (!user) return <div>Login to rate and add to lists</div>;
 
   return (
     <div className={classes.container}>
@@ -122,9 +135,9 @@ const UserGameInfo = ({ gameId }) => {
         }
       >
         {userInfoQuery.data.played ? (
-          <IoGameController />
+          <IoGameController title="Remove from played"/>
         ) : (
-          <IoGameControllerOutline />
+          <IoGameControllerOutline title="Add to played"/>
         )}
       </button>
       <Rating
@@ -142,9 +155,9 @@ const UserGameInfo = ({ gameId }) => {
         }
       >
         {userInfoQuery.data.wishlist ? (
-          <PiListChecksLight />
+          <PiListChecksLight title="Remove from wishlist"/>
         ) : (
-          <PiListBulletsLight />
+          <PiListBulletsLight title="Add to wishlist"/>
         )}
       </button>
     </div>
