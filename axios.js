@@ -3,10 +3,6 @@ import fs from "fs";
 
 let token = fs.readFileSync("secret.txt", { encoding: "utf-8" });
 
-if (!token){
-  token = await updateToken();
-}
-
 const updateToken = async () => {
   const { data } = await axios.post(
     `https://id.twitch.tv/oauth2/token?client_id=${process.env.IGDB_CLIENT_ID}&client_secret=${process.env.IGDB_CLIENT_SECRET}&grant_type=client_credentials`
@@ -14,6 +10,10 @@ const updateToken = async () => {
   fs.writeFileSync("secret.txt", data.access_token, "utf-8");
   return data.access_token;
 };
+
+if (!token){
+  token = await updateToken();
+}
 
 const instance = axios.create({
   baseURL: "https://api.igdb.com/v4",
