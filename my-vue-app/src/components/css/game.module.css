@@ -42,7 +42,8 @@
   border: 3px solid var(--accent);
 }
 
-.game:hover > .cover, .game:hover > .background{
+.game:hover > .cover,
+.game:hover > .background {
   opacity: 0.3;
 }
 

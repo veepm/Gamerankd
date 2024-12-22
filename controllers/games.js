@@ -146,11 +146,14 @@ export const getGames = async (req, res) => {
     );
     games.sort((a, b) => gameIndexMap[a.id] - gameIndexMap[b.id]);
     games = [...games, ...unratedGames];
-  } else if ((sortBy === "lowestRated" || sortBy === "highestRated") && ratingSortedGames.game_ids) {
+  } else if (
+    (sortBy === "lowestRated" || sortBy === "highestRated") &&
+    ratingSortedGames.game_ids
+  ) {
     games = [...unratedGames];
   }
   resizeCover(games, coverSize);
-  
+
   // get avg rating from database for the games returned from IGDB
   const ratingQuery = `
     SELECT game_id, CAST(AVG(rating) AS FLOAT) AS avg_rating
@@ -194,10 +197,10 @@ export const getSingleGame = async (req, res) => {
 
   const { data } = await instance.post("/games", query);
 
-  if  (!data[0]){
+  if (!data[0]) {
     throw new NotFoundError("Game doesn't exist");
   }
-  
+
   await addGameToDB(
     gameId,
     data[0].genres.map((genre) => genre.id),

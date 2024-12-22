@@ -32,13 +32,11 @@ export const getUsers = async (req, res) => {
 
   const count = await pool.query(countQuery, countValues);
 
-  res
-    .status(StatusCodes.OK)
-    .send({
-      users: users.rows,
-      count: count.rows[0].count,
-      total_pages: Math.ceil(count.rows[0].count / limit),
-    });
+  res.status(StatusCodes.OK).send({
+    users: users.rows,
+    count: count.rows[0].count,
+    total_pages: Math.ceil(count.rows[0].count / limit),
+  });
 };
 
 export const getUserGameInfo = async (req, res) => {

@@ -90,7 +90,7 @@ const Games = () => {
     },
   });
 
-  if (listGamesQuery.isError){
+  if (listGamesQuery.isError) {
     console.log(listGamesQuery.error);
   }
 
@@ -117,7 +117,7 @@ const Games = () => {
     },
   });
 
-  if (allGamesQuery.isError){
+  if (allGamesQuery.isError) {
     console.log(allGamesQuery.error);
   }
 

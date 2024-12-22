@@ -54,10 +54,10 @@ const Users = () => {
       </header>
       <div className={classes.users}>
         {usersQuery.isSuccess && (
-          <UsersContainer users={usersQuery.data.users}/>
+          <UsersContainer users={usersQuery.data.users} />
         )}
         <div className={classes.pages}>
-          <PageButton totalPages={usersQuery?.data?.total_pages}/>
+          <PageButton totalPages={usersQuery?.data?.total_pages} />
         </div>
       </div>
     </div>

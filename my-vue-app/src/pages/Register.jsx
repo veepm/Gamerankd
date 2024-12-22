@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from "react";
-import classes from "./css/register.module.css"
+import classes from "./css/register.module.css";
 import { useAppContext } from "../context/appContext";
 import { useNavigate } from "react-router-dom";
 import FormInput from "../components/FormInput";
 
 const Register = () => {
-  const {isUserLoading, user, setupUser} = useAppContext();
+  const { isUserLoading, user, setupUser } = useAppContext();
 
-  const initialValues = {username:"",email:"",password:""};
+  const initialValues = { username: "", email: "", password: "" };
   const [formValues, setFormValues] = useState(initialValues);
   const [formErrors, setFormErrors] = useState({});
   const [isLogin, setIsLogin] = useState(true);
@@ -16,7 +16,7 @@ const Register = () => {
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFormValues({...formValues,[e.target.name]:e.target.value});
+    setFormValues({ ...formValues, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = (e) => {
@@ -28,46 +28,46 @@ const Register = () => {
   };
 
   const validate = () => {
-    const {username,email,password} = formValues;
+    const { username, email, password } = formValues;
     let errors = {};
-    const regex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    
-    if (!username && !isLogin){
+    const regex =
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+    if (!username && !isLogin) {
       errors.username = "Username is required";
     }
-    if (!email){
+    if (!email) {
       errors.email = "Email is required";
-    }
-    else if (!regex.test(email)){
+    } else if (!regex.test(email)) {
       errors.email = "Invalid email";
     }
-    if (!password){
+    if (!password) {
       errors.password = "Password is required";
     }
-    
+
     setFormErrors(errors);
   };
 
-  useEffect(()=>{
-    (async function() {      
-      if (Object.keys(formErrors).length === 0 && isSubmitted.current){
-        const url = isLogin ? "/auth/login" : "/auth/register";  
-        const setupError = await setupUser(url,formValues);
-        if (setupError){   
-          setFormErrors((prev)=>{
+  useEffect(() => {
+    (async function () {
+      if (Object.keys(formErrors).length === 0 && isSubmitted.current) {
+        const url = isLogin ? "/auth/login" : "/auth/register";
+        const setupError = await setupUser(url, formValues);
+        if (setupError) {
+          setFormErrors((prev) => {
             prev.password = setupError.response.data.msg;
             return prev;
-          })
+          });
         }
       }
     })();
-  },[formErrors])
+  }, [formErrors]);
 
   useEffect(() => {
-    if (user){
+    if (user) {
       navigate("/");
     }
-  },[user])
+  }, [user]);
 
   const toggleLogin = () => {
     setIsLogin(!isLogin);
@@ -80,17 +80,47 @@ const Register = () => {
     <div className={classes.container}>
       <form onSubmit={handleSubmit}>
         <h2>{isLogin ? "Login" : "Sign Up"}</h2>
-        { isLogin || <FormInput input="username" type="text" value={formValues.username} handleChange={handleChange} error={formErrors.username}/>}
-        <FormInput input="email" type="email" value={formValues.email} handleChange={handleChange} error={formErrors.email}/>
-        <FormInput input="password" type="password" value={formValues.password} handleChange={handleChange} error={formErrors.password}/>
+        {isLogin || (
+          <FormInput
+            input="username"
+            type="text"
+            value={formValues.username}
+            handleChange={handleChange}
+            error={formErrors.username}
+          />
+        )}
+        <FormInput
+          input="email"
+          type="email"
+          value={formValues.email}
+          handleChange={handleChange}
+          error={formErrors.email}
+        />
+        <FormInput
+          input="password"
+          type="password"
+          value={formValues.password}
+          handleChange={handleChange}
+          error={formErrors.password}
+        />
         <button type="submit">{isUserLoading ? "..." : "Submit"}</button>
         {isLogin ? (
-          <p>Don't have an account? <a href="javascript:void(0)" onClick={toggleLogin}>Register</a></p>
+          <p>
+            Don't have an account?{" "}
+            <a href="javascript:void(0)" onClick={toggleLogin}>
+              Register
+            </a>
+          </p>
         ) : (
-          <p>Already have an account? <a href="javascript:void(0)" onClick={toggleLogin}>Login</a></p>
+          <p>
+            Already have an account?{" "}
+            <a href="javascript:void(0)" onClick={toggleLogin}>
+              Login
+            </a>
+          </p>
         )}
       </form>
     </div>
-  )
-}
-export default Register
+  );
+};
+export default Register;

@@ -64,7 +64,9 @@ const Select = ({
           <div className={classes.dropdownContent}>
             {options.map((option, i) => (
               <div key={i}>
-                {option.group && <div className={classes.group}>{option.group}</div>}
+                {option.group && (
+                  <div className={classes.group}>{option.group}</div>
+                )}
                 {option.options.map((o) => (
                   <div
                     key={o.value}

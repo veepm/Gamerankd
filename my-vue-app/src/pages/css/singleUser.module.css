@@ -3,7 +3,7 @@
   margin: 5rem auto;
 }
 
-.user{
+.user {
   display: flex;
   align-items: center;
   margin-bottom: 2rem;
@@ -24,7 +24,7 @@
   width: fit-content;
 }
 
-.option > div{
+.option > div {
   display: flex;
   align-items: center;
 }

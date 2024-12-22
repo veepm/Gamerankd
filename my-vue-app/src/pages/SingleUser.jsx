@@ -59,23 +59,25 @@ const SingleUser = () => {
         const list = userListsQuery.data?.lists[i];
         return (
           <div key={list?.list_id} className={classes.list}>
-            <Link
-              className={classes.option}
-              to={`lists/${list?.list_name}`}
-            >
+            <Link className={classes.option} to={`lists/${list?.list_name}`}>
               {list?.list_name}
               <div>
                 {list?.games?.length}
                 <IoChevronForwardSharp />
               </div>
             </Link>
-            <GamesContainer games={gameQuery?.data?.games} gameCount={5} isLoading={gameQuery.isLoading} resize={false}/>
+            <GamesContainer
+              games={gameQuery?.data?.games}
+              gameCount={5}
+              isLoading={gameQuery.isLoading}
+              resize={false}
+            />
           </div>
         );
       })}
       <div>
         <Link className={classes.option} to={"reviews"}>
-          Reviews 
+          Reviews
           <div>
             {userReviewsQuery.data?.review_count}
             <IoChevronForwardSharp />

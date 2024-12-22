@@ -28,8 +28,8 @@ const SingleGame = () => {
       </div>
     );
 
-  if (gameInfoQuery.isError){
-    return <Error/>;
+  if (gameInfoQuery.isError) {
+    return <Error />;
   }
 
   const game = gameInfoQuery.data;

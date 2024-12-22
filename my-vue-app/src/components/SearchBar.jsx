@@ -1,17 +1,17 @@
-import { useSearchParams} from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { useEffect, useState, memo, useMemo } from "react";
 import classes from "./css/searchBar.module.css";
 import { IoSearch } from "react-icons/io5";
 
-const SearchBar = ({placeholder}) => {
+const SearchBar = ({ placeholder }) => {
   const [searchValue, setSearchValue] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
-  
+
   const search = searchParams.get("search") || "";
 
   useEffect(() => {
     setSearchValue(search);
-  },[search]);
+  }, [search]);
 
   const debounce = () => {
     let timeoutID;
@@ -19,10 +19,9 @@ const SearchBar = ({placeholder}) => {
       setSearchValue(e.target.value);
       clearTimeout(timeoutID);
       timeoutID = setTimeout(() => {
-        if (e.target.value){
-          searchParams.set("search",e.target.value);
-        }
-        else {
+        if (e.target.value) {
+          searchParams.set("search", e.target.value);
+        } else {
           searchParams.delete("search");
         }
         searchParams.delete("page");
@@ -38,18 +37,18 @@ const SearchBar = ({placeholder}) => {
 
   return (
     <div className={classes.container}>
-      <IoSearch className={classes.icon}/>
-      <input 
+      <IoSearch className={classes.icon} />
+      <input
         className={classes.searchBar}
-        type="search" 
+        type="search"
         name=""
-        id="" 
-        placeholder={placeholder} 
-        onChange={optimizedDebounce} 
+        id=""
+        placeholder={placeholder}
+        onChange={optimizedDebounce}
         value={searchValue}
-        />
+      />
     </div>
-  )
+  );
 };
 
 export default memo(SearchBar);

@@ -12,27 +12,41 @@ const Navbar = () => {
   const { user, logoutUser } = useAppContext();
   const navigate = useNavigate();
 
-  const userOptions = [
-    {
-      options: [
-        {
-          label: "My Page",
-          value: () => navigate(`/users/${user.username}`),
-        },
-      ],
-    },
-    {
-      options: [
-        {
-          label: "Sign Out",
-          value: () => {
-            navigate("/");
-            logoutUser();
+  let userOptions = [];
+  if (user) {
+    userOptions = [
+      {
+        options: [
+          {
+            label: "My Page",
+            value: () => navigate(`/users/${user.username}`),
           },
-        },
-      ],
-    },
-  ];
+        ],
+      },
+      {
+        options: [
+          {
+            label: "Sign Out",
+            value: () => {
+              navigate("/");
+              logoutUser();
+            },
+          },
+        ],
+      },
+    ];
+  } else {
+    userOptions = [
+      {
+        options: [
+          {
+            label: "Login",
+            value: () => navigate(`/register`),
+          },
+        ],
+      },
+    ];
+  }
 
   const dropOptions = [
     {
@@ -90,7 +104,7 @@ const Navbar = () => {
             className={"select"}
             displayIcon={false}
           >
-            <TbBaselineDensityMedium size="1.5rem" className="dropBars"/>
+            <TbBaselineDensityMedium size="1.5rem" className="dropBars" />
           </Select>
         </div>
       </div>

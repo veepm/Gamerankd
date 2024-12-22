@@ -128,11 +128,13 @@ button {
   gap: 2rem;
 }
 
-.options a, .dropBars {
+.options a,
+.dropBars {
   transition: 0.3s;
 }
 
-.options a:hover, .dropBars:hover {
+.options a:hover,
+.dropBars:hover {
   opacity: 0.5;
 }
 
@@ -162,12 +164,12 @@ button {
   display: none;
 }
 
-@media (max-width: 640px){
-  .options{
+@media (max-width: 640px) {
+  .options {
     display: none;
   }
 
-  .dropOptions{
+  .dropOptions {
     display: block;
   }
 }

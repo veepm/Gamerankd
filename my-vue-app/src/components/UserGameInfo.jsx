@@ -135,9 +135,9 @@ const UserGameInfo = ({ gameId }) => {
         }
       >
         {userInfoQuery.data.played ? (
-          <IoGameController title="Remove from played"/>
+          <IoGameController title="Remove from played" />
         ) : (
-          <IoGameControllerOutline title="Add to played"/>
+          <IoGameControllerOutline title="Add to played" />
         )}
       </button>
       <Rating
@@ -155,9 +155,9 @@ const UserGameInfo = ({ gameId }) => {
         }
       >
         {userInfoQuery.data.wishlist ? (
-          <PiListChecksLight title="Remove from wishlist"/>
+          <PiListChecksLight title="Remove from wishlist" />
         ) : (
-          <PiListBulletsLight title="Add to wishlist"/>
+          <PiListBulletsLight title="Add to wishlist" />
         )}
       </button>
     </div>

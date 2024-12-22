@@ -4,7 +4,7 @@ import Rating from "./Rating";
 
 const Game = ({ game }) => {
   const navigate = useNavigate();
- // TODO: Use lower res photo for background
+  // TODO: Use lower res photo for background
   return (
     <div className={classes.game} onClick={() => navigate(`/games/${game.id}`)}>
       {game.cover ? (
@@ -25,7 +25,7 @@ const Game = ({ game }) => {
         <div>{game.name}</div>
       )}
       <div className={classes.rating}>
-        <Rating avgRating={game.avg_rating} size={"1.2rem"}/>
+        <Rating avgRating={game.avg_rating} size={"1.2rem"} />
       </div>
     </div>
   );

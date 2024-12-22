@@ -11,7 +11,7 @@ const updateToken = async () => {
   return data.access_token;
 };
 
-if (!token){
+if (!token) {
   token = await updateToken();
 }
 

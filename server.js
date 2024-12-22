@@ -16,21 +16,38 @@ import reviewsRoute from "./routes/reviewsRoute.js";
 import gamesListsRoute from "./routes/gamesListsRoute.js";
 
 app.use(cookieParser());
-// app.use(cors({origin: "http://localhost:5173", credentials: true, exposedHeaders: ["set-cookie"]}));
-app.use(cors({origin: "https://gamerankd.onrender.com", credentials: true, exposedHeaders: ["set-cookie"]}));
+// app.use(
+//   cors({
+//     origin: "http://localhost:5173",
+//     credentials: true,
+//     exposedHeaders: ["set-cookie"],
+//   })
+// );
+app.use(
+  cors({
+    origin: "https://gamerankd.onrender.com",
+    credentials: true,
+    exposedHeaders: ["set-cookie"],
+  })
+);
 
 // Add headers before the routes are defined
 app.use(function (req, res, next) {
-
   // Request methods you wish to allow
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+  );
 
   // Request headers you wish to allow
-  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type,Authorization');
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "X-Requested-With,content-type,Authorization"
+  );
 
   // Set to true if you need the website to include cookies in the requests sent
   // to the API (e.g. in case you use sessions)
-  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader("Access-Control-Allow-Credentials", true);
 
   // Pass to next layer of middleware
   next();
@@ -51,4 +68,4 @@ const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
   console.log(`Server is listenting on port ${port}`);
-})
+});

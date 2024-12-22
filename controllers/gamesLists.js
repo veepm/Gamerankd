@@ -104,7 +104,7 @@ export const getUserLists = async (req, res) => {
 
 export const getUserList = async (req, res) => {
   const { username, listName } = req.params;
-  let { genres="", search="" } = req.query;
+  let { genres = "", search = "" } = req.query;
 
   const query = `
     SELECT l.*, COALESCE(ARRAY_AGG(lg.game_id) FILTER (WHERE lg.game_id IS NOT NULL), '{}') AS games
@@ -116,7 +116,12 @@ export const getUserList = async (req, res) => {
     GROUP BY l.list_id;
   `;
 
-  const result = await pool.query(query, [username, listName, `{${genres}}`, `%${search}%`]);
+  const result = await pool.query(query, [
+    username,
+    listName,
+    `{${genres}}`,
+    `%${search}%`,
+  ]);
 
   res.status(StatusCodes.OK).json(result.rows[0]);
 };

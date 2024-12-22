@@ -1,16 +1,16 @@
-.container{
+.container {
   position: relative;
   display: flex;
   align-items: center;
 }
 
-.icon{
+.icon {
   position: absolute;
   color: black;
   left: 0.5rem;
 }
 
-.searchBar{
+.searchBar {
   width: 25rem;
   height: 2rem;
   padding-left: 2rem;

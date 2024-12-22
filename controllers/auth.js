@@ -41,27 +41,26 @@ export const register = async (req, res) => {
 
   const { accessToken, refreshToken } = await generateTokens(user.user_id);
 
-  res.cookie("refreshToken", refreshToken, {
-    maxAge: 30 * 24 * 60 * 60 * 1000,
-    httpOnly: true,
-    secure: true,
-  });
-  res.cookie("accessToken", accessToken, {
-    maxAge: 15 * 60 * 1000,
-    httpOnly: true,
-    secure: true,
-  });
+  // res.cookie("refreshToken", refreshToken, {
+  //   maxAge: 30 * 24 * 60 * 60 * 1000,
+  //   httpOnly: true,
+  //   secure: true,
+  // });
+  // res.cookie("accessToken", accessToken, {
+  //   maxAge: 15 * 60 * 1000,
+  //   httpOnly: true,
+  //   secure: true,
+  // });
 
-  res
-    .status(StatusCodes.CREATED)
-    .send({
-      user: {
-        userId: user.user_id,
-        username: user.username,
-        email: user.email,
-      },
-      accessToken,
-    });
+  res.status(StatusCodes.CREATED).send({
+    user: {
+      userId: user.user_id,
+      username: user.username,
+      email: user.email,
+    },
+    accessToken,
+    refreshToken,
+  });
 };
 
 export const login = async (req, res) => {
@@ -90,27 +89,26 @@ export const login = async (req, res) => {
 
   const { accessToken, refreshToken } = await generateTokens(user.user_id);
 
-  res.cookie("refreshToken", refreshToken, {
-    maxAge: 30 * 24 * 60 * 60 * 1000,
-    httpOnly: true,
-    secure: true,
-  });
-  res.cookie("accessToken", accessToken, {
-    maxAge: 15 * 60 * 1000,
-    httpOnly: true,
-    secure: true,
-  });
+  // res.cookie("refreshToken", refreshToken, {
+  //   maxAge: 30 * 24 * 60 * 60 * 1000,
+  //   httpOnly: true,
+  //   secure: true,
+  // });
+  // res.cookie("accessToken", accessToken, {
+  //   maxAge: 15 * 60 * 1000,
+  //   httpOnly: true,
+  //   secure: true,
+  // });
 
-  res
-    .status(StatusCodes.OK)
-    .send({
-      user: {
-        userId: user.user_id,
-        username: user.username,
-        email: user.email,
-      },
-      accessToken,
-    });
+  res.status(StatusCodes.OK).send({
+    user: {
+      userId: user.user_id,
+      username: user.username,
+      email: user.email,
+    },
+    accessToken,
+    refreshToken,
+  });
 };
 
 export const logout = async (req, res) => {
@@ -135,7 +133,8 @@ export const logout = async (req, res) => {
 };
 
 export const refresh = async (req, res) => {
-  const incomingRefreshToken = req.cookies?.refreshToken;
+  // const incomingRefreshToken = req.cookies?.refreshToken;
+  const { refreshToken: incomingRefreshToken } = req.body;
   if (!incomingRefreshToken) {
     throw new UnAuthenticatedError("Refresh token not found");
   }
@@ -162,18 +161,18 @@ export const refresh = async (req, res) => {
       payload.userId
     );
 
-    res.cookie("refreshToken", newRefreshToken, {
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-      httpOnly: true,
-      secure: true,
-    });
-    res.cookie("accessToken", accessToken, {
-      maxAge: 15 * 60 * 1000,
-      httpOnly: true,
-      secure: true,
-    });
+    // res.cookie("refreshToken", newRefreshToken, {
+    //   maxAge: 30 * 24 * 60 * 60 * 1000,
+    //   httpOnly: true,
+    //   secure: true,
+    // });
+    // res.cookie("accessToken", accessToken, {
+    //   maxAge: 15 * 60 * 1000,
+    //   httpOnly: true,
+    //   secure: true,
+    // });
 
-    res.status(StatusCodes.OK).send({ accessToken });
+    res.status(StatusCodes.OK).send({ accessToken, newRefreshToken });
   } catch (error) {
     throw new UnAuthenticatedError(error.message || "Invalid Credentials");
   }

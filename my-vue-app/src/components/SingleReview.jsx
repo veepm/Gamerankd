@@ -31,7 +31,7 @@ const SingleReview = ({ review, showGame }) => {
         </Link>
       ) : (
         <Link to={`/users/${review.username}`}>
-          <ProfilePic username={review.username} className={classes.pic}/>
+          <ProfilePic username={review.username} className={classes.pic} />
         </Link>
       )}
       <div>
@@ -44,12 +44,14 @@ const SingleReview = ({ review, showGame }) => {
             )}
             <Rating avgRating={review.rating} size={"0.75em"} />
           </div>
-          {!showGame && <small>
-            {review.created_at === review.updated_at
-              ? new Date(review.created_at).toLocaleDateString("en-UK")
-              : "Edited " +
-                new Date(review.updated_at).toLocaleDateString("en-UK")}
-          </small>}
+          {!showGame && (
+            <small>
+              {review.created_at === review.updated_at
+                ? new Date(review.created_at).toLocaleDateString("en-UK")
+                : "Edited " +
+                  new Date(review.updated_at).toLocaleDateString("en-UK")}
+            </small>
+          )}
         </header>
         <p>{review.review_text}</p>
       </div>

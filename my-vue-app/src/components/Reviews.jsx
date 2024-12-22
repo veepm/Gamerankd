@@ -140,7 +140,11 @@ const GameReviews = memo(({ pages, showGame }) => {
     <div className={classes.reviews}>
       {pages.map((page) => {
         return page.reviews.map((review) => (
-          <SingleReview review={review} key={review.review_id} showGame={showGame} />
+          <SingleReview
+            review={review}
+            key={review.review_id}
+            showGame={showGame}
+          />
         ));
       })}
     </div>

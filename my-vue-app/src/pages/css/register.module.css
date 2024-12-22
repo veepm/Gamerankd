@@ -1,11 +1,11 @@
-.container{
+.container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
 }
 
-.container form{
+.container form {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -14,7 +14,7 @@
   padding: 3rem 2rem;
 }
 
-.container button{
+.container button {
   width: 100%;
   border: none;
   margin-top: 2rem;
