@@ -197,7 +197,7 @@ const ReviewInput = memo(
       },
       onError: (error) => console.log(error),
     });
-
+  
     return (
       <form
         className={`${classes.inputContainer} ${
@@ -207,12 +207,17 @@ const ReviewInput = memo(
       >
         <textarea
           className={classes.reviewInput}
-          placeholder="What are your thoughts on this game?"
+          placeholder={
+            user
+              ? "What are your thoughts on this game?"
+              : "Login to add review"
+          }
           value={reviewText}
           onChange={handleChange}
+          readOnly={!user}
         />
         <div>
-          <button type="submit">Submit</button>
+          <button type="submit" disabled={!user} style={{cursor: !user && "default"}}>Submit</button>
         </div>
       </form>
     );

@@ -1,5 +1,19 @@
-import { createBrowserRouter,RouterProvider, ScrollRestoration, Outlet } from "react-router-dom";
-import {Games, Error, Landing, SharedLayout, SingleGame, Register, ProtectedRoute, SingleUser} from "./pages/index";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  ScrollRestoration,
+  Outlet,
+} from "react-router-dom";
+import {
+  Games,
+  Error,
+  Landing,
+  SharedLayout,
+  SingleGame,
+  Register,
+  ProtectedRoute,
+  SingleUser,
+} from "./pages/index";
 import "./axios";
 import Users from "./pages/Users";
 
@@ -16,30 +30,30 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <SharedLayout/>,
+        element: <SharedLayout />,
         children: [
-          {index: true, element: <Landing/>},
-          {path: "games", element: <Games/>},
-          {path: "games/:gameId", element: <SingleGame/>},
-          {path: "users", element: <Users/>},
-          {path: "users/:username", element: <SingleUser/>},
-          {path: "/users/:username/lists/:listName", element: <Games/>}
-        ]
-      }
-    ]
+          { index: true, element: <Landing /> },
+          { path: "games", element: <Games /> },
+          { path: "games/:gameId", element: <SingleGame /> },
+          { path: "users", element: <Users /> },
+          { path: "users/:username", element: <SingleUser /> },
+          { path: "/users/:username/lists/:listName", element: <Games /> },
+        ],
+      },
+    ],
   },
   {
-    path:"/register",
-    element: <Register/>
+    path: "/register",
+    element: <Register />,
   },
   {
-    path: "*", 
-    element: <Error/>
-  }
+    path: "*",
+    element: <Error />,
+  },
 ]);
 
 const App = () => {
-  return <RouterProvider router={router}/>;
+  return <RouterProvider router={router} />;
 };
 
 export default App;

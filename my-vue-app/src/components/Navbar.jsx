@@ -1,4 +1,4 @@
-import { NavLink, Link, useNavigate } from "react-router-dom";
+import { NavLink, Link, useNavigate, useLocation } from "react-router-dom";
 import { useAppContext } from "../context/appContext";
 import { memo } from "react";
 import {
@@ -11,6 +11,7 @@ import Select from "./Select";
 const Navbar = () => {
   const { user, logoutUser } = useAppContext();
   const navigate = useNavigate();
+  const location = useLocation();
 
   let userOptions = [];
   if (user) {
@@ -41,7 +42,7 @@ const Navbar = () => {
         options: [
           {
             label: "Login",
-            value: () => navigate(`/register`),
+            value: () => navigate("/register", {state: {from: location.pathname}}),
           },
         ],
       },
@@ -85,7 +86,7 @@ const Navbar = () => {
             Users
           </NavLink>
           {!user ? (
-            <NavLink to="/register">Login/Sign Up</NavLink>
+            <NavLink to="/register" state={{from: location.pathname}}>Login/Sign Up</NavLink>
           ) : (
             <Select
               options={userOptions}

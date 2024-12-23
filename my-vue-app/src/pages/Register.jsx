@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import classes from "./css/register.module.css";
 import { useAppContext } from "../context/appContext";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import FormInput from "../components/FormInput";
 
 const Register = () => {
@@ -14,6 +14,7 @@ const Register = () => {
   const isSubmitted = useRef(false);
 
   const navigate = useNavigate();
+  const {state: {from}} = useLocation();
 
   const handleChange = (e) => {
     setFormValues({ ...formValues, [e.target.name]: e.target.value });
@@ -65,7 +66,7 @@ const Register = () => {
 
   useEffect(() => {
     if (user) {
-      navigate("/");
+      navigate(from);
     }
   }, [user]);
 

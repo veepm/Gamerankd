@@ -38,7 +38,7 @@ const SingleReview = ({ review, showGame }) => {
         <header>
           <div>
             {showGame ? (
-              <Link to={`/games/${game?.id}`}>{game?.name}</Link>
+              <Link to={`/games/${game?.id}`}><h4>{game?.name}</h4></Link>
             ) : (
               <Link to={`/users/${review.username}`}>{review.username}</Link>
             )}
@@ -53,7 +53,7 @@ const SingleReview = ({ review, showGame }) => {
             </small>
           )}
         </header>
-        <p>{review.review_text}</p>
+        <p style={{marginLeft: showGame && "2%"}}>{review.review_text}</p>
       </div>
     </div>
   );

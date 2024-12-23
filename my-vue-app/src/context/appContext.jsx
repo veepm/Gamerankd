@@ -25,7 +25,7 @@ const AppProvider = ({ children }) => {
 
   const logoutUser = async () => {
     try {
-      await axios.post("/auth/logout", undefined, { withCredentials: true });
+      await axios.post("/auth/logout");
       localStorage.removeItem("user");
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
@@ -39,6 +39,7 @@ const AppProvider = ({ children }) => {
     <AppContext.Provider
       value={{
         user,
+        setUser,
         isUserLoading,
         setupUser,
         logoutUser,
