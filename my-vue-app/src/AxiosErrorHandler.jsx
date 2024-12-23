@@ -18,14 +18,15 @@ const AxiosErrorHandler = ({ children }) => {
               data: { refreshToken: localStorage.getItem("refreshToken") },
             });
             return axios(prevRequest);
-          } else {
-            // ask to login again
-            window.location.href = '/';
-            localStorage.removeItem("user");
-            localStorage.removeItem("accessToken");
-            localStorage.removeItem("refreshToken");
-            setUser(null);
           }
+          // else {
+          //   // ask to login again
+          //   window.location.href = '/';
+          //   localStorage.removeItem("user");
+          //   localStorage.removeItem("accessToken");
+          //   localStorage.removeItem("refreshToken");
+          //   setUser(null);
+          // }
         }
         return Promise.reject(error);
       }

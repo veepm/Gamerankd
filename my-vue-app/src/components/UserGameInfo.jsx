@@ -54,17 +54,6 @@ const UserGameInfo = ({ gameId }) => {
     },
     onSuccess: (data, listName) => {
       toast.success(`Game added to ${listName}`);
-      queryClient.setQueryData(
-        ["users", user.username, "lists", listName],
-        (oldData) => ({
-          ...oldData,
-          games: [...oldData.games, gameId],
-        })
-      );
-      // queryClient.invalidateQueries({
-      //   queryKey: ["users", user.username, "lists", listName],
-      //   refetchType: "all",
-      // });
     },
   });
 
@@ -105,17 +94,6 @@ const UserGameInfo = ({ gameId }) => {
     },
     onSuccess: (data, listName) => {
       toast.success(`Game deleted from ${listName}`);
-      queryClient.setQueryData(
-        ["users", user.username, "lists", listName],
-        (oldData) => ({
-          ...oldData,
-          games: oldData.games.filter((game) => game.id !== gameId),
-        })
-      );
-      // queryClient.invalidateQueries({
-      //   queryKey: ["users", user.username, "lists", listName],
-      //   refetchType: "all",
-      // });
     },
   });
 
