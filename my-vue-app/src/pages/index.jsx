@@ -6,6 +6,8 @@ import SingleGame from "./SingleGame";
 import Register from "./Register";
 import ProtectedRoute from "./ProtectedRoute";
 import SingleUser from "./SingleUser";
+import UserReviews from "./UserReviews";
+import Users from "./Users";
 
 export {
   Games,
@@ -15,5 +17,7 @@ export {
   SingleGame,
   Register,
   ProtectedRoute,
-  SingleUser
-}
+  SingleUser,
+  UserReviews,
+  Users,
+};

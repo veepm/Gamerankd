@@ -9,6 +9,7 @@ import {
 import classes from "./css/allGames.module.css";
 import axios from "axios";
 import { useParams, useSearchParams } from "react-router-dom";
+import { useEffect } from "react";
 
 const sortOptions = [
   "popularity",
@@ -55,6 +56,10 @@ const Games = () => {
   const page = Number(searchParams.get("page")) || 1;
   const search = searchParams.get("search") || "";
   let sortBy = searchParams.get("sortBy");
+
+  useEffect(() => {
+    document.title = "Games - Gamerankd";
+  }, []);
 
   if (!sortOptions.includes(sortBy)) {
     sortBy = sortOptions[0];
@@ -107,7 +112,7 @@ const Games = () => {
       { page },
       { search },
       { sortBy },
-      { ids: listGamesQuery?.data?.games },
+      { ids: listName ? listGamesQuery?.data?.games : []},
     ],
     enabled:
       (!username && !listName) || listGamesQuery?.data?.games?.length > 0,

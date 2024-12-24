@@ -4,17 +4,23 @@ import { useAppContext } from "../context/appContext";
 import { useLocation, useNavigate } from "react-router-dom";
 import FormInput from "../components/FormInput";
 
-const Register = () => {
+const Register = ({ login }) => {
   const { isUserLoading, user, setupUser } = useAppContext();
 
   const initialValues = { username: "", email: "", password: "" };
   const [formValues, setFormValues] = useState(initialValues);
   const [formErrors, setFormErrors] = useState({});
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState(login);
   const isSubmitted = useRef(false);
 
   const navigate = useNavigate();
-  const {state: {from}} = useLocation();
+  const {
+    state: { from },
+  } = useLocation();
+
+  useEffect(() => {
+    document.title = `${isLogin ? "Login" : "Register"} - Gamerankd`;
+  }, [isLogin]);
 
   const handleChange = (e) => {
     setFormValues({ ...formValues, [e.target.name]: e.target.value });
@@ -59,16 +65,12 @@ const Register = () => {
             prev.password = setupError.response.data.msg;
             return prev;
           });
+        } else {
+          navigate(`${from.pathname}${from.search}`);
         }
       }
     })();
   }, [formErrors]);
-
-  useEffect(() => {
-    if (user) {
-      navigate(from);
-    }
-  }, [user]);
 
   const toggleLogin = () => {
     setIsLogin(!isLogin);

@@ -14,7 +14,7 @@ import PuffLoader from "react-spinners/PuffLoader";
 import { SingleReview, Select } from "./index";
 import { toast } from "react-toastify";
 
-const Reviews = ({ gameId }) => {
+const Reviews = ({ gameId, username }) => {
   const { user } = useAppContext();
   const [isReviewing, setIsReviewing] = useState(false);
   const [sortBy, setSortBy] = useState({ label: "Latest", value: "latest" });
@@ -22,13 +22,20 @@ const Reviews = ({ gameId }) => {
   const queryClient = useQueryClient();
 
   const reviewsQuery = useInfiniteQuery({
-    queryKey: ["games", gameId, "reviews", { sortBy: sortBy.value }],
+    queryKey: [
+      (gameId && "games") || (username && "users"),
+      gameId || username,
+      "reviews",
+      { sortBy: sortBy.value },
+    ],
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages, lastPageParam) =>
       lastPage.total_pages > lastPageParam ? lastPageParam + 1 : null,
     queryFn: async ({ pageParam }) => {
       const { data } = await axios.get(
-        `/games/${gameId}/reviews?limit=4&page=${pageParam}&sortBy=${sortBy.value}`
+        `/${(gameId && "games") || (username && "users")}/${
+          gameId || username
+        }/reviews?limit=4&page=${pageParam}&sortBy=${sortBy.value}`
       );
       return data;
     },
@@ -61,32 +68,34 @@ const Reviews = ({ gameId }) => {
   if (deleteReviewMutation.isError) console.log(deleteReviewMutation.error);
 
   return (
-    <div className={classes.container}>
+    <div className={classes.container} style={{margin: username && "3rem"}}>
       <header className={classes.header}>
         <h2>{reviewsQuery?.data?.pages[0].review_count} Reviews</h2>
-        <div className={classes.reviewActions}>
-          {userInfoQuery?.data?.review_text ? (
-            <>
-              <button title="Edit your review" onClick={handleClick}>
-                <MdEdit />
+        {gameId && (
+          <div className={classes.reviewActions}>
+            {userInfoQuery?.data?.review_text ? (
+              <>
+                <button title="Edit your review" onClick={handleClick}>
+                  <MdEdit />
+                </button>
+                <button
+                  title="Delete your review"
+                  onClick={deleteReviewMutation.mutate}
+                >
+                  <MdDelete />
+                </button>
+              </>
+            ) : (
+              <button title="Add a review" onClick={handleClick}>
+                <IoAdd
+                  className={`${classes.add} ${
+                    isReviewing ? classes.rotated : ""
+                  }`}
+                />
               </button>
-              <button
-                title="Delete your review"
-                onClick={deleteReviewMutation.mutate}
-              >
-                <MdDelete />
-              </button>
-            </>
-          ) : (
-            <button title="Add a review" onClick={handleClick}>
-              <IoAdd
-                className={`${classes.add} ${
-                  isReviewing ? classes.rotated : ""
-                }`}
-              />
-            </button>
-          )}
-        </div>
+            )}
+          </div>
+        )}
         <Select
           options={[
             {
@@ -102,19 +111,21 @@ const Reviews = ({ gameId }) => {
           openOnHover
         />
       </header>
-      <ReviewInput
-        gameId={gameId}
-        rated={userInfoQuery?.data?.rating}
-        defaultText={userInfoQuery?.data?.review_text}
-        isReviewing={isReviewing}
-        setIsReviewing={setIsReviewing}
-      />
+      {gameId && (
+        <ReviewInput
+          gameId={gameId}
+          rated={userInfoQuery?.data?.rating}
+          defaultText={userInfoQuery?.data?.review_text}
+          isReviewing={isReviewing}
+          setIsReviewing={setIsReviewing}
+        />
+      )}
       {reviewsQuery.isLoading ? (
         <div className={classes.loader}>
           <PuffLoader color="white" />
         </div>
       ) : (
-        <GameReviews pages={reviewsQuery?.data?.pages} />
+        <GameReviews pages={reviewsQuery?.data?.pages} showGame={username} />
       )}
       <div className={classes.loader}>
         <PuffLoader loading={reviewsQuery.isFetchingNextPage} color="white" />
@@ -217,7 +228,13 @@ const ReviewInput = memo(
           readOnly={!user}
         />
         <div>
-          <button type="submit" disabled={!user} style={{cursor: !user && "default"}}>Submit</button>
+          <button
+            type="submit"
+            disabled={!user}
+            style={{ cursor: !user && "default" }}
+          >
+            Submit
+          </button>
         </div>
       </form>
     );

@@ -11,7 +11,9 @@ const GamesContainer = ({ games, gameCount, isLoading, resize = true }) => {
         ? [...Array(gameCount)].map((_, i) => {
             return <div key={i} className={classes.placeholder}></div>;
           })
-        : games?.map((game, i) => <Game key={game.id} game={game} />)}
+        : games?.length > 0
+        ? games?.map((game, i) => <Game key={game.id} game={game} />)
+        : "No games"}
     </div>
   );
 };

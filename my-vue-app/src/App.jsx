@@ -13,9 +13,10 @@ import {
   Register,
   ProtectedRoute,
   SingleUser,
+  Users,
+  UserReviews,
 } from "./pages/index";
 import "./axios";
-import Users from "./pages/Users";
 
 const AppLayout = () => (
   <>
@@ -38,6 +39,7 @@ const router = createBrowserRouter([
           { path: "users", element: <Users /> },
           { path: "users/:username", element: <SingleUser /> },
           { path: "/users/:username/lists/:listName", element: <Games /> },
+          { path: "/users/:username/reviews", element: <UserReviews /> },
         ],
       },
     ],
@@ -45,6 +47,10 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element: <Register />,
+  },
+  {
+    path: "/login",
+    element: <Register login/>
   },
   {
     path: "*",

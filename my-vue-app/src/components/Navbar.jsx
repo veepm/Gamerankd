@@ -42,7 +42,17 @@ const Navbar = () => {
         options: [
           {
             label: "Login",
-            value: () => navigate("/register", {state: {from: location.pathname}}),
+            value: () =>
+              navigate("/login", { state: { from: location } }),
+          },
+        ],
+      },
+      {
+        options: [
+          {
+            label: "Register",
+            value: () =>
+              navigate("/register", { state: { from: location } }),
           },
         ],
       },
@@ -75,8 +85,13 @@ const Navbar = () => {
   return (
     <nav className="navbar">
       <div>
-        <NavLink to="/" title="Home">
-          <TbHexagonLetterGFilled className="icon" />
+        <NavLink
+          to="/"
+          title="Home"
+          style={{ display: "flex", alignItems: "center" }}
+        >
+          <TbHexagonLetterGFilled className="icon" />{" "}
+          <h3 className={"title"}>ameRankD</h3>
         </NavLink>
         <div className="options">
           <NavLink to="/games" end>
@@ -86,7 +101,14 @@ const Navbar = () => {
             Users
           </NavLink>
           {!user ? (
-            <NavLink to="/register" state={{from: location.pathname}}>Login/Sign Up</NavLink>
+            <>
+              <NavLink to="/login" state={{ from: location }}>
+                Login
+              </NavLink>
+              <NavLink to="/register" state={{ from: location }}>
+                Register
+              </NavLink>
+            </>
           ) : (
             <Select
               options={userOptions}

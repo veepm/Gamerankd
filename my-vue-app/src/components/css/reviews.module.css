@@ -1,4 +1,5 @@
 .container {
+  width: 100%;
   max-width: 60ch;
   display: flex;
   flex-direction: column;
@@ -7,6 +8,7 @@
 .header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 1rem;
   margin-bottom: 0.5rem;
 }

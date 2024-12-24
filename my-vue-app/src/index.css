@@ -112,7 +112,7 @@ button {
   right: 0;
   display: flex;
   justify-content: center;
-  height: 3.5rem;
+  height: 4rem;
   z-index: 1000;
 }
 

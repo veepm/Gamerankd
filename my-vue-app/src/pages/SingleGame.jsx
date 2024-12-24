@@ -19,7 +19,12 @@ const SingleGame = () => {
       );
       return data;
     },
+    retry: false,
   });
+
+  useEffect(() => {    
+    document.title = `${gameInfoQuery?.data?.name || "Game"} - Gameranked`;
+  }, [gameInfoQuery.isLoading]);
 
   if (gameInfoQuery.isLoading)
     return (

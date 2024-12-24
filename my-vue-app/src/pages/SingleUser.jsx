@@ -4,9 +4,14 @@ import { Link, useParams } from "react-router-dom";
 import { GamesContainer, ProfilePic, SingleReview } from "../components";
 import { IoChevronForwardSharp, IoLogIn } from "react-icons/io5";
 import classes from "./css/singleUser.module.css";
+import { useEffect } from "react";
 
 const SingleUser = () => {
   const { username } = useParams();
+
+  useEffect(() => {
+    document.title = `${username + " Profile"} - Gameranked`;
+  }, []);
 
   const userListsQuery = useQuery({
     queryKey: ["users", username, "lists"],
@@ -59,7 +64,14 @@ const SingleUser = () => {
         const list = userListsQuery.data?.lists[i];
         return (
           <div key={list?.list_id} className={classes.list}>
-            <Link className={classes.option} to={`lists/${list?.list_name}`}>
+            <Link
+              className={classes.option}
+              to={`lists/${list?.list_name}`}
+              style={{
+                pointerEvents: list?.games?.length == 0 && "none",
+                cursor: list?.games?.length == 0 && "default",
+              }}
+            >
               {list?.list_name}
               <div>
                 {list?.games?.length}
@@ -76,7 +88,14 @@ const SingleUser = () => {
         );
       })}
       <div>
-        <Link className={classes.option} to={"reviews"}>
+        <Link
+          className={classes.option}
+          to={"reviews"}
+          style={{
+            pointerEvents: userReviewsQuery.data?.review_count == 0 && "none",
+            cursor: userReviewsQuery.data?.review_count == 0 && "default",
+          }}
+        >
           Reviews
           <div>
             {userReviewsQuery.data?.review_count}

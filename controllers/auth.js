@@ -172,7 +172,9 @@ export const refresh = async (req, res) => {
     //   secure: true,
     // });
 
-    res.status(StatusCodes.OK).send({ accessToken, newRefreshToken });
+    res
+      .status(StatusCodes.OK)
+      .send({ accessToken, refreshToken: newRefreshToken });
   } catch (error) {
     throw new UnAuthenticatedError(error.message || "Invalid Credentials");
   }
