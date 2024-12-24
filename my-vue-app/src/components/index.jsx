@@ -12,6 +12,7 @@ import UsersContainer from "./UsersContainer";
 import ProfilePic from "./ProfilePic";
 import SingleReview from "./SingleReview";
 import Game from "./Game";
+import StackedGames from "./StackedGames";
 
 export {
   GamesContainer,
@@ -28,4 +29,5 @@ export {
   ProfilePic,
   SingleReview,
   Game,
+  StackedGames,
 };

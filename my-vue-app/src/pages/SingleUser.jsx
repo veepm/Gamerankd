@@ -1,7 +1,12 @@
 import { useQueries, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Link, useParams } from "react-router-dom";
-import { GamesContainer, ProfilePic, SingleReview } from "../components";
+import {
+  GamesContainer,
+  ProfilePic,
+  SingleReview,
+  StackedGames,
+} from "../components";
 import { IoChevronForwardSharp, IoLogIn } from "react-icons/io5";
 import classes from "./css/singleUser.module.css";
 import { useEffect } from "react";
@@ -10,7 +15,7 @@ const SingleUser = () => {
   const { username } = useParams();
 
   useEffect(() => {
-    document.title = `${username + " Profile"} - Gameranked`;
+    document.title = `${username + "'s Profile"} - Gameranked`;
   }, []);
 
   const userListsQuery = useQuery({
@@ -60,34 +65,30 @@ const SingleUser = () => {
         <ProfilePic username={username} />
         <h2>{username}</h2>
       </div>
-      {gameQueries.map((gameQuery, i) => {
-        const list = userListsQuery.data?.lists[i];
-        return (
-          <div key={list?.list_id} className={classes.list}>
-            <Link
-              className={classes.option}
-              to={`lists/${list?.list_name}`}
-              style={{
-                pointerEvents: list?.games?.length == 0 && "none",
-                cursor: list?.games?.length == 0 && "default",
-              }}
-            >
-              {list?.list_name}
-              <div>
-                {list?.games?.length}
-                <IoChevronForwardSharp />
-              </div>
-            </Link>
-            <GamesContainer
-              games={gameQuery?.data?.games}
-              gameCount={5}
-              isLoading={gameQuery.isLoading}
-              resize={false}
-            />
-          </div>
-        );
-      })}
-      <div>
+      <section>
+        {gameQueries.map((gameQuery, i) => {
+          const list = userListsQuery.data?.lists[i];
+          if (list?.games?.length > 0){
+            return (
+                <Link
+                  key={list?.list_id}
+                  className={`${classes.option} ${classes.list}`}
+                  to={`lists/${list?.list_name}`}
+                >
+                  <span className={classes.optionName}>
+                    {list?.list_name}
+                  </span>
+                  <span className={classes.count}>
+                    {list?.games?.length}
+                    <IoChevronForwardSharp />
+                  </span>
+                  <StackedGames games={gameQuery?.data?.games} />
+                </Link>
+            );
+          }
+        })}
+      </section>
+      <section>
         <Link
           className={classes.option}
           to={"reviews"}
@@ -96,11 +97,13 @@ const SingleUser = () => {
             cursor: userReviewsQuery.data?.review_count == 0 && "default",
           }}
         >
-          Reviews
-          <div>
+          <span className={classes.optionName}>
+            Reviews/Ratings
+          </span>
+          <span className={classes.count}>
             {userReviewsQuery.data?.review_count}
             <IoChevronForwardSharp />
-          </div>
+          </span>
         </Link>
         <div className={classes.reviews}>
           {userReviewsQuery.data?.reviews?.map((review) => {
@@ -109,7 +112,7 @@ const SingleUser = () => {
             );
           })}
         </div>
-      </div>
+      </section>
     </div>
   );
 };

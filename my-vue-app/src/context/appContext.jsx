@@ -15,7 +15,6 @@ const AppProvider = ({ children }) => {
       localStorage.setItem("accessToken", data.accessToken);
       localStorage.setItem("refreshToken", data.refreshToken);
       setUser(data.user);
-      axios.defaults.headers.common["Authorization"] = data.accessToken;
     } catch (error) {
       return error;
     } finally {

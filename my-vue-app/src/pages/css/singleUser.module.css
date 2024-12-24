@@ -6,28 +6,31 @@
 .user {
   display: flex;
   align-items: center;
-  margin-bottom: 2rem;
   gap: 1rem;
 }
 
-.list {
-  margin-bottom: 2rem;
-}
-
 .option {
-  display: flex;
-  gap: 1em;
+  display: block;
+  max-width: fit-content;
   text-transform: capitalize;
-  margin-bottom: 1rem;
-  padding-left: 0.5rem;
-  border-left: 2px solid var(--primary-400);
-  width: fit-content;
+  margin-top: 2rem;
 }
 
-.option > div {
-  display: flex;
+.optionName {
+  border-left: 2px solid var(--primary-400);
+  padding-left: 0.5rem;
+}
+
+.count {
+  display: inline-flex;
   align-items: center;
+  margin-left: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 .reviews {
+}
+
+@media (max-width: 640px) {
+
 }

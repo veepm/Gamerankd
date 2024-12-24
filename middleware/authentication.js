@@ -9,7 +9,8 @@ const auth = async (req, res, next) => {
   }
 
   const token = req.cookies.accessToken || authHeader;
-
+  console.log(token);
+  
   try {
     const payload = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
     req.user = { userId: payload.userId, username: payload.username };

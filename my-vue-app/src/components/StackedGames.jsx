@@ -1,14 +1,16 @@
-import Game from "./Game";
+import useWindowDimensions from "../useWindowDimensions";
+import classes from "./css/stackedGames.module.css";
 
 const StackedGames = ({ games }) => {
   return (
-    <div>
-      {games.map((game) => {
+    <div className={classes.container}>
+      {games?.map((game, i) => {
         return (
-          <Game game={game}/>
+          <div className={classes.cover} style={{ zIndex: 5 - i }}>
+            <img src={`https:${game.cover}`} />
+          </div>
         );
       })}
-      ;
     </div>
   );
 };

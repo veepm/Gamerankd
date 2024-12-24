@@ -133,7 +133,6 @@ export const logout = async (req, res) => {
 };
 
 export const refresh = async (req, res) => {
-  // const incomingRefreshToken = req.cookies?.refreshToken;
   const { refreshToken: incomingRefreshToken } = req.body;
   if (!incomingRefreshToken) {
     throw new UnAuthenticatedError("Refresh token not found");

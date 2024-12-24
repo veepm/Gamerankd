@@ -7,6 +7,7 @@ import {
 } from "react-icons/tb";
 import ProfilePic from "./ProfilePic";
 import Select from "./Select";
+import classes from "./css/navbar.module.css";
 
 const Navbar = () => {
   const { user, logoutUser } = useAppContext();
@@ -42,8 +43,7 @@ const Navbar = () => {
         options: [
           {
             label: "Login",
-            value: () =>
-              navigate("/login", { state: { from: location } }),
+            value: () => navigate("/login", { state: { from: location } }),
           },
         ],
       },
@@ -51,8 +51,7 @@ const Navbar = () => {
         options: [
           {
             label: "Register",
-            value: () =>
-              navigate("/register", { state: { from: location } }),
+            value: () => navigate("/register", { state: { from: location } }),
           },
         ],
       },
@@ -83,17 +82,17 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="navbar">
+    <nav className={classes.navbar}>
       <div>
         <NavLink
           to="/"
           title="Home"
           style={{ display: "flex", alignItems: "center" }}
         >
-          <TbHexagonLetterGFilled className="icon" />{" "}
-          <h3 className={"title"}>ameRankD</h3>
+          <TbHexagonLetterGFilled className={classes.icon} />{" "}
+          <h3 className={classes.title}>ameRankD</h3>
         </NavLink>
-        <div className="options">
+        <div className={classes.options}>
           <NavLink to="/games" end>
             Games
           </NavLink>
@@ -113,21 +112,27 @@ const Navbar = () => {
             <Select
               options={userOptions}
               onChange={handleChange}
-              className={"select"}
+              className={classes.select}
               displayIcon={false}
             >
-              <ProfilePic username={user.username} className={"profilePic"} />
+              <ProfilePic
+                username={user.username}
+                className={classes.profilePic}
+              />
             </Select>
           )}
         </div>
-        <div className="dropOptions">
+        <div className={classes.dropOptions}>
           <Select
             options={dropOptions}
             onChange={handleChange}
-            className={"select"}
+            className={classes.select}
             displayIcon={false}
           >
-            <TbBaselineDensityMedium size="1.5rem" className="dropBars" />
+            <TbBaselineDensityMedium
+              size="1.5rem"
+              className={classes.dropBars}
+            />
           </Select>
         </div>
       </div>

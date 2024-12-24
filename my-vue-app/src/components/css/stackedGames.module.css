@@ -1,0 +1,35 @@
+.container{
+  width: fit-content;
+  display: flex;
+  border-radius: var(--border-radius);
+  border: 3px solid rgba(0,0,0,0);
+}
+
+.cover {
+  position: relative;
+  width: 8rem;
+  border-radius: var(--border-radius);
+}
+
+.cover > img {
+  border-radius: var(--border-radius);
+  border: 0.5px solid var(--neutral-500);
+  box-shadow: 6px 0 10px var(--neutral-900);
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+.container .cover:not(:first-child) {
+  margin-left: -3rem;
+}
+
+.container:hover{
+  /* border: 3px solid var(--accent); */
+}
+
+@media (max-width: 640px) {
+  .cover{
+    width: 7rem;
+  }
+}
