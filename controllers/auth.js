@@ -4,6 +4,15 @@ import bcrypt from "bcrypt";
 import { BadRequestError, UnAuthenticatedError } from "../errors/index.js";
 import jwt from "jsonwebtoken";
 import { generateTokens } from "../utils/generateTokens.js";
+import { createTransport } from "nodemailer";
+
+const transporter = createTransport({
+  service: "Gmail",
+  auth: {
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_PASS,
+  },
+});
 
 export const register = async (req, res) => {
   const { username, email, password } = req.body;
@@ -39,7 +48,24 @@ export const register = async (req, res) => {
     client.release();
   }
 
-  const { accessToken, refreshToken } = await generateTokens(user.user_id);
+  jwt.sign(
+    {
+      userId: user.user_id,
+    },
+    process.env.EMAIL_TOKEN_SECRET,
+    {
+      expiresIn: process.env.EMAIL_TOKEN_LIFETIME,
+    },
+    (err, emailToken) => {
+      const url = `https://api-gamerankd.onrender.com/auth/confirmation/${emailToken}`;
+
+      transporter.sendMail({
+        to: user.email,
+        subject: "Confirm Email",
+        html: `Please click this email to confirm your email: <a href="${url}">${url}</a>`,
+      });
+    }
+  );
 
   // res.cookie("refreshToken", refreshToken, {
   //   maxAge: 30 * 24 * 60 * 60 * 1000,
@@ -58,9 +84,21 @@ export const register = async (req, res) => {
       username: user.username,
       email: user.email,
     },
-    accessToken,
-    refreshToken,
   });
+};
+
+export const confirm = async (req, res) => {
+  try {
+    const payload = jwt.verify(
+      req.params.token,
+      process.env.EMAIL_TOKEN_SECRET
+    );
+    const query = "UPDATE users SET confirmed=TRUE WHERE user_id=$1;";
+    await pool.query(query, [payload.userId]);
+  } catch (e) {
+    new UnAuthenticatedError("Email token not verified");
+  }
+  return res.redirect("https://gamerankd.onrender.com/login");
 };
 
 export const login = async (req, res) => {
@@ -81,6 +119,10 @@ export const login = async (req, res) => {
 
   if (!user) {
     throw new UnAuthenticatedError("User does not exist");
+  }
+
+  if (!user.confirmed) {
+    throw new UnAuthenticatedError("Please confirm email");
   }
 
   if (!(await bcrypt.compare(password, user.password_hash))) {

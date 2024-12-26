@@ -1,26 +1,24 @@
 import { useEffect, useRef, useState } from "react";
 import classes from "./css/register.module.css";
 import { useAppContext } from "../context/appContext";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import FormInput from "../components/FormInput";
+import { toast } from "react-toastify";
 
 const Register = ({ login }) => {
-  const { isUserLoading, user, setupUser } = useAppContext();
+  const { isUserLoading, setupUser } = useAppContext();
 
   const initialValues = { username: "", email: "", password: "" };
   const [formValues, setFormValues] = useState(initialValues);
   const [formErrors, setFormErrors] = useState({});
-  const [isLogin, setIsLogin] = useState(login);
   const isSubmitted = useRef(false);
 
   const navigate = useNavigate();
-  const {
-    state: { from },
-  } = useLocation();
+  const { state } = useLocation();
 
   useEffect(() => {
-    document.title = `${isLogin ? "Login" : "Register"} - Gamerankd`;
-  }, [isLogin]);
+    document.title = `${login ? "Login" : "Register"} - Gamerankd`;
+  }, []);
 
   const handleChange = (e) => {
     setFormValues({ ...formValues, [e.target.name]: e.target.value });
@@ -40,7 +38,7 @@ const Register = ({ login }) => {
     const regex =
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-    if (!username && !isLogin) {
+    if (!username && !login) {
       errors.username = "Username is required";
     }
     if (!email) {
@@ -58,32 +56,29 @@ const Register = ({ login }) => {
   useEffect(() => {
     (async function () {
       if (Object.keys(formErrors).length === 0 && isSubmitted.current) {
-        const url = isLogin ? "/auth/login" : "/auth/register";
-        const setupError = await setupUser(url, formValues);
+        const setupError = await setupUser(login, formValues);
         if (setupError) {
           setFormErrors((prev) => {
             prev.password = setupError.response.data.msg;
             return prev;
           });
+        } else if (!login) {
+          toast.info("Verify email by clicking on link sent at email");
+          navigate("/login");
         } else {
-          navigate(`${from.pathname}${from.search}`);
+          navigate(
+            `${state?.from ? state.from.pathname + state.from.search : "/"}`
+          );
         }
       }
     })();
   }, [formErrors]);
 
-  const toggleLogin = () => {
-    setIsLogin(!isLogin);
-    setFormValues(initialValues);
-    setFormErrors({});
-    isSubmitted.current = false;
-  };
-
   return (
     <div className={classes.container}>
       <form onSubmit={handleSubmit}>
-        <h2>{isLogin ? "Login" : "Sign Up"}</h2>
-        {isLogin || (
+        <h2>{login ? "Login" : "Sign Up"}</h2>
+        {login || (
           <FormInput
             input="username"
             type="text"
@@ -107,19 +102,19 @@ const Register = ({ login }) => {
           error={formErrors.password}
         />
         <button type="submit">{isUserLoading ? "..." : "Submit"}</button>
-        {isLogin ? (
+        {login ? (
           <p>
             Don't have an account?{" "}
-            <a href="javascript:void(0)" onClick={toggleLogin}>
+            <Link to="/register" replace={true}>
               Register
-            </a>
+            </Link>
           </p>
         ) : (
           <p>
             Already have an account?{" "}
-            <a href="javascript:void(0)" onClick={toggleLogin}>
+            <Link to="/login" replace={true}>
               Login
-            </a>
+            </Link>
           </p>
         )}
       </form>

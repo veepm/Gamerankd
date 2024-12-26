@@ -6,7 +6,7 @@ const StackedGames = ({ games }) => {
     <div className={classes.container}>
       {games?.map((game, i) => {
         return (
-          <div className={classes.cover} style={{ zIndex: 5 - i }}>
+          <div className={classes.cover} style={{ zIndex: 5 - i }} key={game.id}>
             <img src={`https:${game.cover}`} />
           </div>
         );

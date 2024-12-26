@@ -7,14 +7,17 @@ const AppProvider = ({ children }) => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
   const [isUserLoading, setIsUserLoading] = useState(false);
 
-  const setupUser = async (url, values) => {
+  const setupUser = async (login, values) => {
     try {
       setIsUserLoading(true);
+      const url = login ? "/auth/login" : "/auth/register";
       const { data } = await axios.post(url, values, { withCredentials: true });
-      localStorage.setItem("user", JSON.stringify(data.user));
-      localStorage.setItem("accessToken", data.accessToken);
-      localStorage.setItem("refreshToken", data.refreshToken);
-      setUser(data.user);
+      if (login) {
+        localStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem("accessToken", data.accessToken);
+        localStorage.setItem("refreshToken", data.refreshToken);
+        setUser(data.user);
+      }
     } catch (error) {
       return error;
     } finally {
