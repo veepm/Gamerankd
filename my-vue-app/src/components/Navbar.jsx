@@ -88,23 +88,40 @@ const Navbar = () => {
           to="/"
           title="Home"
           style={{ display: "flex", alignItems: "center" }}
+          className={({ isActive }) => (isActive ? classes.active : "")}
         >
           <TbHexagonLetterGFilled className={classes.icon} />{" "}
           <h3 className={classes.title}>ameRankD</h3>
         </NavLink>
         <div className={classes.options}>
-          <NavLink to="/games" end>
+          <NavLink
+            to="/games"
+            className={({ isActive }) => (isActive ? classes.active : "")}
+            end
+          >
             Games
           </NavLink>
-          <NavLink to="/users" end>
+          <NavLink
+            to="/users"
+            className={({ isActive }) => (isActive ? classes.active : "")}
+            end
+          >
             Users
           </NavLink>
           {!user ? (
             <>
-              <NavLink to="/login" state={{ from: location }}>
+              <NavLink
+                to="/login"
+                className={({ isActive }) => (isActive ? classes.active : "")}
+                state={{ from: location }}
+              >
                 Login
               </NavLink>
-              <NavLink to="/register" state={{ from: location }}>
+              <NavLink
+                to="/register"
+                className={({ isActive }) => (isActive ? classes.active : "")}
+                state={{ from: location }}
+              >
                 Register
               </NavLink>
             </>

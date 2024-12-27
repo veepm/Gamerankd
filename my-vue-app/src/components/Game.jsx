@@ -17,7 +17,7 @@ const Game = ({ game }) => {
           />
           <img
             className={classes.background}
-            src={`https:${game.cover}`}
+            src={`https:${game.cover?.replace("cover_big_2x", "cover_small")}`}
             loading="lazy"
           />
         </>

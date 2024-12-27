@@ -113,7 +113,7 @@ const GameSummary = memo(({ text }) => {
 const GameRating = memo(({ avgRating, ratingCount, ratingDistribution }) => {
   return (
     <span className={classes.avgRating}>
-      <span>{avgRating?.toFixed(1) || "Not Rated"}</span>
+      <span>{avgRating?.toFixed(1)} ({ratingCount})</span>
       <Rating avgRating={avgRating} size="1rem" />
       <IoChevronDownSharp />
       <div className={classes.breakdownContainer}>

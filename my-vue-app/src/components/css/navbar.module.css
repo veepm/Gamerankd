@@ -33,14 +33,18 @@
   opacity: 0.5;
 }
 
+.options > a{
+  padding-left: 0.5em;
+}
+
 .icon {
   font-size: 2.5rem;
   display: block;
   color: var(--primary-400);
 }
 
-.active {
-  /* text-decoration: underline; */
+.options > .active {
+  border-left: 1px solid var(--accent);
 }
 
 .select {

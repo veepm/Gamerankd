@@ -287,10 +287,6 @@ const addGameToDB = async (gameId, gameGenres, gameName) => {
 
 const formatCompanies = (games) => {
   games.forEach((game) => {
-    const publisherIds = game.involved_companies?.map(
-      (company) => company.company.id
-    );
-
     game.publishers = game.involved_companies?.flatMap((company) => {
       if (company.publisher) {
         return { id: company.company.id, name: company.company.name };

@@ -3,6 +3,8 @@
   display: flex;
   border-radius: var(--border-radius);
   border: 3px solid rgba(0,0,0,0);
+  overflow: hidden;
+  transition: 0.25s;
 }
 
 .cover {
@@ -25,11 +27,14 @@
 }
 
 .container:hover{
-  /* border: 3px solid var(--accent); */
+  border: 3px solid var(--accent);
 }
 
 @media (max-width: 640px) {
   .cover{
     width: 7rem;
+  }
+  .container .cover:not(:first-child) {
+    margin-left: calc(-21/8 * 1rem);
   }
 }
