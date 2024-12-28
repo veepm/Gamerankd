@@ -1,7 +1,7 @@
 import { useSearchParams } from "react-router-dom";
 import { IoChevronForwardSharp, IoChevronBackSharp } from "react-icons/io5";
 import classes from "./css/pageButton.module.css";
-import { memo, useEffect, useState } from "react";
+import { memo } from "react";
 
 const PageButton = ({ totalPages, siblingCount = 1 }) => {
   const [searchParams, setSearchParams] = useSearchParams();

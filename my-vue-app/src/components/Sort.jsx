@@ -1,5 +1,5 @@
 import { useSearchParams } from "react-router-dom";
-import { Select } from "../components";
+import Select from "../components/Select";
 
 const Sort = ({ options }) => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -21,6 +21,13 @@ const Sort = ({ options }) => {
     setSearchParams(searchParams, { replace: true });
   };
 
-  return <Select options={options} value={sortBy} onChange={handleChange} openOnHover/>;
+  return (
+    <Select
+      options={options}
+      value={sortBy}
+      onChange={handleChange}
+      openOnHover
+    />
+  );
 };
 export default Sort;

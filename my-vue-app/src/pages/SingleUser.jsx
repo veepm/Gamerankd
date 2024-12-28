@@ -1,15 +1,12 @@
 import { useQueries, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Link, useParams } from "react-router-dom";
-import {
-  GamesContainer,
-  ProfilePic,
-  SingleReview,
-  StackedGames,
-} from "../components";
-import { IoChevronForwardSharp, IoLogIn } from "react-icons/io5";
+import { IoChevronForwardSharp } from "react-icons/io5";
 import classes from "./css/singleUser.module.css";
 import { useEffect } from "react";
+import ProfilePic from "../components/ProfilePic";
+import SingleReview from "../components/SingleReview";
+import StackedGames from "../components/StackedGames";
 
 const SingleUser = () => {
   const { username } = useParams();
@@ -68,22 +65,20 @@ const SingleUser = () => {
       <section>
         {gameQueries.map((gameQuery, i) => {
           const list = userListsQuery.data?.lists[i];
-          if (list?.games?.length > 0){
+          if (list?.games?.length > 0) {
             return (
-                <Link
-                  key={list?.list_id}
-                  className={`${classes.option} ${classes.list}`}
-                  to={`lists/${list?.list_name}`}
-                >
-                  <span className={classes.optionName}>
-                    {list?.list_name}
-                  </span>
-                  <span className={classes.count}>
-                    {list?.games?.length}
-                    <IoChevronForwardSharp />
-                  </span>
-                  <StackedGames games={gameQuery?.data?.games} />
-                </Link>
+              <Link
+                key={list?.list_id}
+                className={`${classes.option} ${classes.list}`}
+                to={`lists/${list?.list_name}`}
+              >
+                <span className={classes.optionName}>{list?.list_name}</span>
+                <span className={classes.count}>
+                  {list?.games?.length}
+                  <IoChevronForwardSharp />
+                </span>
+                <StackedGames games={gameQuery?.data?.games} />
+              </Link>
             );
           }
         })}
@@ -97,9 +92,7 @@ const SingleUser = () => {
             cursor: userReviewsQuery.data?.review_count == 0 && "default",
           }}
         >
-          <span className={classes.optionName}>
-            Reviews/Ratings
-          </span>
+          <span className={classes.optionName}>Reviews/Ratings</span>
           <span className={classes.count}>
             {userReviewsQuery.data?.review_count}
             <IoChevronForwardSharp />

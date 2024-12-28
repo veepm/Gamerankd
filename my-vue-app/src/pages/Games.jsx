@@ -1,11 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import {
-  GamesContainer,
-  PageButton,
-  Sort,
-  SearchBar,
-  GenresFilter,
-} from "../components";
+import GamesContainer from "../components/GamesContainer";
+import PageButton from "../components/PageButton";
+import Sort from "../components/Sort";
+import SearchBar from "../components/SearchBar";
+import GenresFilter from "../components/GenresFilter";
 import classes from "./css/allGames.module.css";
 import axios from "axios";
 import { useParams, useSearchParams } from "react-router-dom";
@@ -112,7 +110,7 @@ const Games = () => {
       { page },
       { search },
       { sortBy },
-      { ids: listName ? listGamesQuery?.data?.games : []},
+      { ids: listName ? listGamesQuery?.data?.games : [] },
     ],
     enabled:
       (!username && !listName) || listGamesQuery?.data?.games?.length > 0,

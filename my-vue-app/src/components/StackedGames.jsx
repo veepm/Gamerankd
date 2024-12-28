@@ -1,4 +1,3 @@
-import useWindowDimensions from "../useWindowDimensions";
 import classes from "./css/stackedGames.module.css";
 
 const StackedGames = ({ games }) => {

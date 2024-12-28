@@ -1,6 +1,7 @@
 import { memo } from "react";
 import { Link } from "react-router-dom";
-import { ProfilePic, Rating } from "./index";
+import ProfilePic from "./ProfilePic";
+import Rating from "./Rating";
 import classes from "./css/singleReview.module.css";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
@@ -38,7 +39,9 @@ const SingleReview = ({ review, showGame }) => {
         <header>
           <div>
             {showGame ? (
-              <Link to={`/games/${game?.id}`}><h4>{game?.name}</h4></Link>
+              <Link to={`/games/${game?.id}`}>
+                <h4>{game?.name}</h4>
+              </Link>
             ) : (
               <Link to={`/users/${review.username}`}>{review.username}</Link>
             )}
@@ -53,7 +56,7 @@ const SingleReview = ({ review, showGame }) => {
             </small>
           )}
         </header>
-        <p style={{marginLeft: showGame && "2%"}}>{review.review_text}</p>
+        <p style={{ marginLeft: showGame && "2%" }}>{review.review_text}</p>
       </div>
     </div>
   );

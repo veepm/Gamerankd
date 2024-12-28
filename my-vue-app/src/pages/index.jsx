@@ -1,4 +1,3 @@
-import Games from "./Games";
 import Error from "./Error";
 import Landing from "./Landing";
 import SharedLayout from "./SharedLayout";
@@ -10,7 +9,6 @@ import UserReviews from "./UserReviews";
 import Users from "./Users";
 
 export {
-  Games,
   Error,
   Landing,
   SharedLayout,

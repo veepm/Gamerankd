@@ -1,34 +1,12 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { PageButton, SearchBar, Sort, UsersContainer } from "../components";
 import { useSearchParams } from "react-router-dom";
 import classes from "./css/users.module.css";
 import { useEffect } from "react";
 import PuffLoader from "react-spinners/PuffLoader";
-
-const options = [
-  {
-    group: "Games Played",
-    options: [
-      { label: "Highest", value: "highest" },
-      { label: "Lowest", value: "lowest" },
-    ],
-  },
-  {
-    group: "Average Rating",
-    options: [
-      { label: "Highest Rated", value: "highestRated" },
-      { label: "Lowest Rated", value: "lowestRated" },
-    ],
-  },
-  {
-    group: "Year Made",
-    options: [
-      { label: "Latest", value: "latest" },
-      { label: "Oldest", value: "oldest" },
-    ],
-  },
-];
+import SearchBar from "../components/SearchBar";
+import UsersContainer from "../components/UsersContainer";
+import PageButton from "../components/PageButton";
 
 const Users = () => {
   const [searchParams, setSearchParams] = useSearchParams();

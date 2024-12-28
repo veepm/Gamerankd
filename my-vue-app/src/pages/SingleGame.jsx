@@ -1,5 +1,4 @@
 import { Link, useParams } from "react-router-dom";
-import { Rating, Reviews, UserGameInfo } from "../components";
 import classes from "./css/singleGame.module.css";
 import React, { memo, useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -7,6 +6,9 @@ import axios from "axios";
 import PuffLoader from "react-spinners/PuffLoader";
 import { IoChevronDownSharp } from "react-icons/io5";
 import Error from "./Error";
+import Rating from "../components/Rating";
+import Reviews from "../components/Reviews";
+import UserGameInfo from "../components/UserGameInfo";
 
 const SingleGame = () => {
   const { gameId } = useParams();
@@ -22,7 +24,7 @@ const SingleGame = () => {
     retry: false,
   });
 
-  useEffect(() => {    
+  useEffect(() => {
     document.title = `${gameInfoQuery?.data?.name || "Game"} - Gameranked`;
   }, [gameInfoQuery.isLoading]);
 
@@ -113,7 +115,9 @@ const GameSummary = memo(({ text }) => {
 const GameRating = memo(({ avgRating, ratingCount, ratingDistribution }) => {
   return (
     <span className={classes.avgRating}>
-      <span>{avgRating?.toFixed(1)} ({ratingCount})</span>
+      <span>
+        {avgRating?.toFixed(1)} ({ratingCount})
+      </span>
       <Rating avgRating={avgRating} size="1rem" />
       <IoChevronDownSharp />
       <div className={classes.breakdownContainer}>

@@ -1,5 +1,4 @@
 import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
-import { AiOutlineStar } from "react-icons/ai";
 import classes from "./css/rating.module.css";
 import { useState, memo } from "react";
 import axios from "axios";

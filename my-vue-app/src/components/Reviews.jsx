@@ -11,7 +11,8 @@ import {
 } from "@tanstack/react-query";
 import useUserInfo from "../useUserInfo";
 import PuffLoader from "react-spinners/PuffLoader";
-import { SingleReview, Select } from "./index";
+import SingleReview from "./SingleReview";
+import Select from "./Select";
 import { toast } from "react-toastify";
 
 const Reviews = ({ gameId, username }) => {
@@ -68,7 +69,7 @@ const Reviews = ({ gameId, username }) => {
   if (deleteReviewMutation.isError) console.log(deleteReviewMutation.error);
 
   return (
-    <div className={classes.container} style={{margin: username && "3rem"}}>
+    <div className={classes.container} style={{ margin: username && "3rem" }}>
       <header className={classes.header}>
         <h2>{reviewsQuery?.data?.pages[0].review_count} Reviews</h2>
         {gameId && (
@@ -208,7 +209,7 @@ const ReviewInput = memo(
       },
       onError: (error) => console.log(error),
     });
-  
+
     return (
       <form
         className={`${classes.inputContainer} ${

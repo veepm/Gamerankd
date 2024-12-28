@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { Rating } from "./index";
+import Rating from "./Rating"
 import classes from "./css/userGameInfo.module.css";
 import axios from "axios";
 import { IoGameController, IoGameControllerOutline } from "react-icons/io5";
