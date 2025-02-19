@@ -36,7 +36,7 @@ const router = createBrowserRouter([
             index: true,
             element: (
               <Suspense fallback="Loading...">
-                <Landing />
+                <Games />
               </Suspense>
             ),
           },
